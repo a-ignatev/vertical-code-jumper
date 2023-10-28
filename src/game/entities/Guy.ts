@@ -6,6 +6,7 @@ const HEIGHT = 20;
 const GRAVITY = 60;
 const JUMP_SPEED = -130;
 const FRAME_TIME = 1000 / 8; // 8fps
+const DRINKING_PERIOD = 3000; // 3s
 export const SIDE_SPEED = 60;
 
 class Animation {
@@ -14,16 +15,30 @@ class Animation {
   elapsedTime = 0;
   img: HTMLImageElement;
   framesCount: number;
-  rows: number;
   cols: number;
+  onEnd?: () => void;
+  blocking: boolean;
 
-  constructor(spreadsheet: string, rows: number, cols: number) {
+  constructor({
+    spreadsheet,
+    frames,
+    cols,
+    blocking,
+    onEnd,
+  }: {
+    spreadsheet: string;
+    frames: number;
+    cols: number;
+    blocking: boolean;
+    onEnd?: () => void;
+  }) {
     this.spreadsheet = spreadsheet;
     this.img = new Image(); // Create new img element
     this.img.src = imgFolder + "/" + spreadsheet; // Set source path
-    this.framesCount = rows * cols;
-    this.rows = rows;
+    this.framesCount = frames;
     this.cols = cols;
+    this.blocking = blocking;
+    this.onEnd = onEnd;
   }
 
   update(delta: number) {
@@ -34,6 +49,7 @@ class Animation {
 
       if (this.currentFrame + 1 >= this.framesCount) {
         this.currentFrame = 0;
+        this.onEnd?.();
       } else {
         this.currentFrame++;
       }
@@ -41,8 +57,8 @@ class Animation {
   }
 
   render(cx: number, cy: number, ctx: CanvasRenderingContext2D) {
-    const row = Math.trunc(this.currentFrame / this.rows);
-    const col = this.currentFrame % this.rows;
+    const row = Math.trunc(this.currentFrame / this.cols);
+    const col = this.currentFrame % this.cols;
 
     console.log({ row, col });
 
@@ -60,7 +76,7 @@ class Animation {
   }
 }
 
-type AnimationType = "idle" | "falling";
+type AnimationType = "idle" | "falling" | "drinking";
 
 export class Guy implements Entity {
   speedX: number;
@@ -69,6 +85,7 @@ export class Guy implements Entity {
   private cy: number;
   animations: Record<AnimationType, Animation>;
   currentAnimation: AnimationType;
+  nonDrinkingTime: number;
 
   constructor(cx: number, cy: number) {
     this.speedX = 0;
@@ -77,10 +94,30 @@ export class Guy implements Entity {
     this.cy = cy;
 
     this.animations = {
-      falling: new Animation("Normal_Guy_Air.png", 1, 1),
-      idle: new Animation("Normal_Guy_Idle_SpriteSheet.png", 3, 3),
+      falling: new Animation({
+        spreadsheet: "Normal_Guy_Air.png",
+        frames: 1,
+        cols: 1,
+        blocking: false,
+      }),
+      idle: new Animation({
+        spreadsheet: "Normal_Guy_Idle_SpriteSheet.png",
+        frames: 9,
+        cols: 3,
+        blocking: false,
+      }),
+      drinking: new Animation({
+        spreadsheet: "Normal_Guy_Drinks_SpriteSheet.png",
+        frames: 11,
+        cols: 4,
+        blocking: true,
+        onEnd: () => {
+          this.currentAnimation = "idle";
+        },
+      }),
     };
 
+    this.nonDrinkingTime = 0;
     this.currentAnimation = "idle";
   }
 
@@ -105,11 +142,18 @@ export class Guy implements Entity {
       }
     });
 
-    console.log(this.speedY);
-    if (this.speedY > GRAVITY / 2) {
-      this.currentAnimation = "falling";
-    } else {
-      this.currentAnimation = "idle";
+    if (!this.animations[this.currentAnimation].blocking) {
+      if (this.speedY > GRAVITY / 2) {
+        this.currentAnimation = "falling";
+      } else {
+        this.currentAnimation = "idle";
+      }
+
+      this.nonDrinkingTime += delta;
+      if (this.nonDrinkingTime >= DRINKING_PERIOD) {
+        this.nonDrinkingTime = 0;
+        this.currentAnimation = "drinking";
+      }
     }
 
     this.animations[this.currentAnimation].update(delta);
