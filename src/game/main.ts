@@ -11,6 +11,8 @@ interface State {
   words: string[];
 }
 
+let abortController = new AbortController();
+
 function main() {
   const vscode = acquireVsCodeApi<State>();
 
@@ -19,21 +21,41 @@ function main() {
     switch (message.type) {
       case "addWords": {
         vscode.setState({ words: message.words });
+        const state = vscode.getState() || { words: [] };
+        init(state.words, abortController.signal);
         break;
       }
       case "restartGame": {
-        initAll(vscode);
+        requestWords(vscode);
       }
     }
   });
 
   window.addEventListener("resize", function () {
-    initAll(vscode);
+    requestWords(vscode);
   });
 
-  vscode.postMessage({ type: "getWords" });
+  requestWords(vscode);
+}
 
-  initAll(vscode);
+function requestWords(vscode: WebviewApi<State>) {
+  resetAll();
+  abortController = new AbortController();
+  vscode.postMessage({ type: "getWords" });
+}
+
+function resetAll() {
+  abortController.abort();
+  const graphics = initCanvas();
+
+  if (!graphics) {
+    return;
+  }
+
+  window.requestAnimationFrame(() => {
+    const { canvas, ctx } = graphics;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
 }
 
 function initCanvas() {
@@ -57,16 +79,16 @@ function initCanvas() {
   return { ctx, canvas };
 }
 
-function initEntities(vscode: WebviewApi<State>) {
+function initEntities(words: string[]) {
   let entities: Entity[] = [];
   const ball = new Ball(window.innerWidth / 2, 0);
   entities.push(ball);
 
-  const state = vscode.getState() || { words: [] };
-  // init initial words
+  // TODO refactor
+  // create initial words
   let y = 0;
   while (y * 100 <= window.innerHeight) {
-    const randomWord = Word.randomWord(state.words);
+    const randomWord = Word.randomWord(words);
     randomWord.y = y * 100;
     entities.push(randomWord);
     y++;
@@ -76,14 +98,14 @@ function initEntities(vscode: WebviewApi<State>) {
 }
 
 function initGameLoop(
-  vscode: WebviewApi<State>,
+  words: string[],
   entities: Entity[],
   ctx: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement
+  canvas: HTMLCanvasElement,
+  abortSignal: AbortSignal
 ) {
   let lastSpawn = 0;
   let lastTimeStamp = 0;
-  const state = vscode.getState() || { words: [] };
 
   function gameLoop(timeStamp: number) {
     const delta = timeStamp - lastTimeStamp;
@@ -102,24 +124,26 @@ function initGameLoop(
     let timeInSecond = timeStamp / 1000;
     if (timeInSecond - lastSpawn >= SPAWN_SPEED) {
       lastSpawn = timeInSecond;
-      entities.push(Word.randomWord(state.words));
+      entities.push(Word.randomWord(words));
     }
 
     lastTimeStamp = timeStamp;
-    window.requestAnimationFrame(gameLoop);
+    if (!abortSignal.aborted) {
+      window.requestAnimationFrame(gameLoop);
+    }
   }
   window.requestAnimationFrame(gameLoop);
 }
 
-function initAll(vscode: WebviewApi<State>) {
+function init(words: string[], abortSignal: AbortSignal) {
   const graphics = initCanvas();
   if (!graphics) {
     return;
   }
 
   const { ctx, canvas } = graphics;
-  const entities = initEntities(vscode);
-  initGameLoop(vscode, entities, ctx, canvas);
+  const entities = initEntities(words);
+  initGameLoop(words, entities, ctx, canvas, abortSignal);
 
   const ball = entities.find((entity) => entity instanceof Ball);
 
