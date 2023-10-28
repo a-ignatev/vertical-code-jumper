@@ -1,23 +1,27 @@
 import { Context, Entity } from "./Entity";
 import { Rect } from "./Rect";
 
-const BALL_RADIUS = 20;
+const WIDTH = 15;
+const HEIGHT = 20;
 const GRAVITY = 60;
 const JUMP_SPEED = -130;
-const BALL_COLOR = "#2ed851";
 export const SIDE_SPEED = 60;
 
-export class Ball implements Entity {
+export class Guy implements Entity {
   speedX: number;
   speedY: number;
   private cx: number;
   private cy: number;
+  img: HTMLImageElement;
 
   constructor(cx: number, cy: number) {
     this.speedX = 0;
     this.speedY = GRAVITY;
     this.cx = cx;
     this.cy = cy;
+
+    this.img = new Image(); // Create new img element
+    this.img.src = imgFolder + "/Normal_Guy_Air.png"; // Set source path
   }
 
   update({ entities, delta, ctx }: Context) {
@@ -25,10 +29,7 @@ export class Ball implements Entity {
     this.speedY = this.speedY;
 
     this.cx += this.speedX / delta;
-    this.cx = Math.max(
-      BALL_RADIUS,
-      Math.min(this.cx, window.innerWidth - BALL_RADIUS)
-    );
+    this.cx = Math.max(WIDTH, Math.min(this.cx, window.innerWidth - WIDTH));
     this.cy += this.speedY / delta;
 
     entities.forEach((entity) => {
@@ -46,10 +47,13 @@ export class Ball implements Entity {
   }
 
   render(ctx: CanvasRenderingContext2D, debug: boolean) {
-    ctx.beginPath();
-    ctx.arc(this.cx, this.cy, BALL_RADIUS, 0, 2 * Math.PI, false);
-    ctx.fillStyle = BALL_COLOR;
-    ctx.fill();
+    ctx.drawImage(
+      this.img,
+      this.cx - WIDTH,
+      this.cy - HEIGHT,
+      2 * WIDTH,
+      2 * HEIGHT
+    );
 
     if (debug) {
       this.getBoundingRect().render(ctx);
@@ -57,15 +61,10 @@ export class Ball implements Entity {
   }
 
   shouldBeRemoved(): boolean {
-    return this.cy - 2 * BALL_RADIUS > window.innerHeight;
+    return this.cy - 2 * HEIGHT > window.innerHeight;
   }
 
   getBoundingRect(): Rect {
-    return new Rect(
-      this.cx - BALL_RADIUS,
-      this.cy + BALL_RADIUS - 1,
-      2 * BALL_RADIUS,
-      1
-    );
+    return new Rect(this.cx - WIDTH, this.cy + HEIGHT - 1, 2 * WIDTH, 1);
   }
 }

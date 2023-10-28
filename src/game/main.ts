@@ -1,5 +1,5 @@
 import { Word } from "./entities/Word";
-import { Ball, SIDE_SPEED } from "./entities/Ball";
+import { Guy, SIDE_SPEED } from "./entities/Guy";
 import { Entity } from "./entities/Entity";
 import { WebviewApi } from "vscode-webview";
 
@@ -15,6 +15,7 @@ let abortController = new AbortController();
 
 function main() {
   const vscode = acquireVsCodeApi<State>();
+  console.log(imgFolder);
 
   window.addEventListener("message", (event) => {
     const message = event.data; // The json data that the extension sent
@@ -75,14 +76,15 @@ function initCanvas() {
 
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
+  ctx.imageSmoothingEnabled = false;
 
   return { ctx, canvas };
 }
 
 function initEntities(words: string[]) {
   let entities: Entity[] = [];
-  const ball = new Ball(window.innerWidth / 2, 0);
-  entities.push(ball);
+  const guy = new Guy(window.innerWidth / 2, 0);
+  entities.push(guy);
 
   // TODO refactor
   // create initial words
@@ -118,7 +120,7 @@ function initGameLoop(
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // render entities
-    entities.forEach((entity) => entity.render(ctx, false));
+    entities.forEach((entity) => entity.render(ctx, true));
 
     // spawn new words
     let timeInSecond = timeStamp / 1000;
@@ -145,24 +147,24 @@ function init(words: string[], abortSignal: AbortSignal) {
   const entities = initEntities(words);
   initGameLoop(words, entities, ctx, canvas, abortSignal);
 
-  const ball = entities.find((entity) => entity instanceof Ball);
+  const guy = entities.find((entity) => entity instanceof Guy);
 
-  if (ball) {
-    handleControls(ball as Ball);
+  if (guy) {
+    handleControls(guy as Guy);
   }
 }
 
-function handleControls(ball: Ball) {
+function handleControls(guy: Guy) {
   let holdingKeys: string[] = [];
 
   window.onkeydown = (event) => {
     event.preventDefault();
     if (event.key === LEFT_KEY) {
-      ball.speedX = -SIDE_SPEED;
+      guy.speedX = -SIDE_SPEED;
       holdingKeys.push(event.key);
     }
     if (event.key === RIGHT_KEY) {
-      ball.speedX = SIDE_SPEED;
+      guy.speedX = SIDE_SPEED;
       holdingKeys.push(event.key);
     }
   };
@@ -173,7 +175,7 @@ function handleControls(ball: Ball) {
       holdingKeys = holdingKeys.filter((key) => key !== event.key);
 
       if (!holdingKeys.length) {
-        ball.speedX = 0;
+        guy.speedX = 0;
       }
     }
   };
