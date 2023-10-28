@@ -14,8 +14,9 @@
   "contributes": {
     "commands": [
       {
-        "command": "vertical-code-jumper.helloWorld",
-        "title": "Hello World"
+        "command": "vertical-code-jumper.restartGame",
+        "title": "Restart Game",
+        "icon": "$(refresh)"
       }
     ],
     "views": {
@@ -24,6 +25,15 @@
           "type": "webview",
           "id": "vertical-code-jumper.verticalCodeJumperView",
           "name": "Vertical Code Jumper"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "vertical-code-jumper.restartGame",
+          "when": "view == vertical-code-jumper.verticalCodeJumperView",
+          "group": "navigation"
         }
       ]
     }

@@ -9,6 +9,10 @@ export function activate(context: vscode.ExtensionContext) {
       provider
     )
   );
+
+  vscode.commands.registerCommand("vertical-code-jumper.restartGame", () => {
+    provider.restartGame();
+  });
 }
 
 class CodeJumperViewProvider implements vscode.WebviewViewProvider {
@@ -37,20 +41,26 @@ class CodeJumperViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.onDidReceiveMessage((data) => {
       switch (data.type) {
-        case "colorSelected": {
-          vscode.window.activeTextEditor?.insertSnippet(
-            new vscode.SnippetString(`#${data.value}`)
-          );
+        case "getWords": {
+          const words = vscode.window.activeTextEditor?.document
+            .getText()
+            .replace(/[^a-zA-Z0-9-_]/g, " ")
+            .split(/\s+/gm)
+            .filter((x) => x.length > 3);
+          this._view?.webview.postMessage({
+            type: "addWords",
+            words: [...new Set(words)],
+          });
           break;
         }
       }
     });
   }
 
-  public addColor() {
+  public restartGame() {
     if (this._view) {
       this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
-      this._view.webview.postMessage({ type: "addColor" });
+      this._view.webview.postMessage({ type: "restartGame" });
     }
   }
 
