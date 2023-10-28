@@ -63,7 +63,7 @@ class CodeJumperViewProvider implements vscode.WebviewViewProvider {
   private _getHtmlForWebview(webview: vscode.Webview) {
     // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "main.js")
+      vscode.Uri.joinPath(this._extensionUri, "media", "main-bundle.js")
     );
 
     // // Do the same for the stylesheet.
@@ -97,7 +97,7 @@ class CodeJumperViewProvider implements vscode.WebviewViewProvider {
 				<title>Vertical Code Jumper</title>
 			</head>
 			<body>
-				<button id="hello">Say hello</button>
+				<button id="hello">Say hello!</button>
 
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
