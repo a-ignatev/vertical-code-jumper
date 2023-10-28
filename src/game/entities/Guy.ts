@@ -105,10 +105,10 @@ export class Guy extends Entity {
       },
     };
 
-    this.jumpSound = new Sound("swing-whoosh-110410.mp3");
-    this.roarSound = new Sound("human-roar-2-39403.mp3");
+    this.jumpSound = new Sound("jump.mp3");
+    this.roarSound = new Sound("roar.mp3");
     this.roarSound.setVolume(0.5);
-    this.drinkingSound = new Sound("gulp-37759.mp3");
+    this.drinkingSound = new Sound("coffee.mp3");
     this.drinkingSound.setVolume(0.5);
 
     this.nonDrinkingTime = 0;

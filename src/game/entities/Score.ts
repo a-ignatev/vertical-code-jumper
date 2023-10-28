@@ -18,7 +18,7 @@ export class Score extends Word {
     this.originalWord = word;
     this.color = SCORE_COLOR;
 
-    this.scoreSound = new Sound("coin_c_02-102844.mp3");
+    this.scoreSound = new Sound("score.mp3");
   }
 
   update({ delta }: Context) {

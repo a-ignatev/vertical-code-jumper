@@ -13,7 +13,7 @@ export class GameOver extends Scene {
     this.ctx = ctx;
 
     this.onClick = this.onClick.bind(this);
-    this.gameOverSound = new Sound("negative_beeps-6008.mp3");
+    this.gameOverSound = new Sound("game-over.mp3");
   }
 
   attach(payload: { score: number }): void {
