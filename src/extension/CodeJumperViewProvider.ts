@@ -51,8 +51,8 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
 
   private _getHtmlForWebview(webview: vscode.Webview) {
     const workbenchConfig = vscode.workspace.getConfiguration("editor");
-    const imgFolder = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "img")
+    const mediaFolder = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media")
     );
 
     // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
@@ -79,7 +79,9 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
         -->
         <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${
           webview.cspSource
-        }; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">
+        }; img-src ${webview.cspSource} https:; media-src ${
+      webview.cspSource
+    } https:; script-src 'nonce-${nonce}';">
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -87,7 +89,7 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
         <script nonce="${nonce}">
           globalFontFamily = "${workbenchConfig.get("fontFamily")}";
           globalFontSize = ${workbenchConfig.get("fontSize")};
-          imgFolder = "${imgFolder}";
+          mediaFolder = "${mediaFolder}";
         </script>
         
         <title>Vertical Code Jumper</title>

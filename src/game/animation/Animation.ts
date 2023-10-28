@@ -31,7 +31,7 @@ export class Animation {
   }) {
     this.spreadsheet = spreadsheet;
     this.img = new Image(); // Create new img element
-    this.img.src = imgFolder + "/" + spreadsheet; // Set source path
+    this.img.src = mediaFolder + "/img/" + spreadsheet; // Set source path
     this.framesCount = frames;
     this.cols = cols;
     this.blocking = blocking;

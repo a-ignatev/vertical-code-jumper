@@ -1,23 +1,36 @@
+import { Sound } from "../sound/Sound";
 import { Context } from "./Entity";
 import { Word } from "./Word";
 
 const TIME_TO_POINTS_RATIO = 1000; // 1s = 10 points
+const EFFECT_POINTS = 100; //sound per each 1000
 export const SCORE_COLOR = "#EDBB4E";
 
 export class Score extends Word {
   originalWord: string;
   playTime: number = 0;
+  scoreSound: Sound;
+  lastEffectScore: number = 0;
 
   constructor(word: string, x: number, y: number) {
     super(word, x, y);
 
     this.originalWord = word;
     this.color = SCORE_COLOR;
+
+    this.scoreSound = new Sound("coin_c_02-102844.mp3");
   }
 
   update({ delta }: Context) {
     this.playTime += delta;
-    this.word = this.originalWord + this.getScore().toString();
+
+    const score = this.getScore();
+    if (score !== this.lastEffectScore && score % EFFECT_POINTS === 0) {
+      this.lastEffectScore = score;
+      this.scoreSound.play();
+    }
+
+    this.word = this.originalWord + score.toString();
   }
 
   getScore() {

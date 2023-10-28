@@ -1,12 +1,13 @@
 import { Animation } from "../animation/Animation";
+import { Sound } from "../sound/Sound";
 import { Context, Entity } from "./Entity";
 import { Rect } from "./Rect";
 import { Word } from "./Word";
 
 const GRAVITY = 60;
 const JUMP_SPEED = -130;
-const DRINKING_PERIOD = 3000; // 3s
-const TRANSFORM_PERIOD = 60000; // 1m
+const DRINKING_PERIOD = 5_000;
+const TRANSFORM_PERIOD = 60_000; // 1m
 export const SIDE_SPEED = 60;
 
 type GuyForm = "normal" | "strong";
@@ -19,6 +20,9 @@ export class Guy extends Entity {
   private cy: number;
   animations: Record<AnimationType, Record<GuyForm, Animation | null>>;
   currentAnimation: AnimationType;
+  jumpSound: Sound;
+  roarSound: Sound;
+  drinkingSound: Sound;
   currentForm: GuyForm;
   nonDrinkingTime: number;
   lifeTime: number;
@@ -101,6 +105,12 @@ export class Guy extends Entity {
       },
     };
 
+    this.jumpSound = new Sound("swing-whoosh-110410.mp3");
+    this.roarSound = new Sound("human-roar-2-39403.mp3");
+    this.roarSound.setVolume(0.5);
+    this.drinkingSound = new Sound("gulp-37759.mp3");
+    this.drinkingSound.setVolume(0.5);
+
     this.nonDrinkingTime = 0;
     this.lifeTime = 0;
     this.currentAnimation = "idle";
@@ -133,6 +143,7 @@ export class Guy extends Entity {
         this.getBoundingRect().intersects(entity.getBoundingRect(ctx))
       ) {
         this.speedY = JUMP_SPEED;
+        this.jumpSound.play();
       }
     });
 
@@ -148,6 +159,7 @@ export class Guy extends Entity {
         this.currentForm === "normal" &&
         this.nonDrinkingTime >= DRINKING_PERIOD
       ) {
+        this.drinkingSound.playWithDelay(500);
         this.nonDrinkingTime = 0;
         this.currentAnimation = "drinking";
       }
@@ -157,6 +169,7 @@ export class Guy extends Entity {
         this.canTransform &&
         this.lifeTime >= TRANSFORM_PERIOD
       ) {
+        this.roarSound.play();
         this.currentAnimation = "transforms";
       }
     }

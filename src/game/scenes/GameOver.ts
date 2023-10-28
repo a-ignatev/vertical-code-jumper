@@ -1,9 +1,11 @@
 import { SCORE_COLOR } from "../entities/Score";
 import { StaticWord } from "../entities/Word";
+import { Sound } from "../sound/Sound";
 import { Scene } from "./Scene";
 
 export class GameOver extends Scene {
   private ctx: CanvasRenderingContext2D;
+  gameOverSound: Sound;
 
   constructor(ctx: CanvasRenderingContext2D) {
     super();
@@ -11,9 +13,12 @@ export class GameOver extends Scene {
     this.ctx = ctx;
 
     this.onClick = this.onClick.bind(this);
+    this.gameOverSound = new Sound("negative_beeps-6008.mp3");
   }
 
   attach(payload: { score: number }): void {
+    this.gameOverSound.play();
+
     const titleText = "Game Over";
     const helpText = "Click to play again";
     const scoreText = payload.score.toString();
