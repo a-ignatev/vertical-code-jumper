@@ -1,11 +1,11 @@
-import { Word } from "./entities/Word";
-import { Guy, SIDE_SPEED } from "./entities/Guy";
-import { Entity } from "./entities/Entity";
 import { WebviewApi } from "vscode-webview";
+import { Game } from "./scenes/Game";
+import { Intro } from "./scenes/Intro";
+import { SceneManager } from "./scenes/SceneManager";
 
-const LEFT_KEY = "ArrowLeft";
-const RIGHT_KEY = "ArrowRight";
-const SPAWN_SPEED = 1;
+export const LEFT_KEY = "ArrowLeft";
+export const RIGHT_KEY = "ArrowRight";
+const DEBUG = false;
 
 interface State {
   words: string[];
@@ -15,7 +15,6 @@ let abortController = new AbortController();
 
 function main() {
   const vscode = acquireVsCodeApi<State>();
-  console.log(imgFolder);
 
   window.addEventListener("message", (event) => {
     const message = event.data; // The json data that the extension sent
@@ -77,64 +76,9 @@ function initCanvas() {
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
   ctx.imageSmoothingEnabled = false;
+  ctx.font = `${globalFontSize}px ${globalFontFamily.split(",")[0]}`;
 
   return { ctx, canvas };
-}
-
-function initEntities(words: string[]) {
-  let entities: Entity[] = [];
-  const guy = new Guy(window.innerWidth / 2, 0);
-  entities.push(guy);
-
-  // TODO refactor
-  // create initial words
-  let y = 1;
-  while (y * 100 <= window.innerHeight) {
-    const randomWord = Word.randomWord(words);
-    randomWord.y = y * 100;
-    entities.push(randomWord);
-    y++;
-  }
-
-  return entities;
-}
-
-function initGameLoop(
-  words: string[],
-  entities: Entity[],
-  ctx: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement,
-  abortSignal: AbortSignal
-) {
-  let lastSpawn = 0;
-  let lastTimeStamp = 0;
-
-  function gameLoop(timeStamp: number) {
-    const delta = timeStamp - lastTimeStamp;
-
-    // update entities
-    entities.forEach((entity) => entity.update({ entities, delta, ctx }));
-    entities = entities.filter((entity) => !entity.shouldBeRemoved());
-
-    // clear screen
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // render entities
-    entities.forEach((entity) => entity.render(ctx, false));
-
-    // spawn new words
-    let timeInSecond = timeStamp / 1000;
-    if (timeInSecond - lastSpawn >= SPAWN_SPEED) {
-      lastSpawn = timeInSecond;
-      entities.push(Word.randomWord(words));
-    }
-
-    lastTimeStamp = timeStamp;
-    if (!abortSignal.aborted) {
-      window.requestAnimationFrame(gameLoop);
-    }
-  }
-  window.requestAnimationFrame(gameLoop);
 }
 
 function init(words: string[], abortSignal: AbortSignal) {
@@ -144,41 +88,53 @@ function init(words: string[], abortSignal: AbortSignal) {
   }
 
   const { ctx, canvas } = graphics;
-  const entities = initEntities(words);
-  initGameLoop(words, entities, ctx, canvas, abortSignal);
 
-  const guy = entities.find((entity) => entity instanceof Guy);
+  const sceneManager = new SceneManager();
+  sceneManager.addScene("intro", new Intro(ctx));
+  sceneManager.addScene("game", new Game(words));
+  sceneManager.switchScene("intro");
 
-  if (guy) {
-    handleControls(guy as Guy);
-  }
+  initGameLoop(sceneManager, ctx, canvas, abortSignal);
 }
 
-function handleControls(guy: Guy) {
-  let holdingKeys: string[] = [];
+function initGameLoop(
+  sceneManager: SceneManager,
+  ctx: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement,
+  abortSignal: AbortSignal
+) {
+  let lastTimeStamp = 0;
 
-  window.onkeydown = (event) => {
-    event.preventDefault();
-    if (event.key === LEFT_KEY) {
-      guy.speedX = -SIDE_SPEED;
-      holdingKeys.push(event.key);
-    }
-    if (event.key === RIGHT_KEY) {
-      guy.speedX = SIDE_SPEED;
-      holdingKeys.push(event.key);
-    }
-  };
+  function gameLoop(timeStamp: number) {
+    const scene = sceneManager.getScene();
 
-  window.onkeyup = (event) => {
-    event.preventDefault();
-    if (event.key === LEFT_KEY || event.key === RIGHT_KEY) {
-      holdingKeys = holdingKeys.filter((key) => key !== event.key);
-
-      if (!holdingKeys.length) {
-        guy.speedX = 0;
-      }
+    if (!scene) {
+      console.log("No scene set");
+      return;
     }
-  };
+
+    const delta = timeStamp - lastTimeStamp;
+
+    // update entities
+    scene.entities.forEach((entity) =>
+      entity.update({ entities: scene.entities, delta, ctx })
+    );
+    scene.entities = scene.entities.filter(
+      (entity) => !entity.shouldBeRemoved()
+    );
+
+    // clear screen
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // render entities
+    scene.entities.forEach((entity) => entity.render(ctx, DEBUG));
+
+    lastTimeStamp = timeStamp;
+    if (!abortSignal.aborted) {
+      window.requestAnimationFrame(gameLoop);
+    }
+  }
+  window.requestAnimationFrame(gameLoop);
 }
 
 main();

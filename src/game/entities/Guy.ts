@@ -1,5 +1,6 @@
 import { Context, Entity } from "./Entity";
 import { Rect } from "./Rect";
+import { Word } from "./Word";
 
 const GRAVITY = 60;
 const JUMP_SPEED = -130;
@@ -94,12 +95,14 @@ export class Guy implements Entity {
   currentForm: GuyForm;
   nonDrinkingTime: number;
   lifeTime: number;
+  canTransform: boolean;
 
-  constructor(cx: number, cy: number) {
+  constructor(cx: number, cy: number, canTransform: boolean) {
     this.speedX = 0;
     this.speedY = GRAVITY;
     this.cx = cx;
     this.cy = cy;
+    this.canTransform = canTransform;
 
     this.animations = {
       falling: {
@@ -192,7 +195,7 @@ export class Guy implements Entity {
     this.cy += this.speedY / delta;
 
     entities.forEach((entity) => {
-      if (entity === this) {
+      if (entity === this || !(entity instanceof Word)) {
         return;
       }
 
@@ -220,7 +223,11 @@ export class Guy implements Entity {
         this.currentAnimation = "drinking";
       }
 
-      if (this.currentForm === "normal" && this.lifeTime >= TRANSFORM_PERIOD) {
+      if (
+        this.currentForm === "normal" &&
+        this.canTransform &&
+        this.lifeTime >= TRANSFORM_PERIOD
+      ) {
         this.currentAnimation = "transforms";
       }
     }

@@ -36,7 +36,6 @@ export class Word implements Entity {
 
   render(ctx: CanvasRenderingContext2D, debug: boolean) {
     ctx.fillStyle = getColor("--vscode-editor-foreground");
-    ctx.font = `${globalFontSize}px ${globalFontFamily.split(",")[0]}`;
     ctx.fillText(this.word, this.x, this.y);
 
     if (debug) {
@@ -58,4 +57,8 @@ export class Word implements Entity {
       globalFontSize
     );
   }
+}
+
+export class StaticWord extends Word {
+  override update(): void {}
 }
