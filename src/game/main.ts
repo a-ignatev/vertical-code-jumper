@@ -120,7 +120,7 @@ function initGameLoop(
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // render entities
-    entities.forEach((entity) => entity.render(ctx, true));
+    entities.forEach((entity) => entity.render(ctx, false));
 
     // spawn new words
     let timeInSecond = timeStamp / 1000;
