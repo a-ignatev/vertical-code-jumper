@@ -1,12 +1,11 @@
 import { Context, Entity } from "./Entity";
 import { Rect } from "./Rect";
 
-const WIDTH = 15;
-const HEIGHT = 20;
 const GRAVITY = 60;
 const JUMP_SPEED = -130;
 const FRAME_TIME = 1000 / 8; // 8fps
 const DRINKING_PERIOD = 3000; // 3s
+const TRANSFORM_PERIOD = 60000; // 1m
 export const SIDE_SPEED = 60;
 
 class Animation {
@@ -18,17 +17,23 @@ class Animation {
   cols: number;
   onEnd?: () => void;
   blocking: boolean;
+  width: number;
+  height: number;
 
   constructor({
     spreadsheet,
     frames,
     cols,
+    width,
+    height,
     blocking,
     onEnd,
   }: {
     spreadsheet: string;
     frames: number;
     cols: number;
+    width: number;
+    height: number;
     blocking: boolean;
     onEnd?: () => void;
   }) {
@@ -39,6 +44,8 @@ class Animation {
     this.cols = cols;
     this.blocking = blocking;
     this.onEnd = onEnd;
+    this.width = width;
+    this.height = height;
   }
 
   update(delta: number) {
@@ -60,32 +67,33 @@ class Animation {
     const row = Math.trunc(this.currentFrame / this.cols);
     const col = this.currentFrame % this.cols;
 
-    console.log({ row, col });
-
     ctx.drawImage(
       this.img,
-      col * WIDTH,
-      row * HEIGHT,
-      WIDTH,
-      HEIGHT,
-      cx - WIDTH,
-      cy - HEIGHT,
-      2 * WIDTH,
-      2 * HEIGHT
+      col * this.width,
+      row * this.height,
+      this.width,
+      this.height,
+      cx - this.width,
+      cy - this.height,
+      2 * this.width,
+      2 * this.height
     );
   }
 }
 
-type AnimationType = "idle" | "falling" | "drinking";
+type GuyForm = "normal" | "strong";
+type AnimationType = "idle" | "falling" | "drinking" | "transforms";
 
 export class Guy implements Entity {
   speedX: number;
   speedY: number;
   private cx: number;
   private cy: number;
-  animations: Record<AnimationType, Animation>;
+  animations: Record<AnimationType, Record<GuyForm, Animation | null>>;
   currentAnimation: AnimationType;
+  currentForm: GuyForm;
   nonDrinkingTime: number;
+  lifeTime: number;
 
   constructor(cx: number, cy: number) {
     this.speedX = 0;
@@ -94,39 +102,93 @@ export class Guy implements Entity {
     this.cy = cy;
 
     this.animations = {
-      falling: new Animation({
-        spreadsheet: "Normal_Guy_Air.png",
-        frames: 1,
-        cols: 1,
-        blocking: false,
-      }),
-      idle: new Animation({
-        spreadsheet: "Normal_Guy_Idle_SpriteSheet.png",
-        frames: 9,
-        cols: 3,
-        blocking: false,
-      }),
-      drinking: new Animation({
-        spreadsheet: "Normal_Guy_Drinks_SpriteSheet.png",
-        frames: 11,
-        cols: 4,
-        blocking: true,
-        onEnd: () => {
-          this.currentAnimation = "idle";
-        },
-      }),
+      falling: {
+        normal: new Animation({
+          spreadsheet: "Normal_Guy_Air.png",
+          frames: 1,
+          cols: 1,
+          width: 15,
+          height: 20,
+          blocking: false,
+        }),
+        strong: new Animation({
+          spreadsheet: "Strong_Guy_Idle_SpriteSheet.png",
+          frames: 1,
+          cols: 1,
+          width: 18,
+          height: 23,
+          blocking: false,
+        }),
+      },
+      idle: {
+        normal: new Animation({
+          spreadsheet: "Normal_Guy_Idle_SpriteSheet.png",
+          frames: 9,
+          cols: 3,
+          width: 15,
+          height: 20,
+          blocking: false,
+        }),
+        strong: new Animation({
+          spreadsheet: "Strong_Guy_Jumps.png",
+          frames: 1,
+          cols: 1,
+          width: 19,
+          height: 21,
+          blocking: false,
+        }),
+      },
+      drinking: {
+        normal: new Animation({
+          spreadsheet: "Normal_Guy_Drinks_SpriteSheet.png",
+          frames: 11,
+          cols: 4,
+          width: 15,
+          height: 20,
+          blocking: true,
+          onEnd: () => {
+            this.currentAnimation = "idle";
+          },
+        }),
+        strong: null,
+      },
+      transforms: {
+        normal: new Animation({
+          spreadsheet: "Normal_Guy_Transforms_SpriteSheet.png",
+          frames: 27,
+          cols: 5,
+          width: 29,
+          height: 25,
+          blocking: true,
+          onEnd: () => {
+            this.currentAnimation = "idle";
+            this.currentForm = "strong";
+          },
+        }),
+        strong: null,
+      },
     };
 
     this.nonDrinkingTime = 0;
+    this.lifeTime = 0;
     this.currentAnimation = "idle";
+    this.currentForm = "normal";
+  }
+
+  private getAnimation() {
+    return this.animations[this.currentAnimation][this.currentForm]!;
   }
 
   update({ entities, delta, ctx }: Context) {
+    this.lifeTime += delta;
     this.speedY += GRAVITY / delta;
     this.speedY = this.speedY;
 
     this.cx += this.speedX / delta;
-    this.cx = Math.max(WIDTH, Math.min(this.cx, window.innerWidth - WIDTH));
+    this.cx = Math.max(
+      this.getAnimation().width,
+      Math.min(this.cx, window.innerWidth - this.getAnimation().width)
+    );
     this.cy += this.speedY / delta;
 
     entities.forEach((entity) => {
@@ -142,7 +204,7 @@ export class Guy implements Entity {
       }
     });
 
-    if (!this.animations[this.currentAnimation].blocking) {
+    if (!this.getAnimation()?.blocking) {
       if (this.speedY > GRAVITY / 2) {
         this.currentAnimation = "falling";
       } else {
@@ -150,17 +212,24 @@ export class Guy implements Entity {
       }
 
       this.nonDrinkingTime += delta;
-      if (this.nonDrinkingTime >= DRINKING_PERIOD) {
+      if (
+        this.currentForm === "normal" &&
+        this.nonDrinkingTime >= DRINKING_PERIOD
+      ) {
         this.nonDrinkingTime = 0;
         this.currentAnimation = "drinking";
       }
+
+      if (this.currentForm === "normal" && this.lifeTime >= TRANSFORM_PERIOD) {
+        this.currentAnimation = "transforms";
+      }
     }
 
-    this.animations[this.currentAnimation].update(delta);
+    this.getAnimation()?.update(delta);
   }
 
   render(ctx: CanvasRenderingContext2D, debug: boolean) {
-    this.animations[this.currentAnimation].render(this.cx, this.cy, ctx);
+    this.getAnimation()?.render(this.cx, this.cy, ctx);
 
     if (debug) {
       this.getBoundingRect().render(ctx);
@@ -168,10 +237,15 @@ export class Guy implements Entity {
   }
 
   shouldBeRemoved(): boolean {
-    return this.cy - 2 * HEIGHT > window.innerHeight;
+    return this.cy - 2 * this.getAnimation().height > window.innerHeight;
   }
 
   getBoundingRect(): Rect {
-    return new Rect(this.cx - WIDTH, this.cy + HEIGHT - 1, 2 * WIDTH, 1);
+    return new Rect(
+      this.cx - this.getAnimation().width,
+      this.cy + this.getAnimation().height - 1,
+      2 * this.getAnimation().width,
+      1
+    );
   }
 }
