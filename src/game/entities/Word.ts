@@ -1,0 +1,61 @@
+import { Context, Entity } from "./Entity";
+import { Rect } from "./Rect";
+
+const FALLING_SPEED = 30;
+
+function getColor(name: string) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name);
+}
+
+function getRandomWord(words: string[]) {
+  return words[Math.floor(Math.random() * words.length)];
+}
+
+function getRandomWordX() {
+  return Math.random() * window.innerWidth - 20;
+}
+
+export class Word implements Entity {
+  x: number;
+  y: number;
+  word: string;
+
+  constructor(word: string, x: number, y: number) {
+    this.word = word;
+    this.x = x;
+    this.y = y;
+  }
+
+  static randomWord(words: string[]) {
+    return new Word(getRandomWord(words), getRandomWordX(), 0);
+  }
+
+  update({ delta }: Context) {
+    this.y += FALLING_SPEED / delta;
+  }
+
+  render(ctx: CanvasRenderingContext2D, debug: boolean) {
+    ctx.fillStyle = getColor("--vscode-editor-foreground");
+    ctx.font = `${globalFontSize}px ${globalFontFamily.split(",")[0]}`;
+    ctx.fillText(this.word, this.x, this.y);
+
+    if (debug) {
+      this.getBoundingRect(ctx).render(ctx);
+    }
+  }
+
+  shouldBeRemoved(): boolean {
+    return this.y - globalFontSize > window.innerHeight;
+  }
+
+  getBoundingRect(ctx: CanvasRenderingContext2D): Rect {
+    const measure = ctx.measureText(this.word);
+
+    return new Rect(
+      this.x,
+      this.y - globalFontSize,
+      measure.width,
+      globalFontSize
+    );
+  }
+}
