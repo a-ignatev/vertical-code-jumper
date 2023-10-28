@@ -86,7 +86,7 @@ function initEntities(words: string[]) {
 
   // TODO refactor
   // create initial words
-  let y = 0;
+  let y = 1;
   while (y * 100 <= window.innerHeight) {
     const randomWord = Word.randomWord(words);
     randomWord.y = y * 100;
