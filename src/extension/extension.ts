@@ -61,6 +61,8 @@ class CodeJumperViewProvider implements vscode.WebviewViewProvider {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
+    const workbenchConfig = vscode.workspace.getConfiguration("editor");
+
     // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
     const scriptUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "media", "main-bundle.js")
@@ -83,12 +85,18 @@ class CodeJumperViewProvider implements vscode.WebviewViewProvider {
 					and only allow scripts that have a specific nonce.
 					(See the 'webview-sample' extension sample for img-src content security policy examples)
 				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${
+          webview.cspSource
+        }; script-src 'nonce-${nonce}';">
 
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link href="${styleMainUri}" rel="stylesheet">
-
+        <script nonce="${nonce}">
+          globalFontFamily = "${workbenchConfig.get("fontFamily")}";
+          globalFontSize = ${workbenchConfig.get("fontSize")};
+        </script>
+        
 				<title>Vertical Code Jumper</title>
 			</head>
 			<body>
