@@ -227,18 +227,26 @@ function initCanvas() {
     }
   }, 10);
 
+  let holdingKeys: string[] = [];
   window.onkeydown = (ev) => {
     ev.preventDefault();
     if (ev.key === "ArrowLeft") {
       ball.speedX = -3;
+      holdingKeys.push(ev.key);
     }
     if (ev.key === "ArrowRight") {
       ball.speedX = 3;
+      holdingKeys.push(ev.key);
     }
   };
   window.onkeyup = (ev) => {
     ev.preventDefault();
-    ball.speedX = 0;
+    if (ev.key === "ArrowLeft" || ev.key === "ArrowRight") {
+      holdingKeys = holdingKeys.filter((key) => key !== ev.key);
+      if (!holdingKeys.length) {
+        ball.speedX = 0;
+      }
+    }
   };
 
   window.addEventListener("message", (event) => {
