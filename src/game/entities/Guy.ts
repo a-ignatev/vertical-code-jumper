@@ -2,6 +2,7 @@ import { Animation } from "../animation/Animation";
 import { Sound } from "../sound/Sound";
 import { Context, Entity } from "./Entity";
 import { Rect } from "./Rect";
+import { Score } from "./Score";
 import { Word } from "./Word";
 
 const GRAVITY = 60;
@@ -134,7 +135,11 @@ export class Guy extends Entity {
     this.cy += this.speedY / delta;
 
     entities.forEach((entity) => {
-      if (entity === this || !(entity instanceof Word)) {
+      if (
+        entity === this ||
+        !(entity instanceof Word) ||
+        entity instanceof Score
+      ) {
         return;
       }
 

@@ -4,3 +4,4 @@ node_modules
 .vscode-test/
 *.vsix
 media/main-bundle.js
+media/main-bundle.js.map
