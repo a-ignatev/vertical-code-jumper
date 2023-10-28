@@ -2,6 +2,7 @@
 
 An infinite vertical jumping game in your code.
 
+![Current File](/demo/demo.gif "Vertical Code Jumper")
 
 ## Contributors
 - "A Normal guy that transforms into a super strong normal guy" by https://kalann.itch.io/
