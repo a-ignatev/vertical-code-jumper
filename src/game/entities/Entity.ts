@@ -1,3 +1,4 @@
+import { Scene } from "../scenes/Scene";
 import { Rect } from "./Rect";
 
 export interface Context {
@@ -6,9 +7,15 @@ export interface Context {
   ctx: CanvasRenderingContext2D;
 }
 
-export interface Entity {
-  getBoundingRect(ctx: CanvasRenderingContext2D): Rect;
-  update(context: Context): void;
-  render(ctx: CanvasRenderingContext2D, debug: boolean): void;
-  shouldBeRemoved(): boolean;
+export abstract class Entity {
+  protected scene?: Scene;
+
+  abstract getBoundingRect(ctx: CanvasRenderingContext2D): Rect;
+  abstract update(context: Context): void;
+  abstract render(ctx: CanvasRenderingContext2D, debug: boolean): void;
+  abstract tryDestroyEntity(): boolean;
+
+  setScene(scene: Scene) {
+    this.scene = scene;
+  }
 }

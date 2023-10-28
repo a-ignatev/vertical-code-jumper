@@ -1,91 +1,18 @@
+import { Animation } from "../animation/Animation";
 import { Context, Entity } from "./Entity";
 import { Rect } from "./Rect";
 import { Word } from "./Word";
 
 const GRAVITY = 60;
 const JUMP_SPEED = -130;
-const FRAME_TIME = 1000 / 8; // 8fps
 const DRINKING_PERIOD = 3000; // 3s
 const TRANSFORM_PERIOD = 60000; // 1m
 export const SIDE_SPEED = 60;
 
-class Animation {
-  spreadsheet: string;
-  currentFrame = 0;
-  elapsedTime = 0;
-  img: HTMLImageElement;
-  framesCount: number;
-  cols: number;
-  onEnd?: () => void;
-  blocking: boolean;
-  width: number;
-  height: number;
-
-  constructor({
-    spreadsheet,
-    frames,
-    cols,
-    width,
-    height,
-    blocking,
-    onEnd,
-  }: {
-    spreadsheet: string;
-    frames: number;
-    cols: number;
-    width: number;
-    height: number;
-    blocking: boolean;
-    onEnd?: () => void;
-  }) {
-    this.spreadsheet = spreadsheet;
-    this.img = new Image(); // Create new img element
-    this.img.src = imgFolder + "/" + spreadsheet; // Set source path
-    this.framesCount = frames;
-    this.cols = cols;
-    this.blocking = blocking;
-    this.onEnd = onEnd;
-    this.width = width;
-    this.height = height;
-  }
-
-  update(delta: number) {
-    this.elapsedTime += delta;
-
-    if (this.elapsedTime >= FRAME_TIME) {
-      this.elapsedTime = 0;
-
-      if (this.currentFrame + 1 >= this.framesCount) {
-        this.currentFrame = 0;
-        this.onEnd?.();
-      } else {
-        this.currentFrame++;
-      }
-    }
-  }
-
-  render(cx: number, cy: number, ctx: CanvasRenderingContext2D) {
-    const row = Math.trunc(this.currentFrame / this.cols);
-    const col = this.currentFrame % this.cols;
-
-    ctx.drawImage(
-      this.img,
-      col * this.width,
-      row * this.height,
-      this.width,
-      this.height,
-      cx - this.width,
-      cy - this.height,
-      2 * this.width,
-      2 * this.height
-    );
-  }
-}
-
 type GuyForm = "normal" | "strong";
 type AnimationType = "idle" | "falling" | "drinking" | "transforms";
 
-export class Guy implements Entity {
+export class Guy extends Entity {
   speedX: number;
   speedY: number;
   private cx: number;
@@ -98,6 +25,8 @@ export class Guy implements Entity {
   canTransform: boolean;
 
   constructor(cx: number, cy: number, canTransform: boolean) {
+    super();
+
     this.speedX = 0;
     this.speedY = GRAVITY;
     this.cx = cx;
@@ -243,8 +172,15 @@ export class Guy implements Entity {
     }
   }
 
-  shouldBeRemoved(): boolean {
-    return this.cy - 2 * this.getAnimation().height > window.innerHeight;
+  tryDestroyEntity(): boolean {
+    const offTheScreen =
+      this.cy - 2 * this.getAnimation().height > window.innerHeight;
+
+    if (offTheScreen) {
+      this.scene?.getSceneManager()?.switchScene("gameOver");
+    }
+
+    return offTheScreen;
   }
 
   getBoundingRect(): Rect {

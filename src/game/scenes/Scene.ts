@@ -1,17 +1,30 @@
 import { Entity } from "../entities/Entity";
 import { SceneManager } from "./SceneManager";
 
-export type SceneType = "intro" | "game";
+export type SceneType = "intro" | "game" | "gameOver";
 
 export abstract class Scene {
-  sceneManager?: SceneManager;
+  protected sceneManager?: SceneManager;
 
-  entities: Entity[] = [];
+  private entities: Entity[] = [];
 
   setSceneManager(sceneManager: SceneManager) {
     this.sceneManager = sceneManager;
   }
 
-  abstract attach(): void;
-  abstract detach(): void;
+  getSceneManager() {
+    return this.sceneManager;
+  }
+
+  setEntities(entities: Entity[]) {
+    entities.forEach((entity) => entity.setScene(this));
+    this.entities = entities;
+  }
+
+  getEntities() {
+    return this.entities;
+  }
+
+  abstract attach(payload: unknown): void;
+  abstract detach(): unknown;
 }

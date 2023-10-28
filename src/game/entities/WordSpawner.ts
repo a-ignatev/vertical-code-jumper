@@ -4,11 +4,13 @@ import { Word } from "./Word";
 
 const SPAWN_PERIOD = 1000; //1s
 
-export class WordSpawner implements Entity {
+export class WordSpawner extends Entity {
   private timeWithoutSpawn = 0;
   private words: string[];
 
   constructor(words: string[]) {
+    super();
+
     this.timeWithoutSpawn = 0;
     this.words = words;
   }
@@ -28,7 +30,7 @@ export class WordSpawner implements Entity {
 
   render(): void {}
 
-  shouldBeRemoved(): boolean {
+  tryDestroyEntity(): boolean {
     return false;
   }
 }

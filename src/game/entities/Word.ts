@@ -15,15 +15,19 @@ function getRandomWordX() {
   return Math.random() * window.innerWidth - 20;
 }
 
-export class Word implements Entity {
+export class Word extends Entity {
   x: number;
   y: number;
   word: string;
+  color: string;
 
   constructor(word: string, x: number, y: number) {
+    super();
+
     this.word = word;
     this.x = x;
     this.y = y;
+    this.color = getColor("--vscode-editor-foreground");
   }
 
   static randomWord(words: string[]) {
@@ -35,7 +39,7 @@ export class Word implements Entity {
   }
 
   render(ctx: CanvasRenderingContext2D, debug: boolean) {
-    ctx.fillStyle = getColor("--vscode-editor-foreground");
+    ctx.fillStyle = this.color;
     ctx.fillText(this.word, this.x, this.y);
 
     if (debug) {
@@ -43,7 +47,7 @@ export class Word implements Entity {
     }
   }
 
-  shouldBeRemoved(): boolean {
+  tryDestroyEntity(): boolean {
     return this.y - globalFontSize > window.innerHeight;
   }
 
@@ -60,5 +64,5 @@ export class Word implements Entity {
 }
 
 export class StaticWord extends Word {
-  override update(): void {}
+  update(): void {}
 }

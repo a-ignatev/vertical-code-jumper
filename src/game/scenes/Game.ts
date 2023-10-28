@@ -4,34 +4,43 @@ import { Entity } from "../entities/Entity";
 import { WordSpawner } from "../entities/WordSpawner";
 import { LEFT_KEY, RIGHT_KEY } from "../main";
 import { Scene } from "./Scene";
+import { Score } from "../entities/Score";
 
 export class Game extends Scene {
   words: string[];
   holdingKeys: string[] = [];
   guy?: Guy;
+  score?: Score;
 
   constructor(words: string[]) {
     super();
 
     this.words = words;
+
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
   }
 
   attach() {
-    this.entities = this.initEntities(this.words);
+    this.setEntities(this.initEntities(this.words));
 
-    window.addEventListener("keydown", this.onKeyDown.bind(this));
-    window.addEventListener("keyup", this.onKeyUp.bind(this));
+    window.addEventListener("keydown", this.onKeyDown);
+    window.addEventListener("keyup", this.onKeyUp);
   }
 
   detach() {
-    window.removeEventListener("keydown", this.onKeyDown.bind(this));
-    window.removeEventListener("keyup", this.onKeyUp.bind(this));
+    window.removeEventListener("keydown", this.onKeyDown);
+    window.removeEventListener("keyup", this.onKeyUp);
+
+    return { score: this.score?.getScore() };
   }
 
   private initEntities(words: string[]) {
     let entities: Entity[] = [];
     this.guy = new Guy(window.innerWidth / 2, 0, true);
+    this.score = new Score("Score: ", globalFontSize / 2, 1.5 * globalFontSize);
     entities.push(this.guy);
+    entities.push(this.score);
     entities.push(new WordSpawner(words));
 
     // TODO refactor

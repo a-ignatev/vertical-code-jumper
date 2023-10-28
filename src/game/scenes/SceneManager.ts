@@ -11,15 +11,16 @@ export class SceneManager {
   }
 
   switchScene(sceneType: SceneType) {
-    console.log("switching!");
     const prevScene = this.getScene();
+    let payload: unknown = null;
+
     if (prevScene) {
-      prevScene.detach();
+      payload = prevScene.detach();
     }
 
     this.currentSceneType = sceneType;
 
-    this.getScene()?.attach();
+    this.getScene()?.attach(payload);
   }
 
   getScene() {

@@ -2,6 +2,7 @@ import { WebviewApi } from "vscode-webview";
 import { Game } from "./scenes/Game";
 import { Intro } from "./scenes/Intro";
 import { SceneManager } from "./scenes/SceneManager";
+import { GameOver } from "./scenes/GameOver";
 
 export const LEFT_KEY = "ArrowLeft";
 export const RIGHT_KEY = "ArrowRight";
@@ -81,22 +82,6 @@ function initCanvas() {
   return { ctx, canvas };
 }
 
-function init(words: string[], abortSignal: AbortSignal) {
-  const graphics = initCanvas();
-  if (!graphics) {
-    return;
-  }
-
-  const { ctx, canvas } = graphics;
-
-  const sceneManager = new SceneManager();
-  sceneManager.addScene("intro", new Intro(ctx));
-  sceneManager.addScene("game", new Game(words));
-  sceneManager.switchScene("intro");
-
-  initGameLoop(sceneManager, ctx, canvas, abortSignal);
-}
-
 function initGameLoop(
   sceneManager: SceneManager,
   ctx: CanvasRenderingContext2D,
@@ -116,18 +101,22 @@ function initGameLoop(
     const delta = timeStamp - lastTimeStamp;
 
     // update entities
-    scene.entities.forEach((entity) =>
-      entity.update({ entities: scene.entities, delta, ctx })
+    scene.getEntities().forEach((entity) =>
+      entity.update({
+        entities: scene.getEntities(),
+        delta,
+        ctx,
+      })
     );
-    scene.entities = scene.entities.filter(
-      (entity) => !entity.shouldBeRemoved()
+    scene.setEntities(
+      scene.getEntities().filter((entity) => !entity.tryDestroyEntity())
     );
 
     // clear screen
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // render entities
-    scene.entities.forEach((entity) => entity.render(ctx, DEBUG));
+    scene.getEntities().forEach((entity) => entity.render(ctx, DEBUG));
 
     lastTimeStamp = timeStamp;
     if (!abortSignal.aborted) {
@@ -135,6 +124,23 @@ function initGameLoop(
     }
   }
   window.requestAnimationFrame(gameLoop);
+}
+
+function init(words: string[], abortSignal: AbortSignal) {
+  const graphics = initCanvas();
+  if (!graphics) {
+    return;
+  }
+
+  const { ctx, canvas } = graphics;
+
+  const sceneManager = new SceneManager();
+  sceneManager.addScene("intro", new Intro(ctx));
+  sceneManager.addScene("game", new Game(words));
+  sceneManager.addScene("gameOver", new GameOver(ctx));
+  sceneManager.switchScene("intro");
+
+  initGameLoop(sceneManager, ctx, canvas, abortSignal);
 }
 
 main();
