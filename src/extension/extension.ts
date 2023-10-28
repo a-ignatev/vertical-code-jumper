@@ -66,16 +66,9 @@ class CodeJumperViewProvider implements vscode.WebviewViewProvider {
       vscode.Uri.joinPath(this._extensionUri, "media", "main-bundle.js")
     );
 
-    // // Do the same for the stylesheet.
-    // const styleResetUri = webview.asWebviewUri(
-    //   vscode.Uri.joinPath(this._extensionUri, "media", "reset.css")
-    // );
-    // const styleVSCodeUri = webview.asWebviewUri(
-    //   vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
-    // );
-    // const styleMainUri = webview.asWebviewUri(
-    //   vscode.Uri.joinPath(this._extensionUri, "media", "main.css")
-    // );
+    const styleMainUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "main.css")
+    );
 
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
@@ -94,10 +87,12 @@ class CodeJumperViewProvider implements vscode.WebviewViewProvider {
 
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+        <link href="${styleMainUri}" rel="stylesheet">
+
 				<title>Vertical Code Jumper</title>
 			</head>
 			<body>
-				<button id="hello">Say hello!</button>
+        <canvas id="gameCanvas"></canvas>
 
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>

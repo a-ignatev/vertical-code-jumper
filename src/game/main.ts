@@ -1,7 +1,59 @@
-document.getElementById("hello")?.addEventListener("click", hello);
+let canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D;
+let interval: NodeJS.Timer;
 
-function hello() {
-  const div = document.createElement("div");
-  div.innerHTML = "i'm going to jump!!!";
-  document.body.appendChild(div);
+class BallState {
+  cx: number;
+  cy: number;
+
+  constructor(cx: number, cy: number) {
+    this.cx = cx;
+    this.cy = cy;
+  }
 }
+
+function initCanvas() {
+  canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
+
+  if (!canvas) {
+    console.log("Canvas not ready");
+    return;
+  }
+
+  ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+
+  if (!ctx) {
+    console.log("Canvas context not ready");
+    return;
+  }
+
+  ctx.canvas.width = window.innerWidth;
+  ctx.canvas.height = window.innerHeight;
+
+  let ballRadius = 20;
+  let ballState = { x: 0, y: 0 };
+  clearInterval(interval);
+  interval = setInterval(() => {
+    ballState.y += 1;
+    drawBall();
+  }, 10);
+
+  function drawBall() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.beginPath();
+    ctx.arc(ballState.x, ballState.y, ballRadius, 0, 2 * Math.PI, false);
+    ctx.fillStyle = "#2ed851";
+    ctx.fill();
+  }
+
+  window.onmousemove = (ev) => {
+    ev.preventDefault();
+    ballState = { x: ev.clientX, y: ev.clientY };
+  };
+}
+
+window.addEventListener("resize", function () {
+  initCanvas();
+});
+
+initCanvas();
