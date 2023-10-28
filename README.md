@@ -5,7 +5,7 @@ An infinite vertical jumping game in your code.
 
 ## Contributors
 - "A Normal guy that transforms into a super strong normal guy" by https://kalann.itch.io/
-- Free sounds effects by https://pixabay.com/ 
+- Free sound effects by https://pixabay.com/ 
 
 ## Support Further Development
 
