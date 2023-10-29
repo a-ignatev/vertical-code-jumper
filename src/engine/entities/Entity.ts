@@ -15,6 +15,10 @@ export abstract class Entity {
   abstract render(ctx: CanvasRenderingContext2D, debug: boolean): void;
   abstract tryDestroyEntity(): boolean;
 
+  getZOrder() {
+    return 0;
+  }
+
   setScene(scene: Scene) {
     this.scene = scene;
   }

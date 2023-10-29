@@ -36,7 +36,10 @@ export function startGameLoop(
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // render entities
-    scene.getEntities().forEach((entity) => entity.render(ctx, debug));
+    scene
+      .getEntities()
+      .sort((a, b) => a.getZOrder() - b.getZOrder())
+      .forEach((entity) => entity.render(ctx, debug));
 
     lastTimeStamp = timeStamp;
 

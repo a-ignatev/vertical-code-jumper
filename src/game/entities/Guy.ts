@@ -210,4 +210,8 @@ export class Guy extends Entity {
       1
     );
   }
+
+  getZOrder() {
+    return 1;
+  }
 }
