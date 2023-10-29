@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.2](https://github.com/a-ignatev/vertical-code-jumper/compare/v0.0.1...v0.0.2) (2023-10-29)
+
+
+### Features
+
+* add music ([075002b](https://github.com/a-ignatev/vertical-code-jumper/commit/075002bc40b572f27dc409b4e5a6ec894cbfa563))
+
+
+### Bug Fixes
+
+* render sorting ([7c18c47](https://github.com/a-ignatev/vertical-code-jumper/commit/7c18c47dd4dad5c2b4dc9e71d27d7682df520d5b))
+
 ### 0.0.1 (2023-10-28)
 
 
