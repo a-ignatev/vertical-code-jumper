@@ -15,3 +15,15 @@ export function getRandomWordXNotCloseTo(x: number) {
     return (Math.random() * window.innerWidth) / 2;
   }
 }
+
+export function debounce(func: () => void, time: number) {
+  var timer: NodeJS.Timeout | undefined;
+
+  return function () {
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    timer = setTimeout(func, time);
+  };
+}

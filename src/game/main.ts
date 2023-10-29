@@ -6,6 +6,7 @@ import { prepareCanvas } from "engine/utils/prepareCanvas";
 import { Game } from "./scenes/Game";
 import { GameOver } from "./scenes/GameOver";
 import { Intro } from "./scenes/Intro";
+import { debounce } from "./helpers";
 
 const DEBUG = false;
 
@@ -47,9 +48,12 @@ function main() {
     }
   });
 
-  window.addEventListener("resize", function () {
-    requestWords(vscode);
-  });
+  window.addEventListener(
+    "resize",
+    debounce(function () {
+      requestWords(vscode);
+    }, 200)
+  );
 
   requestWords(vscode);
 }

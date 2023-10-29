@@ -37,6 +37,8 @@ export function startGameLoop(
 
     if (!abortSignal.aborted) {
       window.requestAnimationFrame(gameLoop);
+    } else {
+      sceneManager.destroy();
     }
   }
   window.requestAnimationFrame(gameLoop);

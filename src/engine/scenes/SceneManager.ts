@@ -33,4 +33,10 @@ export class SceneManager {
       return this.scenes[this.currentSceneType];
     }
   }
+
+  destroy() {
+    this.getCurrentScene()?.detach();
+    this.scenes = {};
+    this.currentSceneType = undefined;
+  }
 }
