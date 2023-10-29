@@ -102,10 +102,10 @@ function startGame(words: string[], abortSignal: AbortSignal) {
 
   const { ctx, canvas } = graphics;
 
-  const sceneManager = new SceneManager();
-  sceneManager.addScene("intro", new Intro(ctx, music));
+  const sceneManager = new SceneManager(ctx);
+  sceneManager.addScene("intro", new Intro(music));
   sceneManager.addScene("game", new Game(words));
-  sceneManager.addScene("gameOver", new GameOver(ctx));
+  sceneManager.addScene("gameOver", new GameOver());
   sceneManager.switchScene("intro");
 
   startGameLoop(sceneManager, ctx, canvas, abortSignal, DEBUG);

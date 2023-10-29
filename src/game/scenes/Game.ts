@@ -1,5 +1,6 @@
 import { Entity } from "engine/entities/Entity";
 import { Scene } from "engine/scenes/Scene";
+import { CommitSpawner } from "game/entities/CommitSpawner";
 import { Guy, SIDE_SPEED } from "game/entities/Guy";
 import { Score } from "game/entities/Score";
 import { Word } from "game/entities/Word";
@@ -23,8 +24,8 @@ export class Game extends Scene {
     this.onKeyUp = this.onKeyUp.bind(this);
   }
 
-  attach() {
-    this.setEntities(this.initEntities(this.words));
+  attach(ctx: CanvasRenderingContext2D) {
+    this.setEntities(this.initEntities(this.words, ctx));
 
     window.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("keyup", this.onKeyUp);
@@ -37,19 +38,25 @@ export class Game extends Scene {
     return { score: this.score?.getScore() };
   }
 
-  private initEntities(words: string[]) {
+  private initEntities(words: string[], ctx: CanvasRenderingContext2D) {
     let entities: Entity[] = [];
     this.guy = new Guy(window.innerWidth / 2, 0, true);
-    this.score = new Score("Score: ", globalFontSize / 2, 1.5 * globalFontSize);
+    this.score = new Score(
+      "Score: ",
+      globalFontSize / 2,
+      1.5 * globalFontSize,
+      ctx
+    );
     entities.push(this.guy);
     entities.push(this.score);
-    entities.push(new WordSpawner(words));
+    entities.push(new WordSpawner(words, this.guy, ctx));
+    entities.push(new CommitSpawner(this.guy, ctx, this.score));
 
     // TODO refactor
     // create initial words
     let y = 1;
     while (y * 100 <= window.innerHeight) {
-      const randomWord = Word.randomWord(words);
+      const randomWord = Word.randomWord(words, innerWidth / 2, ctx);
       randomWord.y = y * 100;
       entities.push(randomWord);
       y++;

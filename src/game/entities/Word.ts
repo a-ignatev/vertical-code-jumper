@@ -1,37 +1,51 @@
 import { Context, Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
+import { getRandomWordXNotCloseTo } from "game/helpers";
+import { getColor } from "game/helpers";
 
 const FALLING_SPEED = 30;
-
-function getColor(name: string) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name);
-}
 
 function getRandomWord(words: string[]) {
   return words[Math.floor(Math.random() * words.length)];
 }
 
-function getRandomWordX() {
-  return Math.random() * window.innerWidth - 20;
-}
-
 export class Word extends Entity {
-  x: number;
+  private x: number;
   y: number;
-  word: string;
+  protected word: string;
   color: string;
+  private font: string;
+  private wordLength: number;
 
-  constructor(word: string, x: number, y: number) {
+  constructor(
+    word: string,
+    x: number,
+    y: number,
+    ctx: CanvasRenderingContext2D
+  ) {
     super();
 
     this.word = word;
     this.x = x;
     this.y = y;
+    this.font = `${globalFontSize}px ${globalFontFamily.split(",")[0]}`;
     this.color = getColor("--vscode-editor-foreground");
+
+    ctx.font = this.font;
+    this.wordLength = ctx.measureText(this.word).width;
   }
 
-  static randomWord(words: string[]) {
-    return new Word(getRandomWord(words), getRandomWordX(), 0);
+  static randomWord(
+    words: string[],
+    notCloseTo: number,
+    ctx: CanvasRenderingContext2D
+  ) {
+    return new Word(
+      getRandomWord(words),
+      getRandomWordXNotCloseTo(notCloseTo),
+      0,
+      ctx
+    );
   }
 
   update({ delta }: Context) {
@@ -39,11 +53,12 @@ export class Word extends Entity {
   }
 
   render(ctx: CanvasRenderingContext2D, debug: boolean) {
+    ctx.font = this.font;
     ctx.fillStyle = this.color;
     ctx.fillText(this.word, this.x, this.y);
 
     if (debug) {
-      this.getBoundingRect(ctx).render(ctx);
+      this.getBoundingRect().render(ctx);
     }
   }
 
@@ -51,13 +66,11 @@ export class Word extends Entity {
     return this.y - globalFontSize > window.innerHeight;
   }
 
-  getBoundingRect(ctx: CanvasRenderingContext2D): Rect {
-    const measure = ctx.measureText(this.word);
-
+  getBoundingRect(): Rect {
     return new Rect(
       this.x,
       this.y - globalFontSize,
-      measure.width,
+      this.wordLength,
       globalFontSize
     );
   }

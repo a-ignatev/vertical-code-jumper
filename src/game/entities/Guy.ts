@@ -8,7 +8,7 @@ import { Word } from "./Word";
 const GRAVITY = 60;
 const JUMP_SPEED = -130;
 const DRINKING_PERIOD = 5_000;
-const TRANSFORM_PERIOD = 60_000; // 1m
+const TRANSFORM_PERIOD = 60_000;
 export const SIDE_SPEED = 60;
 
 type GuyForm = "normal" | "strong";
@@ -17,7 +17,7 @@ type AnimationType = "idle" | "falling" | "drinking" | "transforms";
 export class Guy extends Entity {
   speedX: number;
   speedY: number;
-  private cx: number;
+  cx: number;
   private cy: number;
   animations: Record<AnimationType, Record<GuyForm, Animation | null>>;
   currentAnimation: AnimationType;
@@ -122,7 +122,7 @@ export class Guy extends Entity {
     return this.animations[this.currentAnimation][this.currentForm]!;
   }
 
-  update({ entities, delta, ctx }: Context) {
+  update({ entities, delta }: Context) {
     this.lifeTime += delta;
     this.speedY += GRAVITY / delta;
     this.speedY = this.speedY;
@@ -145,7 +145,7 @@ export class Guy extends Entity {
 
       if (
         this.speedY > 0 &&
-        this.getBoundingRect().intersects(entity.getBoundingRect(ctx))
+        this.getBoundingRect().intersects(entity.getBoundingRect())
       ) {
         this.speedY = JUMP_SPEED;
         this.jumpSound.play();
@@ -203,10 +203,12 @@ export class Guy extends Entity {
   }
 
   getBoundingRect(): Rect {
+    const animation = this.getAnimation();
+
     return new Rect(
-      this.cx - this.getAnimation().width,
-      this.cy + this.getAnimation().height - 1,
-      2 * this.getAnimation().width,
+      this.cx - animation.width,
+      this.cy + animation.height - 1,
+      2 * animation.width,
       1
     );
   }

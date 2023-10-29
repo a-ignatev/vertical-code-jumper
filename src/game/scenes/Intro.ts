@@ -1,16 +1,17 @@
 import { Scene } from "engine/scenes/Scene";
 import { Sound } from "engine/sound/Sound";
+import { CommitSpawner } from "game/entities/CommitSpawner";
 import { Guy } from "game/entities/Guy";
+import { Score } from "game/entities/Score";
 import { StaticWord } from "game/entities/Word";
+import { getRandomWordX } from "game/helpers";
 
 export class Intro extends Scene {
-  private ctx: CanvasRenderingContext2D;
   private music: Sound;
 
-  constructor(ctx: CanvasRenderingContext2D, music: Sound) {
+  constructor(music: Sound) {
     super();
 
-    this.ctx = ctx;
     this.music = music;
 
     if (!this.music.isPlaying()) {
@@ -20,30 +21,34 @@ export class Intro extends Scene {
     this.onClick = this.onClick.bind(this);
   }
 
-  attach(): void {
+  attach(ctx: CanvasRenderingContext2D): void {
     const titleText = "Vertical Code Jumper";
     const helpText = "Click to play";
     const keysText = "Press ← and → to move";
 
     const guy = new Guy(window.innerWidth / 2, window.innerHeight / 2, false);
+    const commitSpawner = new CommitSpawner(guy, ctx, null, getRandomWordX);
     const title = new StaticWord(
       titleText,
-      window.innerWidth / 2 - this.ctx.measureText(titleText).width / 2,
-      window.innerHeight / 2 + 2 * globalFontSize
+      window.innerWidth / 2 - ctx.measureText(titleText).width / 2,
+      window.innerHeight / 2 + 2 * globalFontSize,
+      ctx
     );
 
     const keys = new StaticWord(
       keysText,
-      window.innerWidth / 2 - this.ctx.measureText(keysText).width / 2,
-      window.innerHeight / 2 + 4 * globalFontSize
+      window.innerWidth / 2 - ctx.measureText(keysText).width / 2,
+      window.innerHeight / 2 + 4 * globalFontSize,
+      ctx
     );
     const help = new StaticWord(
       helpText,
-      window.innerWidth / 2 - this.ctx.measureText(helpText).width / 2,
-      window.innerHeight / 2 + 6 * globalFontSize
+      window.innerWidth / 2 - ctx.measureText(helpText).width / 2,
+      window.innerHeight / 2 + 6 * globalFontSize,
+      ctx
     );
 
-    this.setEntities([guy, title, help, keys]);
+    this.setEntities([guy, title, help, keys, commitSpawner]);
 
     window.addEventListener("click", this.onClick);
   }

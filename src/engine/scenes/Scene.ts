@@ -25,6 +25,6 @@ export abstract class Scene {
     return this.entities;
   }
 
-  abstract attach(payload: unknown): void;
+  abstract attach(ctx: CanvasRenderingContext2D, payload: unknown): void;
   abstract detach(): unknown;
 }

@@ -4,6 +4,11 @@ import { SceneType } from "./Scene";
 export class SceneManager {
   private scenes: Record<string, Scene> = {};
   private currentSceneType?: SceneType;
+  private ctx: CanvasRenderingContext2D;
+
+  constructor(ctx: CanvasRenderingContext2D) {
+    this.ctx = ctx;
+  }
 
   addScene(name: SceneType, scene: Scene) {
     scene.setSceneManager(this);
@@ -20,7 +25,7 @@ export class SceneManager {
 
     this.currentSceneType = sceneType;
 
-    this.getScene()?.attach(payload);
+    this.getScene()?.attach(this.ctx, payload);
   }
 
   getScene() {

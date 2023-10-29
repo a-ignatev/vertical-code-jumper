@@ -4,19 +4,16 @@ import { SCORE_COLOR } from "game/entities/Score";
 import { StaticWord } from "game/entities/Word";
 
 export class GameOver extends Scene {
-  private ctx: CanvasRenderingContext2D;
   gameOverSound: Sound;
 
-  constructor(ctx: CanvasRenderingContext2D) {
+  constructor() {
     super();
-
-    this.ctx = ctx;
 
     this.onClick = this.onClick.bind(this);
     this.gameOverSound = new Sound("game-over.mp3");
   }
 
-  attach(payload: { score: number }): void {
+  attach(ctx: CanvasRenderingContext2D, payload: { score: number }): void {
     this.gameOverSound.play();
 
     const jobTitleText = this.getJobTitle(payload.score);
@@ -26,28 +23,32 @@ export class GameOver extends Scene {
 
     const score = new StaticWord(
       scoreText,
-      window.innerWidth / 2 - this.ctx.measureText(scoreText).width / 2,
-      window.innerHeight / 2
+      window.innerWidth / 2 - ctx.measureText(scoreText).width / 2,
+      window.innerHeight / 2,
+      ctx
     );
 
     score.color = SCORE_COLOR;
 
     const title = new StaticWord(
       titleText,
-      window.innerWidth / 2 - this.ctx.measureText(titleText).width / 2,
-      window.innerHeight / 2 + 2 * globalFontSize
+      window.innerWidth / 2 - ctx.measureText(titleText).width / 2,
+      window.innerHeight / 2 + 2 * globalFontSize,
+      ctx
     );
 
     const jobTitle = new StaticWord(
       jobTitleText,
-      window.innerWidth / 2 - this.ctx.measureText(jobTitleText).width / 2,
-      window.innerHeight / 2 - 2 * globalFontSize
+      window.innerWidth / 2 - ctx.measureText(jobTitleText).width / 2,
+      window.innerHeight / 2 - 2 * globalFontSize,
+      ctx
     );
 
     const help = new StaticWord(
       helpText,
-      window.innerWidth / 2 - this.ctx.measureText(helpText).width / 2,
-      window.innerHeight / 2 + 4 * globalFontSize
+      window.innerWidth / 2 - ctx.measureText(helpText).width / 2,
+      window.innerHeight / 2 + 4 * globalFontSize,
+      ctx
     );
 
     this.setEntities([jobTitle, score, title, help]);
@@ -60,14 +61,14 @@ export class GameOver extends Scene {
   }
 
   private titles = [
-    { name: "Junior", limit: 500 },
-    { name: "Advanced Junior", limit: 700 },
-    { name: "Regular", limit: 900 },
-    { name: "Senior", limit: 1200 },
-    { name: "Strong Senior", limit: 1500 },
-    { name: "Staff", limit: 2000 },
-    { name: "Senior Staff", limit: 2500 },
-    { name: "Principal", limit: 3000 },
+    { name: "Junior", limit: 1000 },
+    { name: "Advanced Junior", limit: 1400 },
+    { name: "Regular", limit: 1800 },
+    { name: "Senior", limit: 2400 },
+    { name: "Strong Senior", limit: 3000 },
+    { name: "Staff", limit: 4000 },
+    { name: "Senior Staff", limit: 5000 },
+    { name: "Principal", limit: 6000 },
   ];
 
   private getJobTitle(score: number) {

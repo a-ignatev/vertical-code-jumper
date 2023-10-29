@@ -25,7 +25,6 @@ export function startGameLoop(
       entity.update({
         entities: scene.getEntities(),
         delta,
-        ctx,
       })
     );
     scene.setEntities(
