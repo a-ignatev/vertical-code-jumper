@@ -1,10 +1,7 @@
-//@ts-check
+import path from "path";
+import { Configuration } from "webpack";
 
-"use strict";
-
-const path = require("path");
-
-const gameConfig = {
+const gameConfig: Configuration = {
   target: "web",
   mode: "none",
   entry: "./src/game/main.ts",
@@ -38,11 +35,7 @@ const gameConfig = {
   },
 };
 
-//@ts-check
-/** @typedef {import('webpack').Configuration} WebpackConfig **/
-
-/** @type WebpackConfig */
-const extensionConfig = {
+const extensionConfig: Configuration = {
   target: "node", // VS Code extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
   mode: "none", // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
 
@@ -80,4 +73,4 @@ const extensionConfig = {
   },
 };
 
-module.exports = [gameConfig, extensionConfig];
+export default [gameConfig, extensionConfig];
