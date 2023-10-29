@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { Entity } from "engine/entities/Entity";
 import { SceneManager } from "./SceneManager";
 
@@ -19,7 +20,7 @@ export abstract class Scene {
     let entityName = name;
 
     if (this.entities.has(entityName)) {
-      entityName += Math.random().toString();
+      entityName += uuidv4();
     }
 
     entity.name = entityName;
@@ -42,5 +43,10 @@ export abstract class Scene {
   }
 
   abstract attach(ctx: CanvasRenderingContext2D, payload: unknown): void;
+
   abstract detach(): unknown;
+
+  afterDetach() {
+    this.entities.clear();
+  }
 }

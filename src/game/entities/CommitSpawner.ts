@@ -3,7 +3,6 @@ import { Rect } from "engine/entities/Rect";
 import { getRandomWordXNotCloseTo } from "game/helpers";
 import { Commit } from "./Commit";
 import { Guy } from "./Guy";
-import { Score } from "./Score";
 
 const SPAWN_PERIOD = 2500;
 
@@ -33,9 +32,8 @@ export class CommitSpawner extends Entity {
     if (!this.timeWithoutSpawn || this.timeWithoutSpawn >= SPAWN_PERIOD) {
       this.timeWithoutSpawn = 0;
       const guy = this.getScene().getEntity<Guy>("guy");
-      const score = this.getScene().getEntity<Score>("score");
 
-      if (guy && score) {
+      if (guy) {
         this.getScene().addEntity(
           "commit",
           new Commit(this.xPositionGenerator(guy.getPosition().cx), 0, this.ctx)

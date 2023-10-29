@@ -20,6 +20,7 @@ export class SceneManager {
 
     if (prevScene) {
       payload = prevScene.detach();
+      prevScene.afterDetach();
     }
 
     this.currentSceneType = sceneType;
