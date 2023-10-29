@@ -50,6 +50,10 @@ export class Word extends Entity {
 
   update({ delta }: Context) {
     this.y += FALLING_SPEED / delta;
+
+    if (this.y - globalFontSize > window.innerHeight) {
+      this.getScene().removeEntity(this);
+    }
   }
 
   render(ctx: CanvasRenderingContext2D, debug: boolean) {
@@ -60,10 +64,6 @@ export class Word extends Entity {
     if (debug) {
       this.getBoundingRect().render(ctx);
     }
-  }
-
-  tryDestroyEntity(): boolean {
-    return this.y - globalFontSize > window.innerHeight;
   }
 
   getBoundingRect(): Rect {

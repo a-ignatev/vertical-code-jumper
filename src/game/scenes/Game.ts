@@ -1,4 +1,3 @@
-import { Entity } from "engine/entities/Entity";
 import { Scene } from "engine/scenes/Scene";
 import { CommitSpawner } from "game/entities/CommitSpawner";
 import { Guy, SIDE_SPEED } from "game/entities/Guy";
@@ -10,10 +9,10 @@ const LEFT_KEY = "ArrowLeft";
 const RIGHT_KEY = "ArrowRight";
 
 export class Game extends Scene {
-  words: string[];
-  holdingKeys: string[] = [];
-  guy?: Guy;
-  score?: Score;
+  private words: string[];
+  private holdingKeys: string[] = [];
+  private guy?: Guy;
+  private score?: Score;
 
   constructor(words: string[]) {
     super();
@@ -25,7 +24,28 @@ export class Game extends Scene {
   }
 
   attach(ctx: CanvasRenderingContext2D) {
-    this.setEntities(this.initEntities(this.words, ctx));
+    this.guy = new Guy(window.innerWidth / 2, 0, true);
+    this.score = new Score(
+      "Score: ",
+      globalFontSize / 2,
+      1.5 * globalFontSize,
+      ctx
+    );
+
+    // TODO refactor
+    // create initial words
+    let y = 1;
+    while (y * 100 <= window.innerHeight) {
+      const randomWord = Word.randomWord(this.words, innerWidth / 2, ctx);
+      randomWord.y = y * 100;
+      this.addEntity("word", randomWord);
+      y++;
+    }
+
+    this.addEntity("guy", this.guy);
+    this.addEntity("score", this.score);
+    this.addEntity("wordSpawner", new WordSpawner(this.words, ctx));
+    this.addEntity("commitSpawner", new CommitSpawner(ctx));
 
     window.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("keyup", this.onKeyUp);
@@ -38,33 +58,6 @@ export class Game extends Scene {
     return { score: this.score?.getScore() };
   }
 
-  private initEntities(words: string[], ctx: CanvasRenderingContext2D) {
-    let entities: Entity[] = [];
-    this.guy = new Guy(window.innerWidth / 2, 0, true);
-    this.score = new Score(
-      "Score: ",
-      globalFontSize / 2,
-      1.5 * globalFontSize,
-      ctx
-    );
-    entities.push(this.guy);
-    entities.push(this.score);
-    entities.push(new WordSpawner(words, this.guy, ctx));
-    entities.push(new CommitSpawner(this.guy, ctx, this.score));
-
-    // TODO refactor
-    // create initial words
-    let y = 1;
-    while (y * 100 <= window.innerHeight) {
-      const randomWord = Word.randomWord(words, innerWidth / 2, ctx);
-      randomWord.y = y * 100;
-      entities.push(randomWord);
-      y++;
-    }
-
-    return entities;
-  }
-
   private onKeyDown(event: KeyboardEvent) {
     event.preventDefault();
 
@@ -73,12 +66,12 @@ export class Game extends Scene {
     }
 
     if (event.key === LEFT_KEY) {
-      this.guy.speedX = -SIDE_SPEED;
+      this.guy.setSpeedX(-SIDE_SPEED);
       this.holdingKeys.push(event.key);
     }
 
     if (event.key === RIGHT_KEY) {
-      this.guy.speedX = SIDE_SPEED;
+      this.guy.setSpeedX(SIDE_SPEED);
       this.holdingKeys.push(event.key);
     }
   }
@@ -94,7 +87,7 @@ export class Game extends Scene {
       this.holdingKeys = this.holdingKeys.filter((key) => key !== event.key);
 
       if (!this.holdingKeys.length) {
-        this.guy.speedX = 0;
+        this.guy.setSpeedX(0);
       }
     }
   }

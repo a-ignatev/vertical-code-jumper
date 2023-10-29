@@ -15,19 +15,19 @@ type GuyForm = "normal" | "strong";
 type AnimationType = "idle" | "falling" | "drinking" | "transforms";
 
 export class Guy extends Entity {
-  speedX: number;
-  speedY: number;
-  cx: number;
+  private speedX: number;
+  private speedY: number;
+  private cx: number;
   private cy: number;
-  animations: Record<AnimationType, Record<GuyForm, Animation | null>>;
-  currentAnimation: AnimationType;
-  jumpSound: Sound;
-  roarSound: Sound;
-  drinkingSound: Sound;
-  currentForm: GuyForm;
-  nonDrinkingTime: number;
-  lifeTime: number;
-  canTransform: boolean;
+  private animations: Record<AnimationType, Record<GuyForm, Animation | null>>;
+  private currentAnimation: AnimationType;
+  private jumpSound: Sound;
+  private roarSound: Sound;
+  private drinkingSound: Sound;
+  private currentForm: GuyForm;
+  private nonDrinkingTime: number;
+  private lifeTime: number;
+  private canTransform: boolean;
 
   constructor(cx: number, cy: number, canTransform: boolean) {
     super();
@@ -46,7 +46,7 @@ export class Guy extends Entity {
           cols: 1,
           width: 15,
           height: 20,
-          blocking: false,
+          isBlocking: false,
         }),
         strong: new Animation({
           spreadsheet: "Strong_Guy_Idle_SpriteSheet.png",
@@ -54,7 +54,7 @@ export class Guy extends Entity {
           cols: 1,
           width: 18,
           height: 23,
-          blocking: false,
+          isBlocking: false,
         }),
       },
       idle: {
@@ -64,7 +64,7 @@ export class Guy extends Entity {
           cols: 3,
           width: 15,
           height: 20,
-          blocking: false,
+          isBlocking: false,
         }),
         strong: new Animation({
           spreadsheet: "Strong_Guy_Jumps.png",
@@ -72,7 +72,7 @@ export class Guy extends Entity {
           cols: 1,
           width: 19,
           height: 21,
-          blocking: false,
+          isBlocking: false,
         }),
       },
       drinking: {
@@ -82,7 +82,7 @@ export class Guy extends Entity {
           cols: 4,
           width: 15,
           height: 20,
-          blocking: true,
+          isBlocking: true,
           onEnd: () => {
             this.currentAnimation = "idle";
           },
@@ -96,7 +96,7 @@ export class Guy extends Entity {
           cols: 5,
           width: 29,
           height: 25,
-          blocking: true,
+          isBlocking: true,
           onEnd: () => {
             this.currentAnimation = "idle";
             this.currentForm = "strong";
@@ -122,25 +122,36 @@ export class Guy extends Entity {
     return this.animations[this.currentAnimation][this.currentForm]!;
   }
 
-  update({ entities, delta }: Context) {
+  getPosition() {
+    return {
+      cx: this.cx,
+      cy: this.cy,
+    };
+  }
+
+  setSpeedX(speed: number) {
+    this.speedX = speed;
+  }
+
+  update({ delta }: Context) {
     this.lifeTime += delta;
     this.speedY += GRAVITY / delta;
     this.speedY = this.speedY;
 
     this.cx += this.speedX / delta;
     this.cx = Math.max(
-      this.getAnimation().width,
-      Math.min(this.cx, window.innerWidth - this.getAnimation().width)
+      this.getAnimation().getSize().width,
+      Math.min(this.cx, window.innerWidth - this.getAnimation().getSize().width)
     );
     this.cy += this.speedY / delta;
 
-    entities.forEach((entity) => {
+    for (const entity of this.getScene().getEntities()) {
       if (
         entity === this ||
         !(entity instanceof Word) ||
         entity instanceof Score
       ) {
-        return;
+        continue;
       }
 
       if (
@@ -150,9 +161,9 @@ export class Guy extends Entity {
         this.speedY = JUMP_SPEED;
         this.jumpSound.play();
       }
-    });
+    }
 
-    if (!this.getAnimation().blocking) {
+    if (!this.getAnimation().isBlocking) {
       if (this.speedY > GRAVITY / 2) {
         this.currentAnimation = "falling";
       } else {
@@ -181,6 +192,13 @@ export class Guy extends Entity {
     }
 
     this.getAnimation().update(delta);
+
+    const offTheScreen =
+      this.cy - 2 * this.getAnimation().getSize().height > window.innerHeight;
+
+    if (offTheScreen) {
+      this.getScene().getSceneManager().switchScene("gameOver");
+    }
   }
 
   render(ctx: CanvasRenderingContext2D, debug: boolean) {
@@ -191,24 +209,13 @@ export class Guy extends Entity {
     }
   }
 
-  tryDestroyEntity(): boolean {
-    const offTheScreen =
-      this.cy - 2 * this.getAnimation().height > window.innerHeight;
-
-    if (offTheScreen) {
-      this.scene?.getSceneManager()?.switchScene("gameOver");
-    }
-
-    return offTheScreen;
-  }
-
   getBoundingRect(): Rect {
-    const animation = this.getAnimation();
+    const size = this.getAnimation().getSize();
 
     return new Rect(
-      this.cx - animation.width,
-      this.cy + animation.height - 1,
-      2 * animation.width,
+      this.cx - size.width,
+      this.cy + size.height - 1,
+      2 * size.width,
       1
     );
   }

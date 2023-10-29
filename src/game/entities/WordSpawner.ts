@@ -8,15 +8,13 @@ const SPAWN_PERIOD = 1000; //1s
 export class WordSpawner extends Entity {
   private timeWithoutSpawn = 0;
   private words: string[];
-  private guy: Guy;
   private ctx: CanvasRenderingContext2D;
 
-  constructor(words: string[], guy: Guy, ctx: CanvasRenderingContext2D) {
+  constructor(words: string[], ctx: CanvasRenderingContext2D) {
     super();
 
     this.timeWithoutSpawn = 0;
     this.words = words;
-    this.guy = guy;
     this.ctx = ctx;
   }
 
@@ -24,18 +22,21 @@ export class WordSpawner extends Entity {
     return new Rect(0, 0, 0, 0);
   }
 
-  update({ delta, entities }: Context): void {
+  update({ delta }: Context): void {
     this.timeWithoutSpawn += delta;
 
     if (!this.timeWithoutSpawn || this.timeWithoutSpawn >= SPAWN_PERIOD) {
       this.timeWithoutSpawn = 0;
-      entities.push(Word.randomWord(this.words, this.guy.cx, this.ctx));
+      const guy = this.getScene().getEntity<Guy>("guy");
+
+      if (guy) {
+        this.getScene().addEntity(
+          "word",
+          Word.randomWord(this.words, guy.getPosition().cx, this.ctx)
+        );
+      }
     }
   }
 
   render(): void {}
-
-  tryDestroyEntity(): boolean {
-    return false;
-  }
 }

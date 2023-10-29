@@ -1,6 +1,6 @@
 export class Sound {
-  audio: HTMLAudioElement;
-  muted: boolean;
+  private audio: HTMLAudioElement;
+  private isMuted: boolean;
 
   constructor(name: string, isLoop: boolean = false) {
     const src = mediaFolder + "/sound/" + name;
@@ -10,11 +10,11 @@ export class Sound {
       this.audio.loop = true;
     }
 
-    this.muted = false;
+    this.isMuted = false;
   }
 
   play() {
-    if (this.muted) {
+    if (this.isMuted) {
       return;
     }
 
@@ -31,7 +31,7 @@ export class Sound {
   }
 
   seMuted(value: boolean) {
-    this.muted = value;
+    this.isMuted = value;
   }
 
   setVolume(volume: number) {

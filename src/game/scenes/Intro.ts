@@ -2,7 +2,6 @@ import { Scene } from "engine/scenes/Scene";
 import { Sound } from "engine/sound/Sound";
 import { CommitSpawner } from "game/entities/CommitSpawner";
 import { Guy } from "game/entities/Guy";
-import { Score } from "game/entities/Score";
 import { StaticWord } from "game/entities/Word";
 import { getRandomWordX } from "game/helpers";
 
@@ -27,7 +26,7 @@ export class Intro extends Scene {
     const keysText = "Press ← and → to move";
 
     const guy = new Guy(window.innerWidth / 2, window.innerHeight / 2, false);
-    const commitSpawner = new CommitSpawner(guy, ctx, null, getRandomWordX);
+    const commitSpawner = new CommitSpawner(ctx, getRandomWordX);
     const title = new StaticWord(
       titleText,
       window.innerWidth / 2 - ctx.measureText(titleText).width / 2,
@@ -48,7 +47,11 @@ export class Intro extends Scene {
       ctx
     );
 
-    this.setEntities([guy, title, help, keys, commitSpawner]);
+    this.addEntity("guy", guy);
+    this.addEntity("title", title);
+    this.addEntity("help", help);
+    this.addEntity("keys", keys);
+    this.addEntity("commitSpawner", commitSpawner);
 
     window.addEventListener("click", this.onClick);
   }
@@ -58,7 +61,7 @@ export class Intro extends Scene {
   }
 
   private onClick() {
-    this.sceneManager?.switchScene("game");
+    this.getSceneManager().switchScene("game");
 
     if (!this.music.isPlaying()) {
       this.music.play();

@@ -51,7 +51,10 @@ export class GameOver extends Scene {
       ctx
     );
 
-    this.setEntities([jobTitle, score, title, help]);
+    this.addEntity("jobTitle", jobTitle);
+    this.addEntity("score", score);
+    this.addEntity("title", title);
+    this.addEntity("help", help);
 
     window.addEventListener("click", this.onClick);
   }
@@ -78,6 +81,6 @@ export class GameOver extends Scene {
   }
 
   private onClick() {
-    this.sceneManager?.switchScene("game");
+    this.getSceneManager().switchScene("game");
   }
 }

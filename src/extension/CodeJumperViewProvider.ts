@@ -15,11 +15,7 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
       .get<boolean>("enableMusic", true);
   }
 
-  public resolveWebviewView(
-    webviewView: vscode.WebviewView,
-    context: vscode.WebviewViewResolveContext,
-    _token: vscode.CancellationToken
-  ) {
+  public resolveWebviewView(webviewView: vscode.WebviewView) {
     this._view = webviewView;
 
     webviewView.webview.options = {

@@ -32,6 +32,7 @@
       "warn",
       { "allowSameFolder": true, "rootDir": "src" }
     ],
+    "no-unused-vars": "error",
     "simple-import-sort/imports": [
       "error",
       {

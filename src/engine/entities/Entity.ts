@@ -2,20 +2,25 @@ import { Scene } from "engine/scenes/Scene";
 import { Rect } from "./Rect";
 
 export interface Context {
-  entities: Entity[];
   delta: number;
 }
 
 export abstract class Entity {
-  protected scene?: Scene;
+  // must be set by the scene
+  private scene!: Scene;
+  // must be set by the scene
+  public name!: string;
 
   abstract getBoundingRect(): Rect;
   abstract update(context: Context): void;
   abstract render(ctx: CanvasRenderingContext2D, debug: boolean): void;
-  abstract tryDestroyEntity(): boolean;
 
   getZOrder() {
     return 0;
+  }
+
+  getScene() {
+    return this.scene;
   }
 
   setScene(scene: Scene) {

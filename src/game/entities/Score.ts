@@ -7,11 +7,11 @@ const EFFECT_POINTS = 100;
 export const SCORE_COLOR = "#EDBB4E";
 
 export class Score extends Word {
-  originalWord: string;
-  playTime: number = 0;
-  scoreSound: Sound;
-  lastEffectScore: number = 0;
-  additionalScore: number = 0;
+  private originalWord: string;
+  private playTime: number = 0;
+  private scoreSound: Sound;
+  private lastEffectScore: number = 0;
+  private additionalScore: number = 0;
 
   constructor(
     word: string,

@@ -10,7 +10,7 @@ export function startGameLoop(
   let lastTimeStamp = 0;
 
   function gameLoop(timeStamp: number) {
-    const scene = sceneManager.getScene();
+    const scene = sceneManager.getCurrentScene();
 
     if (!scene) {
       console.log("No scene set");
@@ -21,22 +21,15 @@ export function startGameLoop(
     const delta = timeStamp - lastTimeStamp;
 
     // update entities
-    scene.getEntities().forEach((entity) =>
-      entity.update({
-        entities: scene.getEntities(),
-        delta,
-      })
-    );
-    scene.setEntities(
-      scene.getEntities().filter((entity) => !entity.tryDestroyEntity())
-    );
+    for (const entity of scene.getEntities()) {
+      entity.update({ delta });
+    }
 
     // clear screen
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // render entities
-    scene
-      .getEntities()
+    [...scene.getEntities()]
       .sort((a, b) => a.getZOrder() - b.getZOrder())
       .forEach((entity) => entity.render(ctx, debug));
 

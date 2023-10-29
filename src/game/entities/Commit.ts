@@ -13,27 +13,19 @@ export class Commit extends Entity {
   private removeColor = "#f85149";
   private neutralColor = "#6e768166";
 
-  x: number;
-  y: number;
-  blocks: string[];
-  addedText: string;
-  removedText: string;
-  score: Score | null;
-  isCollected: boolean = false;
-  totalLength: number;
-  addedLength: number;
-  removedLength: number;
-  blocksYOffset: number;
+  private x: number;
+  private y: number;
+  private blocks: string[];
+  private addedText: string;
+  private removedText: string;
+  private totalLength: number;
+  private addedLength: number;
+  private removedLength: number;
+  private blocksYOffset: number;
 
-  constructor(
-    x: number,
-    y: number,
-    score: Score | null,
-    ctx: CanvasRenderingContext2D
-  ) {
+  constructor(x: number, y: number, ctx: CanvasRenderingContext2D) {
     super();
 
-    this.score = score;
     this.x = x;
     this.y = y;
 
@@ -62,20 +54,25 @@ export class Commit extends Entity {
       BLOCK_SIZE / 2;
   }
 
-  update({ delta, entities }: Context): void {
+  update({ delta }: Context): void {
     this.y += FALLING_SPEED / delta;
 
-    if (this.score) {
-      entities.forEach((entity) => {
+    const score = this.getScene().getEntity<Score>("score");
+
+    if (score) {
+      for (const entity of this.getScene().getEntities()) {
         if (
-          this.score &&
           entity instanceof Guy &&
           this.getBoundingRect().intersects(entity.getBoundingRect())
         ) {
-          this.score.addScore(100);
-          this.isCollected = true;
+          score.addScore(100);
+          this.getScene().removeEntity(this);
         }
-      });
+      }
+    }
+
+    if (this.y - FONT_SIZE > window.innerHeight) {
+      this.getScene().removeEntity(this);
     }
   }
 
@@ -103,10 +100,6 @@ export class Commit extends Entity {
 
   getBoundingRect(): Rect {
     return new Rect(this.x, this.y - FONT_SIZE, this.totalLength, FONT_SIZE);
-  }
-
-  tryDestroyEntity(): boolean {
-    return this.isCollected || this.y - FONT_SIZE > window.innerHeight;
   }
 
   getZOrder(): number {

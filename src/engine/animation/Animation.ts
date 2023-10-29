@@ -1,16 +1,20 @@
 const FRAME_TIME = 1000 / 8; // 8fps
 
-export class Animation {
-  spreadsheet: string;
-  currentFrame = 0;
-  elapsedTime = 0;
-  img: HTMLImageElement;
+interface ImageProperties {
   framesCount: number;
   cols: number;
-  onEnd?: () => void;
-  blocking: boolean;
   width: number;
   height: number;
+}
+
+export class Animation {
+  public isBlocking: boolean;
+
+  private currentFrame = 0;
+  private elapsedTime = 0;
+  private img: HTMLImageElement;
+  private onEnd?: () => void;
+  private imageProperties: ImageProperties;
 
   constructor({
     spreadsheet,
@@ -18,7 +22,7 @@ export class Animation {
     cols,
     width,
     height,
-    blocking,
+    isBlocking,
     onEnd,
   }: {
     spreadsheet: string;
@@ -26,18 +30,27 @@ export class Animation {
     cols: number;
     width: number;
     height: number;
-    blocking: boolean;
+    isBlocking: boolean;
     onEnd?: () => void;
   }) {
-    this.spreadsheet = spreadsheet;
     this.img = new Image(); // Create new img element
     this.img.src = mediaFolder + "/img/" + spreadsheet; // Set source path
-    this.framesCount = frames;
-    this.cols = cols;
-    this.blocking = blocking;
+    this.isBlocking = isBlocking;
     this.onEnd = onEnd;
-    this.width = width;
-    this.height = height;
+
+    this.imageProperties = {
+      framesCount: frames,
+      cols,
+      width,
+      height,
+    };
+  }
+
+  getSize() {
+    return {
+      width: this.imageProperties.width,
+      height: this.imageProperties.height,
+    };
   }
 
   update(delta: number) {
@@ -46,7 +59,7 @@ export class Animation {
     if (this.elapsedTime >= FRAME_TIME) {
       this.elapsedTime = 0;
 
-      if (this.currentFrame + 1 >= this.framesCount) {
+      if (this.currentFrame + 1 >= this.imageProperties.framesCount) {
         this.currentFrame = 0;
         this.onEnd?.();
       } else {
@@ -56,19 +69,19 @@ export class Animation {
   }
 
   render(cx: number, cy: number, ctx: CanvasRenderingContext2D) {
-    const row = Math.trunc(this.currentFrame / this.cols);
-    const col = this.currentFrame % this.cols;
+    const row = Math.trunc(this.currentFrame / this.imageProperties.cols);
+    const col = this.currentFrame % this.imageProperties.cols;
 
     ctx.drawImage(
       this.img,
-      col * this.width,
-      row * this.height,
-      this.width,
-      this.height,
-      cx - this.width,
-      cy - this.height,
-      2 * this.width,
-      2 * this.height
+      col * this.imageProperties.width,
+      row * this.imageProperties.height,
+      this.imageProperties.width,
+      this.imageProperties.height,
+      cx - this.imageProperties.width,
+      cy - this.imageProperties.height,
+      2 * this.imageProperties.width,
+      2 * this.imageProperties.height
     );
   }
 }
