@@ -1,14 +1,22 @@
 import { Scene } from "engine/scenes/Scene";
+import { Sound } from "engine/sound/Sound";
 import { Guy } from "game/entities/Guy";
 import { StaticWord } from "game/entities/Word";
 
 export class Intro extends Scene {
   private ctx: CanvasRenderingContext2D;
+  private music: Sound;
 
-  constructor(ctx: CanvasRenderingContext2D) {
+  constructor(ctx: CanvasRenderingContext2D, music: Sound) {
     super();
 
     this.ctx = ctx;
+    this.music = music;
+
+    if (!this.music.isPlaying()) {
+      this.music.play();
+    }
+
     this.onClick = this.onClick.bind(this);
   }
 
@@ -46,5 +54,9 @@ export class Intro extends Scene {
 
   private onClick() {
     this.sceneManager?.switchScene("game");
+
+    if (!this.music.isPlaying()) {
+      this.music.play();
+    }
   }
 }

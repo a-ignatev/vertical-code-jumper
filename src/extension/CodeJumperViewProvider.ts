@@ -9,6 +9,12 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
+  private isMusicEnabled() {
+    return vscode.workspace
+      .getConfiguration("vertical-code-jumper")
+      .get<boolean>("enableMusic", true);
+  }
+
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
     context: vscode.WebviewViewResolveContext,
@@ -59,8 +65,15 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
 
   public restartGame() {
     if (this._view) {
-      this._view.show(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
+      this._view.show(true);
       this._view.webview.postMessage({ type: "restartGame" });
+    }
+  }
+
+  public setMusicEnabled(enabled: boolean) {
+    if (this._view) {
+      this._view.show(true);
+      this._view.webview.postMessage({ type: "setMusicEnabled", enabled });
     }
   }
 
@@ -105,6 +118,7 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
           globalFontFamily = "${workbenchConfig.get("fontFamily")}";
           globalFontSize = ${workbenchConfig.get("fontSize")};
           mediaFolder = "${mediaFolder}";
+          initialMusicEnabled = ${this.isMusicEnabled()};
         </script>
         
         <title>Vertical Code Jumper</title>

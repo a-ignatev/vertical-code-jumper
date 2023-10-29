@@ -28,6 +28,16 @@
         "command": "vertical-code-jumper.restartGame",
         "title": "Restart Game",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "vertical-code-jumper.enableMusic",
+        "title": "Enable music",
+        "icon": "$(mute)"
+      },
+      {
+        "command": "vertical-code-jumper.disableMusic",
+        "title": "Disable music",
+        "icon": "$(unmute)"
       }
     ],
     "views": {
@@ -42,11 +52,31 @@
     "menus": {
       "view/title": [
         {
+          "command": "vertical-code-jumper.enableMusic",
+          "when": "view == vertical-code-jumper.verticalCodeJumperView && !config.vertical-code-jumper.enableMusic",
+          "group": "navigation"
+        },
+        {
+          "command": "vertical-code-jumper.disableMusic",
+          "when": "view == vertical-code-jumper.verticalCodeJumperView && config.vertical-code-jumper.enableMusic",
+          "group": "navigation"
+        },
+        {
           "command": "vertical-code-jumper.restartGame",
           "when": "view == vertical-code-jumper.verticalCodeJumperView",
           "group": "navigation"
         }
       ]
+    },
+    "configuration": {
+      "title": "Vertical Code Jumper",
+      "properties": {
+        "vertical-code-jumper.enableMusic": {
+          "type": "boolean",
+          "default": true,
+          "description": "Play in-game music."
+        }
+      }
     }
   },
   "scripts": {
