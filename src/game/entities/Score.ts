@@ -1,5 +1,5 @@
-import { Sound } from "../sound/Sound";
-import { Context } from "./Entity";
+import { Context } from "../../engine/entities/Entity";
+import { Sound } from "../../engine/sound/Sound";
 import { Word } from "./Word";
 
 const TIME_TO_POINTS_RATIO = 1000; // 1s = 10 points

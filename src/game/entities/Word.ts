@@ -1,5 +1,5 @@
-import { Context, Entity } from "./Entity";
-import { Rect } from "./Rect";
+import { Context, Entity } from "../../engine/entities/Entity";
+import { Rect } from "../../engine/entities/Rect";
 
 const FALLING_SPEED = 30;
 

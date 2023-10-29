@@ -1,10 +1,10 @@
 import { Word } from "../entities/Word";
 import { Guy, SIDE_SPEED } from "../entities/Guy";
-import { Entity } from "../entities/Entity";
 import { WordSpawner } from "../entities/WordSpawner";
 import { LEFT_KEY, RIGHT_KEY } from "../main";
-import { Scene } from "./Scene";
+import { Scene } from "../../engine/scenes/Scene";
 import { Score } from "../entities/Score";
+import { Entity } from "../../engine/entities/Entity";
 
 export class Game extends Scene {
   words: string[];

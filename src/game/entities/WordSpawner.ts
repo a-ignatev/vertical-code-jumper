@@ -1,5 +1,5 @@
-import { Context, Entity } from "./Entity";
-import { Rect } from "./Rect";
+import { Context, Entity } from "../../engine/entities/Entity";
+import { Rect } from "../../engine/entities/Rect";
 import { Word } from "./Word";
 
 const SPAWN_PERIOD = 1000; //1s

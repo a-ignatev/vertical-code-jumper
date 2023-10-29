@@ -1,7 +1,7 @@
 import { SCORE_COLOR } from "../entities/Score";
 import { StaticWord } from "../entities/Word";
-import { Sound } from "../sound/Sound";
-import { Scene } from "./Scene";
+import { Sound } from "../../engine/sound/Sound";
+import { Scene } from "../../engine/scenes/Scene";
 
 export class GameOver extends Scene {
   private ctx: CanvasRenderingContext2D;

@@ -1,9 +1,9 @@
-import { Animation } from "../animation/Animation";
-import { Sound } from "../sound/Sound";
-import { Context, Entity } from "./Entity";
-import { Rect } from "./Rect";
+import { Sound } from "../../engine/sound/Sound";
+import { Rect } from "../../engine/entities/Rect";
 import { Score } from "./Score";
 import { Word } from "./Word";
+import { Context, Entity } from "../../engine/entities/Entity";
+import { Animation } from "../../engine/animation/Animation";
 
 const GRAVITY = 60;
 const JUMP_SPEED = -130;

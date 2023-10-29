@@ -1,6 +1,6 @@
 import { StaticWord } from "../entities/Word";
 import { Guy } from "../entities/Guy";
-import { Scene } from "./Scene";
+import { Scene } from "../../engine/scenes/Scene";
 
 export class Intro extends Scene {
   private ctx: CanvasRenderingContext2D;

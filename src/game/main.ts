@@ -1,8 +1,10 @@
 import { WebviewApi } from "vscode-webview";
 import { Game } from "./scenes/Game";
 import { Intro } from "./scenes/Intro";
-import { SceneManager } from "./scenes/SceneManager";
+import { SceneManager } from "../engine/scenes/SceneManager";
 import { GameOver } from "./scenes/GameOver";
+import { startGameLoop } from "../engine/main";
+import { prepareCanvas } from "../engine/utils/prepareCanvas";
 
 export const LEFT_KEY = "ArrowLeft";
 export const RIGHT_KEY = "ArrowRight";
@@ -23,7 +25,7 @@ function main() {
       case "addWords": {
         vscode.setState({ words: message.words });
         const state = vscode.getState() || { words: [] };
-        init(state.words, abortController.signal);
+        startGame(state.words, abortController.signal);
         break;
       }
       case "restartGame": {
@@ -47,7 +49,7 @@ function requestWords(vscode: WebviewApi<State>) {
 
 function resetAll() {
   abortController.abort();
-  const graphics = initCanvas();
+  const graphics = prepareCanvas(globalFontSize, globalFontFamily);
 
   if (!graphics) {
     return;
@@ -59,75 +61,8 @@ function resetAll() {
   });
 }
 
-function initCanvas() {
-  const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
-
-  if (!canvas) {
-    console.log("Canvas not ready");
-    return;
-  }
-
-  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-
-  if (!ctx) {
-    console.log("Canvas context not ready");
-    return;
-  }
-
-  ctx.canvas.width = window.innerWidth;
-  ctx.canvas.height = window.innerHeight;
-  ctx.imageSmoothingEnabled = false;
-  ctx.font = `${globalFontSize}px ${globalFontFamily.split(",")[0]}`;
-
-  return { ctx, canvas };
-}
-
-function initGameLoop(
-  sceneManager: SceneManager,
-  ctx: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement,
-  abortSignal: AbortSignal
-) {
-  let lastTimeStamp = 0;
-
-  function gameLoop(timeStamp: number) {
-    const scene = sceneManager.getScene();
-
-    if (!scene) {
-      console.log("No scene set");
-      return;
-    }
-
-    const delta = timeStamp - lastTimeStamp;
-
-    // update entities
-    scene.getEntities().forEach((entity) =>
-      entity.update({
-        entities: scene.getEntities(),
-        delta,
-        ctx,
-      })
-    );
-    scene.setEntities(
-      scene.getEntities().filter((entity) => !entity.tryDestroyEntity())
-    );
-
-    // clear screen
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // render entities
-    scene.getEntities().forEach((entity) => entity.render(ctx, DEBUG));
-
-    lastTimeStamp = timeStamp;
-    if (!abortSignal.aborted) {
-      window.requestAnimationFrame(gameLoop);
-    }
-  }
-  window.requestAnimationFrame(gameLoop);
-}
-
-function init(words: string[], abortSignal: AbortSignal) {
-  const graphics = initCanvas();
+function startGame(words: string[], abortSignal: AbortSignal) {
+  const graphics = prepareCanvas(globalFontSize, globalFontFamily);
   if (!graphics) {
     return;
   }
@@ -140,7 +75,7 @@ function init(words: string[], abortSignal: AbortSignal) {
   sceneManager.addScene("gameOver", new GameOver(ctx));
   sceneManager.switchScene("intro");
 
-  initGameLoop(sceneManager, ctx, canvas, abortSignal);
+  startGameLoop(sceneManager, ctx, canvas, abortSignal, DEBUG);
 }
 
 main();
