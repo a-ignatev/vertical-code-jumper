@@ -17,7 +17,11 @@ const gameConfig = {
     },
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js"],
+    extensions: [".ts"],
+    modules: [
+      path.resolve(__dirname, "src"),
+      path.resolve(__dirname, "node_modules"),
+    ],
   },
   module: {
     rules: [
@@ -55,7 +59,7 @@ const extensionConfig = {
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
-    extensions: [".ts", ".js"],
+    extensions: [".ts"],
   },
   module: {
     rules: [

@@ -1,5 +1,7 @@
 export function prepareCanvas(fontSizePx: number, fontFamily: string) {
-  const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
+  const canvas = document.getElementById(
+    "gameCanvas"
+  ) as HTMLCanvasElement | null;
 
   if (!canvas) {
     console.log("Canvas not ready");
@@ -7,7 +9,7 @@ export function prepareCanvas(fontSizePx: number, fontFamily: string) {
     return;
   }
 
-  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D | null;
 
   if (!ctx) {
     console.log("Canvas context not ready");

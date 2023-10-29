@@ -152,7 +152,7 @@ export class Guy extends Entity {
       }
     });
 
-    if (!this.getAnimation()?.blocking) {
+    if (!this.getAnimation().blocking) {
       if (this.speedY > GRAVITY / 2) {
         this.currentAnimation = "falling";
       } else {
@@ -180,11 +180,11 @@ export class Guy extends Entity {
       }
     }
 
-    this.getAnimation()?.update(delta);
+    this.getAnimation().update(delta);
   }
 
   render(ctx: CanvasRenderingContext2D, debug: boolean) {
-    this.getAnimation()?.render(this.cx, this.cy, ctx);
+    this.getAnimation().render(this.cx, this.cy, ctx);
 
     if (debug) {
       this.getBoundingRect().render(ctx);

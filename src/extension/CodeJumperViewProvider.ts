@@ -24,14 +24,29 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-    webviewView.webview.onDidReceiveMessage((data) => {
+    webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.type) {
         case "getWords": {
-          const words = vscode.window.activeTextEditor?.document
-            .getText()
-            .replace(/[^a-zA-Z0-9-_]/g, " ")
-            .split(/\s+/gm)
-            .filter((x) => x.length > 3);
+          let words: string[] = [];
+
+          if (vscode.window.activeTextEditor) {
+            words = vscode.window.activeTextEditor.document
+              .getText()
+              .replace(/[^a-zA-Z0-9-_]/g, " ")
+              .split(/\s+/gm)
+              .filter((x) => x.length > 3);
+          } else {
+            const files = await vscode.workspace.findFiles(
+              "**/**",
+              undefined,
+              100
+            );
+            words = files
+              .filter((x) => x.path.length > 3)
+              .map((x) => x.path.split("/").at(-1))
+              .filter((x): x is string => !!x);
+          }
+
           this._view?.webview.postMessage({
             type: "addWords",
             words: [...new Set(words)],
@@ -44,7 +59,7 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
 
   public restartGame() {
     if (this._view) {
-      this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
+      this._view.show(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
       this._view.webview.postMessage({ type: "restartGame" });
     }
   }
