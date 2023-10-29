@@ -1,10 +1,12 @@
-import { Word } from "../entities/Word";
-import { Guy, SIDE_SPEED } from "../entities/Guy";
-import { WordSpawner } from "../entities/WordSpawner";
-import { LEFT_KEY, RIGHT_KEY } from "../main";
-import { Scene } from "../../engine/scenes/Scene";
-import { Score } from "../entities/Score";
-import { Entity } from "../../engine/entities/Entity";
+import { Entity } from "engine/entities/Entity";
+import { Scene } from "engine/scenes/Scene";
+import { Guy, SIDE_SPEED } from "game/entities/Guy";
+import { Score } from "game/entities/Score";
+import { Word } from "game/entities/Word";
+import { WordSpawner } from "game/entities/WordSpawner";
+
+const LEFT_KEY = "ArrowLeft";
+const RIGHT_KEY = "ArrowRight";
 
 export class Game extends Scene {
   words: string[];
@@ -58,6 +60,7 @@ export class Game extends Scene {
 
   private onKeyDown(event: KeyboardEvent) {
     event.preventDefault();
+
     if (!this.guy) {
       return;
     }
@@ -75,6 +78,7 @@ export class Game extends Scene {
 
   private onKeyUp(event: KeyboardEvent) {
     event.preventDefault();
+
     if (!this.guy) {
       return;
     }

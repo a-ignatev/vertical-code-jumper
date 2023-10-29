@@ -1,4 +1,4 @@
-import { Scene } from "../scenes/Scene";
+import { Scene } from "engine/scenes/Scene";
 import { Rect } from "./Rect";
 
 export interface Context {

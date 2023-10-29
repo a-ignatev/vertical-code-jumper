@@ -1,5 +1,5 @@
-import { Context } from "../../engine/entities/Entity";
-import { Sound } from "../../engine/sound/Sound";
+import { Context } from "engine/entities/Entity";
+import { Sound } from "engine/sound/Sound";
 import { Word } from "./Word";
 
 const TIME_TO_POINTS_RATIO = 1000; // 1s = 10 points
@@ -25,6 +25,7 @@ export class Score extends Word {
     this.playTime += delta;
 
     const score = this.getScore();
+
     if (score !== this.lastEffectScore && score % EFFECT_POINTS === 0) {
       this.lastEffectScore = score;
       this.scoreSound.play();

@@ -3,6 +3,7 @@ export function prepareCanvas(fontSizePx: number, fontFamily: string) {
 
   if (!canvas) {
     console.log("Canvas not ready");
+
     return;
   }
 
@@ -10,6 +11,7 @@ export function prepareCanvas(fontSizePx: number, fontFamily: string) {
 
   if (!ctx) {
     console.log("Canvas context not ready");
+
     return;
   }
 

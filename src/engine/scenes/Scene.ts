@@ -1,4 +1,4 @@
-import { Entity } from "../entities/Entity";
+import { Entity } from "engine/entities/Entity";
 import { SceneManager } from "./SceneManager";
 
 export type SceneType = "intro" | "game" | "gameOver";

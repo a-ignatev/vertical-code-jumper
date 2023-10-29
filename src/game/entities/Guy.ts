@@ -1,9 +1,9 @@
-import { Sound } from "../../engine/sound/Sound";
-import { Rect } from "../../engine/entities/Rect";
+import { Animation } from "engine/animation/Animation";
+import { Context, Entity } from "engine/entities/Entity";
+import { Rect } from "engine/entities/Rect";
+import { Sound } from "engine/sound/Sound";
 import { Score } from "./Score";
 import { Word } from "./Word";
-import { Context, Entity } from "../../engine/entities/Entity";
-import { Animation } from "../../engine/animation/Animation";
 
 const GRAVITY = 60;
 const JUMP_SPEED = -130;
@@ -160,6 +160,7 @@ export class Guy extends Entity {
       }
 
       this.nonDrinkingTime += delta;
+
       if (
         this.currentForm === "normal" &&
         this.nonDrinkingTime >= DRINKING_PERIOD

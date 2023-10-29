@@ -14,6 +14,7 @@ export function startGameLoop(
 
     if (!scene) {
       console.log("No scene set");
+
       return;
     }
 
@@ -38,6 +39,7 @@ export function startGameLoop(
     scene.getEntities().forEach((entity) => entity.render(ctx, debug));
 
     lastTimeStamp = timeStamp;
+
     if (!abortSignal.aborted) {
       window.requestAnimationFrame(gameLoop);
     }

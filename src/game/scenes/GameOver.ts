@@ -1,7 +1,7 @@
-import { SCORE_COLOR } from "../entities/Score";
-import { StaticWord } from "../entities/Word";
-import { Sound } from "../../engine/sound/Sound";
-import { Scene } from "../../engine/scenes/Scene";
+import { Scene } from "engine/scenes/Scene";
+import { Sound } from "engine/sound/Sound";
+import { SCORE_COLOR } from "game/entities/Score";
+import { StaticWord } from "game/entities/Word";
 
 export class GameOver extends Scene {
   private ctx: CanvasRenderingContext2D;
@@ -72,6 +72,7 @@ export class GameOver extends Scene {
 
   private getJobTitle(score: number) {
     const titleIndex = this.titles.findIndex(({ limit }) => limit > score) || 0;
+
     return this.titles[titleIndex].name + " Engineer";
   }
 

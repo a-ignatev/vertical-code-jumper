@@ -1,13 +1,11 @@
 import { WebviewApi } from "vscode-webview";
+import { startGameLoop } from "engine/main";
+import { SceneManager } from "engine/scenes/SceneManager";
+import { prepareCanvas } from "engine/utils/prepareCanvas";
 import { Game } from "./scenes/Game";
-import { Intro } from "./scenes/Intro";
-import { SceneManager } from "../engine/scenes/SceneManager";
 import { GameOver } from "./scenes/GameOver";
-import { startGameLoop } from "../engine/main";
-import { prepareCanvas } from "../engine/utils/prepareCanvas";
+import { Intro } from "./scenes/Intro";
 
-export const LEFT_KEY = "ArrowLeft";
-export const RIGHT_KEY = "ArrowRight";
 const DEBUG = false;
 
 interface State {
@@ -63,6 +61,7 @@ function resetAll() {
 
 function startGame(words: string[], abortSignal: AbortSignal) {
   const graphics = prepareCanvas(globalFontSize, globalFontFamily);
+
   if (!graphics) {
     return;
   }
