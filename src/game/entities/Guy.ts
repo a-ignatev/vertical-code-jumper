@@ -5,11 +5,12 @@ import { Sound } from "engine/sound/Sound";
 import { Score } from "./Score";
 import { Word } from "./Word";
 
-const GRAVITY = 60;
-const JUMP_SPEED = -130;
-const DRINKING_PERIOD = 5_000;
-const TRANSFORM_PERIOD = 60_000;
-export const SIDE_SPEED = 60;
+const GRAVITY = 1000;
+const JUMP_SPEED = -500;
+export const SIDE_SPEED = 225;
+
+const DRINKING_PERIOD = 5;
+const TRANSFORM_PERIOD = 60;
 
 type GuyForm = "normal" | "strong";
 type AnimationType = "idle" | "falling" | "drinking" | "transforms";
@@ -25,15 +26,15 @@ export class Guy extends Entity {
   private roarSound: Sound;
   private drinkingSound: Sound;
   private currentForm: GuyForm;
-  private nonDrinkingTime: number;
-  private lifeTime: number;
+  private nonDrinkingTimeS: number;
+  private lifeTimeS: number;
   private canTransform: boolean;
 
   constructor(cx: number, cy: number, canTransform: boolean) {
     super();
 
     this.speedX = 0;
-    this.speedY = GRAVITY;
+    this.speedY = 0;
     this.cx = cx;
     this.cy = cy;
     this.canTransform = canTransform;
@@ -112,8 +113,8 @@ export class Guy extends Entity {
     this.drinkingSound = new Sound("coffee.mp3");
     this.drinkingSound.setVolume(0.5);
 
-    this.nonDrinkingTime = 0;
-    this.lifeTime = 0;
+    this.nonDrinkingTimeS = 0;
+    this.lifeTimeS = 0;
     this.currentAnimation = "idle";
     this.currentForm = "normal";
   }
@@ -134,16 +135,16 @@ export class Guy extends Entity {
   }
 
   update({ delta }: Context) {
-    this.lifeTime += delta;
-    this.speedY += GRAVITY / delta;
-    this.speedY = this.speedY;
+    this.lifeTimeS += delta;
 
-    this.cx += this.speedX / delta;
+    this.speedY += GRAVITY * delta;
+    this.cy += this.speedY * delta;
+
+    this.cx += this.speedX * delta;
     this.cx = Math.max(
       this.getAnimation().getSize().width,
       Math.min(this.cx, window.innerWidth - this.getAnimation().getSize().width)
     );
-    this.cy += this.speedY / delta;
 
     for (const entity of this.getScene().getEntities()) {
       if (
@@ -164,27 +165,27 @@ export class Guy extends Entity {
     }
 
     if (!this.getAnimation().isBlocking) {
-      if (this.speedY > GRAVITY / 2) {
+      if (this.speedY > 0) {
         this.currentAnimation = "falling";
       } else {
         this.currentAnimation = "idle";
       }
 
-      this.nonDrinkingTime += delta;
+      this.nonDrinkingTimeS += delta;
 
       if (
         this.currentForm === "normal" &&
-        this.nonDrinkingTime >= DRINKING_PERIOD
+        this.nonDrinkingTimeS >= DRINKING_PERIOD
       ) {
         this.drinkingSound.playWithDelay(500);
-        this.nonDrinkingTime = 0;
+        this.nonDrinkingTimeS = 0;
         this.currentAnimation = "drinking";
       }
 
       if (
         this.currentForm === "normal" &&
         this.canTransform &&
-        this.lifeTime >= TRANSFORM_PERIOD
+        this.lifeTimeS >= TRANSFORM_PERIOD
       ) {
         this.roarSound.play();
         this.currentAnimation = "transforms";

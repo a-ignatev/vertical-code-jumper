@@ -3,7 +3,7 @@ import { Rect } from "engine/entities/Rect";
 import { getRandomWordXNotCloseTo } from "game/helpers";
 import { getColor } from "game/helpers";
 
-const FALLING_SPEED = 30;
+const FALLING_SPEED = 150;
 
 function getRandomWord(words: string[]) {
   return words[Math.floor(Math.random() * words.length)];
@@ -49,7 +49,7 @@ export class Word extends Entity {
   }
 
   update({ delta }: Context) {
-    this.y += FALLING_SPEED / delta;
+    this.y += FALLING_SPEED * delta;
 
     if (this.y - globalFontSize > window.innerHeight) {
       this.getScene().removeEntity(this);

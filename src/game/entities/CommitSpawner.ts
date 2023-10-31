@@ -4,7 +4,7 @@ import { getRandomWordXNotCloseTo } from "game/helpers";
 import { Commit } from "./Commit";
 import { Guy } from "./Guy";
 
-const SPAWN_PERIOD = 2500;
+const SPAWN_PERIOD = 2.5;
 
 export class CommitSpawner extends Entity {
   private timeWithoutSpawn = 0;
@@ -29,7 +29,7 @@ export class CommitSpawner extends Entity {
   update({ delta }: Context): void {
     this.timeWithoutSpawn += delta;
 
-    if (!this.timeWithoutSpawn || this.timeWithoutSpawn >= SPAWN_PERIOD) {
+    if (this.timeWithoutSpawn >= SPAWN_PERIOD) {
       this.timeWithoutSpawn = 0;
       const guy = this.getScene().getEntity<Guy>("guy");
 

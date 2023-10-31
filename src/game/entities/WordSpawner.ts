@@ -3,17 +3,16 @@ import { Rect } from "engine/entities/Rect";
 import { Guy } from "./Guy";
 import { Word } from "./Word";
 
-const SPAWN_PERIOD = 1000; //1s
+const SPAWN_PERIOD = 1;
 
 export class WordSpawner extends Entity {
-  private timeWithoutSpawn = 0;
+  private timeWithoutSpawn = -1;
   private words: string[];
   private ctx: CanvasRenderingContext2D;
 
   constructor(words: string[], ctx: CanvasRenderingContext2D) {
     super();
 
-    this.timeWithoutSpawn = 0;
     this.words = words;
     this.ctx = ctx;
   }
@@ -25,7 +24,7 @@ export class WordSpawner extends Entity {
   update({ delta }: Context): void {
     this.timeWithoutSpawn += delta;
 
-    if (!this.timeWithoutSpawn || this.timeWithoutSpawn >= SPAWN_PERIOD) {
+    if (this.timeWithoutSpawn < 0 || this.timeWithoutSpawn >= SPAWN_PERIOD) {
       this.timeWithoutSpawn = 0;
       const guy = this.getScene().getEntity<Guy>("guy");
 

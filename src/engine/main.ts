@@ -18,11 +18,16 @@ export function startGameLoop(
       return;
     }
 
-    const delta = timeStamp - lastTimeStamp;
+    if (!lastTimeStamp) {
+      lastTimeStamp = timeStamp;
+      window.requestAnimationFrame(gameLoop);
+    }
+
+    const deltaMs = timeStamp - lastTimeStamp;
 
     // update entities
     for (const entity of scene.getEntities()) {
-      entity.update({ delta });
+      entity.update({ delta: deltaMs / 1000 });
     }
 
     // clear screen

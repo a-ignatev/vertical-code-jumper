@@ -2,13 +2,12 @@ import { Context } from "engine/entities/Entity";
 import { Sound } from "engine/sound/Sound";
 import { Word } from "./Word";
 
-const TIME_TO_POINTS_RATIO = 1000;
 const EFFECT_POINTS = 100;
 export const SCORE_COLOR = "#EDBB4E";
 
 export class Score extends Word {
   private originalWord: string;
-  private playTime: number = 0;
+  private playTimeS: number = 0;
   private scoreSound: Sound;
   private lastEffectScore: number = 0;
   private additionalScore: number = 0;
@@ -28,7 +27,7 @@ export class Score extends Word {
   }
 
   update({ delta }: Context) {
-    this.playTime += delta;
+    this.playTimeS += delta;
 
     const score = this.getScore();
 
@@ -46,9 +45,6 @@ export class Score extends Word {
   }
 
   getScore() {
-    return (
-      Math.round(this.playTime / TIME_TO_POINTS_RATIO) * 10 +
-      this.additionalScore
-    );
+    return Math.round(this.playTimeS) * 10 + this.additionalScore;
   }
 }

@@ -1,4 +1,4 @@
-const FRAME_TIME = 1000 / 8; // 8fps
+const FRAME_TIME = 1 / 8; // 8fps
 
 interface ImageProperties {
   framesCount: number;

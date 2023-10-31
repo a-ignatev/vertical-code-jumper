@@ -3,7 +3,7 @@ import { Rect } from "engine/entities/Rect";
 import { Guy } from "./Guy";
 import { Score } from "./Score";
 
-const FALLING_SPEED = 50;
+const FALLING_SPEED = 300;
 const FONT_SIZE = globalFontSize * 0.8;
 const BLOCK_SIZE = FONT_SIZE * 0.5;
 const PADDING = 1;
@@ -55,7 +55,7 @@ export class Commit extends Entity {
   }
 
   update({ delta }: Context): void {
-    this.y += FALLING_SPEED / delta;
+    this.y += FALLING_SPEED * delta;
 
     const score = this.getScene().getEntity<Score>("score");
 

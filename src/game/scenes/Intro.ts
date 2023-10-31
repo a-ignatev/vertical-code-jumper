@@ -25,7 +25,7 @@ export class Intro extends Scene {
     const helpText = "Click to play";
     const keysText = "Press ← and → to move";
 
-    const guy = new Guy(window.innerWidth / 2, window.innerHeight / 2, false);
+    const guy = new Guy(window.innerWidth / 2, 0, false);
     const commitSpawner = new CommitSpawner(ctx, getRandomWordX);
     const title = new StaticWord(
       titleText,
