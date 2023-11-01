@@ -6,7 +6,8 @@ import { prepareCanvas } from "engine/utils/prepareCanvas";
 import { Game } from "./scenes/Game";
 import { GameOver } from "./scenes/GameOver";
 import { Intro } from "./scenes/Intro";
-import { debounce } from "./helpers";
+import { Resize } from "./scenes/Resize";
+import { debounce, isScreenTooSmall, isScreenTooWide } from "./helpers";
 
 const DEBUG = false;
 
@@ -110,7 +111,13 @@ function startGame(words: string[], abortSignal: AbortSignal) {
   sceneManager.addScene("intro", new Intro(music));
   sceneManager.addScene("game", new Game(words));
   sceneManager.addScene("gameOver", new GameOver());
-  sceneManager.switchScene("intro");
+  sceneManager.addScene("resize", new Resize());
+
+  if (isScreenTooSmall() || isScreenTooWide()) {
+    sceneManager.switchScene("resize");
+  } else {
+    sceneManager.switchScene("intro");
+  }
 
   startGameLoop(sceneManager, ctx, canvas, abortSignal, DEBUG);
 }

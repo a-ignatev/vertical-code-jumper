@@ -29,3 +29,11 @@ export function debounce(func: () => void, time: number) {
     timer = setTimeout(func, time);
   };
 }
+
+export function isScreenTooSmall() {
+  return window.innerWidth < 350;
+}
+
+export function isScreenTooWide() {
+  return window.innerWidth > 500;
+}
