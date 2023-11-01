@@ -9,11 +9,13 @@ export function getRandomWordX() {
 export function getRandomWordXNotCloseTo(x: number) {
   const side = x / window.innerWidth;
 
-  if (side <= 0.5) {
+  if (side < 0.5) {
     return (Math.random() * window.innerWidth) / 2 - 20 + window.innerWidth / 2;
-  } else {
+  } else if (side > 0.5) {
     return (Math.random() * window.innerWidth) / 2;
   }
+
+  return getRandomWordX();
 }
 
 export function debounce(func: () => void, time: number) {

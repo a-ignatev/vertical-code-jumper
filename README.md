@@ -2,6 +2,11 @@
 
 An infinite vertical jumping game in your code.
 
+# Features
+- infinitely jumps though words from the open file
+- collect falling commits to prevent damage and collect points
+- drink coffee to receive more points per commit and prevent any damage
+
 ![Current File](/demo/demo.gif "Vertical Code Jumper")
 
 ## Contributors

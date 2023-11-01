@@ -63,19 +63,23 @@ export class GameOver extends Scene {
     window.removeEventListener("click", this.onClick);
   }
 
+  private multiplier = 2000;
+
   private titles = [
-    { name: "Junior", limit: 1000 },
-    { name: "Advanced Junior", limit: 1400 },
-    { name: "Regular", limit: 1800 },
-    { name: "Senior", limit: 2400 },
-    { name: "Strong Senior", limit: 3000 },
-    { name: "Staff", limit: 4000 },
-    { name: "Senior Staff", limit: 5000 },
-    { name: "Principal", limit: 6000 },
+    { name: "Junior", limit: 1 },
+    { name: "Advanced Junior", limit: 1.4 },
+    { name: "Regular", limit: 1.8 },
+    { name: "Senior", limit: 2.4 },
+    { name: "Strong Senior", limit: 3 },
+    { name: "Staff", limit: 4 },
+    { name: "Senior Staff", limit: 5 },
+    { name: "Principal", limit: 7 },
   ];
 
   private getJobTitle(score: number) {
-    const titleIndex = this.titles.findIndex(({ limit }) => limit > score) || 0;
+    const titleIndex =
+      this.titles.findIndex(({ limit }) => limit * this.multiplier > score) ||
+      0;
 
     return this.titles[titleIndex].name + " Engineer";
   }
