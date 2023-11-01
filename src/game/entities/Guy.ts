@@ -29,6 +29,7 @@ export class Guy extends Entity {
   private nonDrinkingTimeS: number;
   private lifeTimeS: number;
   private canTransform: boolean;
+  private fullBoundingBox: Rect;
 
   constructor(cx: number, cy: number, canTransform: boolean) {
     super();
@@ -112,11 +113,19 @@ export class Guy extends Entity {
     this.roarSound.setVolume(0.5);
     this.drinkingSound = new Sound("coffee.mp3");
     this.drinkingSound.setVolume(0.5);
-
     this.nonDrinkingTimeS = 0;
     this.lifeTimeS = 0;
     this.currentAnimation = "idle";
     this.currentForm = "normal";
+
+    const size = this.getAnimation().getSize();
+    this.fullBoundingBox = new Rect(
+      this.cx - size.width,
+      this.cy + size.height - 1,
+      2 * size.width,
+      2 * size.width,
+      "#00FF00"
+    );
   }
 
   private getAnimation() {
@@ -144,6 +153,11 @@ export class Guy extends Entity {
     this.cx = Math.max(
       this.getAnimation().getSize().width,
       Math.min(this.cx, window.innerWidth - this.getAnimation().getSize().width)
+    );
+
+    this.fullBoundingBox.updatePosition(
+      this.cx - this.getAnimation().getSize().width,
+      this.cy - this.getAnimation().getSize().width
     );
 
     for (const entity of this.getScene().getEntities()) {
@@ -207,7 +221,12 @@ export class Guy extends Entity {
 
     if (debug) {
       this.getBoundingRect().render(ctx);
+      this.fullBoundingBox.render(ctx);
     }
+  }
+
+  getFullBoundingBox() {
+    return this.fullBoundingBox;
   }
 
   getBoundingRect(): Rect {

@@ -63,7 +63,7 @@ export class Commit extends Entity {
       for (const entity of this.getScene().getEntities()) {
         if (
           entity instanceof Guy &&
-          this.getBoundingRect().intersects(entity.getBoundingRect())
+          this.getBoundingRect().intersects(entity.getFullBoundingBox())
         ) {
           score.addScore(100);
           this.getScene().removeEntity(this);
