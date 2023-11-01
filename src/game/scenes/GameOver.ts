@@ -10,6 +10,7 @@ export class GameOver extends Scene {
     super();
 
     this.onClick = this.onClick.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
     this.gameOverSound = new Sound("game-over.mp3");
   }
 
@@ -17,32 +18,33 @@ export class GameOver extends Scene {
     this.gameOverSound.play();
 
     const jobTitleText = this.getJobTitle(payload.score);
-    const titleText = "Game Over";
-    const helpText = "Click to play again";
+    const gameOverText = "Game Over";
+    const helpText = "Click or press Space";
+    const help2Text = "to play again";
     const scoreText = payload.score.toString();
 
-    const score = new StaticWord(
-      scoreText,
-      window.innerWidth / 2 - ctx.measureText(scoreText).width / 2,
-      window.innerHeight / 2,
-      ctx
-    );
-
-    score.color = SCORE_COLOR;
-
-    const title = new StaticWord(
-      titleText,
-      window.innerWidth / 2 - ctx.measureText(titleText).width / 2,
-      window.innerHeight / 2 + 2 * globalFontSize,
+    const gameOver = new StaticWord(
+      gameOverText,
+      window.innerWidth / 2 - ctx.measureText(gameOverText).width / 2,
+      window.innerHeight / 2 - 6 * globalFontSize,
       ctx
     );
 
     const jobTitle = new StaticWord(
       jobTitleText,
       window.innerWidth / 2 - ctx.measureText(jobTitleText).width / 2,
-      window.innerHeight / 2 - 2 * globalFontSize,
+      window.innerHeight / 2 - globalFontSize,
       ctx
     );
+
+    const score = new StaticWord(
+      scoreText,
+      window.innerWidth / 2 - ctx.measureText(scoreText).width / 2,
+      window.innerHeight / 2 + globalFontSize,
+      ctx
+    );
+
+    score.color = SCORE_COLOR;
 
     const help = new StaticWord(
       helpText,
@@ -50,17 +52,26 @@ export class GameOver extends Scene {
       window.innerHeight / 2 + 4 * globalFontSize,
       ctx
     );
+    const help2 = new StaticWord(
+      help2Text,
+      window.innerWidth / 2 - ctx.measureText(help2Text).width / 2,
+      window.innerHeight / 2 + 6 * globalFontSize,
+      ctx
+    );
 
     this.addEntity("jobTitle", jobTitle);
     this.addEntity("score", score);
-    this.addEntity("title", title);
+    this.addEntity("title", gameOver);
     this.addEntity("help", help);
+    this.addEntity("help2", help2);
 
     window.addEventListener("click", this.onClick);
+    window.addEventListener("keydown", this.onKeyDown);
   }
 
   detach(): void {
     window.removeEventListener("click", this.onClick);
+    window.removeEventListener("keydown", this.onKeyDown);
   }
 
   private multiplier = 2000;
@@ -85,6 +96,10 @@ export class GameOver extends Scene {
   }
 
   private onClick() {
+    this.getSceneManager().switchScene("game");
+  }
+
+  private onKeyDown() {
     this.getSceneManager().switchScene("game");
   }
 }
