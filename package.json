@@ -2,7 +2,7 @@
   "name": "vertical-code-jumper",
   "displayName": "Vertical Code Jumper",
   "description": "An infinite vertical jumping game in your code.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "andrei-ignatev",
   "license": "MIT",
   "icon": "resources/icon.png",
