@@ -2,6 +2,7 @@ import { Context, Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
 import { CoffeeWave } from "./CoffeeWave";
 import { Guy } from "./Guy";
+import { LifeBar } from "./LifeBar";
 import { Score } from "./Score";
 
 const FALLING_SPEED = 300;
@@ -81,6 +82,16 @@ export class Commit extends Entity {
 
     if (this.y - FONT_SIZE > window.innerHeight) {
       this.getScene().removeEntity(this);
+
+      const coffeeWave = this.getScene().getEntity("coffeeWave");
+
+      if (!coffeeWave) {
+        const lifeBar = this.getScene().getEntity<LifeBar>("lifeBar");
+
+        if (lifeBar) {
+          lifeBar.decreaseLife();
+        }
+      }
     }
   }
 

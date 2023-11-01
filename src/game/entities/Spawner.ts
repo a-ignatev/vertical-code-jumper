@@ -85,5 +85,5 @@ export const createCoffeeMugSpawner = () =>
         return new CoffeeMug();
       }
     },
-    5
+    6
   );

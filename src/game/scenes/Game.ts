@@ -2,6 +2,7 @@ import { Scene } from "engine/scenes/Scene";
 import { BonusIndicator } from "game/entities/BonusIndicator";
 import { CoffeeMug } from "game/entities/CoffeeMug";
 import { Guy, SIDE_SPEED } from "game/entities/Guy";
+import { LifeBar } from "game/entities/LifeBar";
 import { Score } from "game/entities/Score";
 import {
   createCoffeeMugSpawner,
@@ -53,6 +54,7 @@ export class Game extends Scene {
     this.addEntity("commitSpawner", createCommitSpawner(ctx, this.guy));
     this.addEntity("coffeeMugSpawner", createCoffeeMugSpawner());
     this.addEntity("bonusIndicator", new BonusIndicator(ctx));
+    this.addEntity("lifeBar", new LifeBar());
 
     window.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("keyup", this.onKeyUp);
