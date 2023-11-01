@@ -1,5 +1,6 @@
 import { Context, Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
+import { CoffeeWave } from "./CoffeeWave";
 import { Guy } from "./Guy";
 import { Score } from "./Score";
 
@@ -65,7 +66,14 @@ export class Commit extends Entity {
           entity instanceof Guy &&
           this.getBoundingRect().intersects(entity.getFullBoundingBox())
         ) {
-          score.addScore(100);
+          const coffeeWave =
+            this.getScene().getEntity<CoffeeWave>("coffeeWave");
+
+          if (coffeeWave) {
+            score.addScore(200);
+          } else {
+            score.addScore(100);
+          }
           this.getScene().removeEntity(this);
         }
       }

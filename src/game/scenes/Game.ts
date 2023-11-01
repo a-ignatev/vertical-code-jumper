@@ -1,9 +1,14 @@
 import { Scene } from "engine/scenes/Scene";
-import { CommitSpawner } from "game/entities/CommitSpawner";
+import { BonusIndicator } from "game/entities/BonusIndicator";
+import { CoffeeMug } from "game/entities/CoffeeMug";
 import { Guy, SIDE_SPEED } from "game/entities/Guy";
 import { Score } from "game/entities/Score";
+import {
+  createCoffeeMugSpawner,
+  createCommitSpawner,
+  createWordSpawner,
+} from "game/entities/Spawner";
 import { Word } from "game/entities/Word";
-import { WordSpawner } from "game/entities/WordSpawner";
 
 const LEFT_KEY = "ArrowLeft";
 const RIGHT_KEY = "ArrowRight";
@@ -44,8 +49,10 @@ export class Game extends Scene {
 
     this.addEntity("guy", this.guy);
     this.addEntity("score", this.score);
-    this.addEntity("wordSpawner", new WordSpawner(this.words, ctx));
-    this.addEntity("commitSpawner", new CommitSpawner(ctx));
+    this.addEntity("wordSpawner", createWordSpawner(ctx, this.words, this.guy));
+    this.addEntity("commitSpawner", createCommitSpawner(ctx, this.guy));
+    this.addEntity("coffeeMugSpawner", createCoffeeMugSpawner());
+    this.addEntity("bonusIndicator", new BonusIndicator(ctx));
 
     window.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("keyup", this.onKeyUp);
@@ -73,6 +80,10 @@ export class Game extends Scene {
     if (event.key === RIGHT_KEY) {
       this.guy.setSpeedX(SIDE_SPEED);
       this.holdingKeys.push(event.key);
+    }
+
+    if (event.key === "m") {
+      this.addEntity("mug", new CoffeeMug());
     }
   }
 

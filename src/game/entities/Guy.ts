@@ -9,7 +9,7 @@ const GRAVITY = 1000;
 const JUMP_SPEED = -500;
 export const SIDE_SPEED = 225;
 
-const DRINKING_PERIOD = 5;
+const DRINKING_PERIOD = 1;
 const TRANSFORM_PERIOD = 60;
 
 type GuyForm = "normal" | "strong";
@@ -189,7 +189,8 @@ export class Guy extends Entity {
 
       if (
         this.currentForm === "normal" &&
-        this.nonDrinkingTimeS >= DRINKING_PERIOD
+        this.nonDrinkingTimeS >= DRINKING_PERIOD &&
+        this.getScene().getEntity("coffeeWave")
       ) {
         this.drinkingSound.playWithDelay(500);
         this.nonDrinkingTimeS = 0;

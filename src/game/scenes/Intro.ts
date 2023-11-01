@@ -1,7 +1,7 @@
 import { Scene } from "engine/scenes/Scene";
 import { Sound } from "engine/sound/Sound";
-import { CommitSpawner } from "game/entities/CommitSpawner";
 import { Guy } from "game/entities/Guy";
+import { createCommitSpawner } from "game/entities/Spawner";
 import { StaticWord } from "game/entities/Word";
 import { getRandomWordX } from "game/helpers";
 
@@ -26,7 +26,7 @@ export class Intro extends Scene {
     const keysText = "Press ← and → to move";
 
     const guy = new Guy(window.innerWidth / 2, 0, false);
-    const commitSpawner = new CommitSpawner(ctx, getRandomWordX);
+    const commitSpawner = createCommitSpawner(ctx, guy, getRandomWordX);
     const title = new StaticWord(
       titleText,
       window.innerWidth / 2 - ctx.measureText(titleText).width / 2,

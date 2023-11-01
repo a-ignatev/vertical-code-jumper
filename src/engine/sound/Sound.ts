@@ -13,6 +13,10 @@ export class Sound {
     this.isMuted = false;
   }
 
+  setCurrentTime(timeS: number) {
+    this.audio.currentTime = timeS;
+  }
+
   play() {
     if (this.isMuted) {
       return;
