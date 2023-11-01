@@ -6,8 +6,6 @@ import { BonusIndicator } from "./BonusIndicator";
 const MIDDLE_WAVE_SPEED = 6.25;
 const MIDDLE_WAVE_MAX = 10;
 const MIDDLE_WAVE_MIN = -10;
-const DRINKING_SPEED = window.innerHeight / 10; // 10 seconds
-const POURING_SPEED = window.innerHeight; // 1 second
 const SHIFT_SPEED = 4;
 const SEGMENT_LENGTH = 20;
 const SCALE = 5;
@@ -19,11 +17,15 @@ export class CoffeeWave extends Entity {
   private middleHeight: number = 0;
   private isPouring = true;
   private sound: Sound;
+  private drinkingSpeed: number;
+  private pouringSpeed: number;
 
   constructor() {
     super();
 
     this.baseHeight = window.innerHeight;
+    this.drinkingSpeed = window.innerHeight / 10; // 10 seconds
+    this.pouringSpeed = window.innerHeight; // 1 second
     this.shift = 0;
     this.sound = new Sound("pouring-drink.mp3");
     this.sound.setCurrentTime(0.2);
@@ -36,9 +38,9 @@ export class CoffeeWave extends Entity {
 
   update({ delta }: Context): void {
     if (this.isPouring) {
-      this.baseHeight -= POURING_SPEED * delta;
+      this.baseHeight -= this.pouringSpeed * delta;
     } else {
-      this.baseHeight += DRINKING_SPEED * delta;
+      this.baseHeight += this.drinkingSpeed * delta;
     }
 
     this.shift -= SHIFT_SPEED * delta;
