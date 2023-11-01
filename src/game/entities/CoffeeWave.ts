@@ -3,6 +3,9 @@ import { Rect } from "engine/entities/Rect";
 import { Sound } from "engine/sound/Sound";
 import { BonusIndicator } from "./BonusIndicator";
 
+const MIDDLE_WAVE_SPEED = 6.25;
+const MIDDLE_WAVE_MAX = 10;
+const MIDDLE_WAVE_MIN = -10;
 const DRINKING_SPEED = window.innerHeight / 10; // 10 seconds
 const POURING_SPEED = window.innerHeight; // 1 second
 const SHIFT_SPEED = 4;
@@ -41,16 +44,16 @@ export class CoffeeWave extends Entity {
     this.shift -= SHIFT_SPEED * delta;
 
     if (this.isMiddleGoingUp === true) {
-      this.middleHeight -= 0.1;
+      this.middleHeight -= MIDDLE_WAVE_SPEED * delta;
     } else {
-      this.middleHeight += 0.1;
+      this.middleHeight += MIDDLE_WAVE_SPEED * delta;
     }
 
-    if (this.middleHeight > 10) {
+    if (this.middleHeight > MIDDLE_WAVE_MAX) {
       this.isMiddleGoingUp = true;
     }
 
-    if (this.middleHeight < -10) {
+    if (this.middleHeight < MIDDLE_WAVE_MIN) {
       this.isMiddleGoingUp = false;
     }
 

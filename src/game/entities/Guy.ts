@@ -2,6 +2,7 @@ import { Animation } from "engine/animation/Animation";
 import { Context, Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
 import { Sound } from "engine/sound/Sound";
+import { LifeBar } from "./LifeBar";
 import { Score } from "./Score";
 import { Word } from "./Word";
 
@@ -204,6 +205,7 @@ export class Guy extends Entity {
       ) {
         this.roarSound.play();
         this.currentAnimation = "transforms";
+        this.getScene().getEntity<LifeBar>("lifeBar")?.becomeStrong();
       }
     }
 

@@ -3,6 +3,7 @@ import { Rect } from "engine/entities/Rect";
 import { Sound } from "engine/sound/Sound";
 
 const LIFE_COUNT = 3;
+const STRONG_LIFE_COUNT = 4;
 const WIDTH = 28;
 const HEIGHT = 24;
 const PADDING = 4;
@@ -11,7 +12,8 @@ export class LifeBar extends Entity {
   private heartImg: HTMLImageElement;
   private heartEmptyImg: HTMLImageElement;
   private life = LIFE_COUNT;
-  sound: Sound;
+  private totalLife = LIFE_COUNT;
+  private sound: Sound;
 
   constructor() {
     super();
@@ -37,12 +39,21 @@ export class LifeBar extends Entity {
     }
   }
 
+  reset() {
+    this.life = this.totalLife;
+  }
+
+  becomeStrong() {
+    this.totalLife = STRONG_LIFE_COUNT;
+    this.reset();
+  }
+
   update(): void {}
 
   render(ctx: CanvasRenderingContext2D): void {
-    const offset = window.innerWidth - (WIDTH + PADDING) * LIFE_COUNT;
+    const offset = window.innerWidth - (WIDTH + PADDING) * this.totalLife;
 
-    for (let i = 0; i < LIFE_COUNT; i++) {
+    for (let i = 0; i < this.totalLife; i++) {
       ctx.drawImage(
         this.life - 1 >= i ? this.heartImg : this.heartEmptyImg,
         offset + i * (WIDTH + PADDING),

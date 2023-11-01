@@ -99,7 +99,11 @@ export class GameOver extends Scene {
     this.getSceneManager().switchScene("game");
   }
 
-  private onKeyDown() {
-    this.getSceneManager().switchScene("game");
+  private onKeyDown(event: KeyboardEvent) {
+    event.preventDefault();
+
+    if (event.key === " ") {
+      this.getSceneManager().switchScene("game");
+    }
   }
 }

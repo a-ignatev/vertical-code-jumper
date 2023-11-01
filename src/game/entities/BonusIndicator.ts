@@ -1,7 +1,11 @@
-import { Entity } from "engine/entities/Entity";
+import { Context, Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
 
 const TEXT = "x2";
+const SCALE_SPEED = 3;
+const MAX_SCALE = 2;
+const MIN_SCALE = 0.6;
+const COLOR = "#EDBB4E";
 
 export class BonusIndicator extends Entity {
   private isHidden = true;
@@ -19,18 +23,18 @@ export class BonusIndicator extends Entity {
     throw new Error("Method not implemented.");
   }
 
-  update(): void {
+  update({ delta }: Context): void {
     if (this.isGrowing === true) {
-      this.scale -= 0.05;
+      this.scale -= SCALE_SPEED * delta;
     } else {
-      this.scale += 0.05;
+      this.scale += SCALE_SPEED * delta;
     }
 
-    if (this.scale > 2) {
+    if (this.scale > MAX_SCALE) {
       this.isGrowing = true;
     }
 
-    if (this.scale < 0.6) {
+    if (this.scale < MIN_SCALE) {
       this.isGrowing = false;
     }
   }
@@ -47,7 +51,7 @@ export class BonusIndicator extends Entity {
     ctx.font = `${globalFontSize * this.scale}px ${
       globalFontFamily.split(",")[0]
     }`;
-    ctx.fillStyle = "#EDBB4E";
+    ctx.fillStyle = COLOR;
     ctx.fillText(
       TEXT,
       window.innerWidth / 2 - (this.originalTextWidth / 2) * this.scale,

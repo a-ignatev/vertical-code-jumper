@@ -4,8 +4,10 @@ import { getRandomWordX } from "game/helpers";
 import { BonusIndicator } from "./BonusIndicator";
 import { CoffeeWave } from "./CoffeeWave";
 import { Guy } from "./Guy";
+import { LifeBar } from "./LifeBar";
 
 const MUG_SIZE = 16;
+const FALLING_SPEED = 300;
 
 export class CoffeeMug extends Entity {
   private cx: number;
@@ -31,7 +33,7 @@ export class CoffeeMug extends Entity {
   }
 
   update({ delta }: Context): void {
-    this.cy += 300 * delta;
+    this.cy += FALLING_SPEED * delta;
 
     const guy = this.getScene().getEntity<Guy>("guy");
 
@@ -40,6 +42,7 @@ export class CoffeeMug extends Entity {
 
       if (!this.getScene().getEntity("coffeeWave")) {
         this.getScene().addEntity("coffeeWave", new CoffeeWave());
+        this.getScene().getEntity<LifeBar>("lifeBar")?.reset();
         this.getScene()
           .getEntity<BonusIndicator>("bonusIndicator")
           ?.setIsHidden(false);
