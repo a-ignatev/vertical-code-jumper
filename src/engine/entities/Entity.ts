@@ -3,6 +3,7 @@ import { Rect } from "./Rect";
 
 export interface Context {
   delta: number;
+  ctx: CanvasRenderingContext2D
 }
 
 export abstract class Entity {

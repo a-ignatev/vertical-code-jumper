@@ -42,16 +42,16 @@ export class Word extends Entity {
   ) {
     return new Word(
       getRandomWord(words),
-      getRandomWordXNotCloseTo(notCloseTo),
+      getRandomWordXNotCloseTo(ctx, notCloseTo),
       0,
       ctx
     );
   }
 
-  update({ delta }: Context) {
+  update({ delta, ctx }: Context) {
     this.y += FALLING_SPEED * delta;
 
-    if (this.y - globalFontSize > window.innerHeight) {
+    if (this.y - globalFontSize > ctx.canvas.height) {
       this.getScene().removeEntity(this);
     }
   }

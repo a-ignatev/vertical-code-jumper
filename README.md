@@ -8,7 +8,7 @@ An infinite vertical jumping game in your code.
 - drink coffee to receive more points per commit and prevent any damage
 - survive for one minute to become even stronger!
 
-![Current File](/demo/demo.gif "Vertical Code Jumper")
+![Current File](/resources/demo.gif "Vertical Code Jumper")
 
 ## Contributors
 - "A Normal guy that transforms into a super strong normal guy" by https://kalann.itch.io/

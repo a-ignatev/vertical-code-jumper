@@ -17,8 +17,11 @@ export function prepareCanvas(fontSizePx: number, fontFamily: string) {
     return;
   }
 
-  ctx.canvas.width = window.innerWidth;
-  ctx.canvas.height = window.innerHeight;
+  if (automaticResizeCanvas) {
+    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.height = window.innerHeight;
+  }
+
   ctx.imageSmoothingEnabled = false;
   ctx.font = `${fontSizePx}px ${fontFamily.split(",")[0]}`;
 

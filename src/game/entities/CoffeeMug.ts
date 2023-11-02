@@ -14,10 +14,10 @@ export class CoffeeMug extends Entity {
   private cy: number;
   private img: HTMLImageElement;
 
-  constructor() {
+  constructor(ctx: CanvasRenderingContext2D) {
     super();
 
-    this.cx = getRandomWordX();
+    this.cx = getRandomWordX(ctx);
     this.cy = -MUG_SIZE;
     this.img = new Image(); // Create new img element
     this.img.src = mediaFolder + "/img/mug.png"; // Set source path
@@ -32,7 +32,7 @@ export class CoffeeMug extends Entity {
     );
   }
 
-  update({ delta }: Context): void {
+  update({ delta, ctx }: Context): void {
     this.cy += FALLING_SPEED * delta;
 
     const guy = this.getScene().getEntity<Guy>("guy");
@@ -41,7 +41,7 @@ export class CoffeeMug extends Entity {
       this.getScene().removeEntity(this);
 
       if (!this.getScene().getEntity("coffeeWave")) {
-        this.getScene().addEntity("coffeeWave", new CoffeeWave());
+        this.getScene().addEntity("coffeeWave", new CoffeeWave(ctx));
         this.getScene().getEntity<LifeBar>("lifeBar")?.reset();
         this.getScene()
           .getEntity<BonusIndicator>("bonusIndicator")

@@ -57,11 +57,14 @@ export class Spawner extends Entity {
 export const createCommitSpawner = (
   ctx: CanvasRenderingContext2D,
   guy: Guy,
-  xPositionGenerator: (x: number) => number = getRandomWordXNotCloseTo
+  xPositionGenerator: (
+    ctx: CanvasRenderingContext2D,
+    x: number
+  ) => number = getRandomWordXNotCloseTo
 ) =>
   new Spawner(
     "commit",
-    () => new Commit(xPositionGenerator(guy.getPosition().cx), 0, ctx),
+    () => new Commit(xPositionGenerator(ctx, guy.getPosition().cx), 0, ctx),
     2.5
   );
 
@@ -77,12 +80,12 @@ export const createWordSpawner = (
     true
   );
 
-export const createCoffeeMugSpawner = () =>
+export const createCoffeeMugSpawner = (ctx: CanvasRenderingContext2D) =>
   new Spawner(
     "coffeeMug",
     (spawner: Spawner) => {
       if (!spawner.getScene().getEntity("coffeeWave")) {
-        return new CoffeeMug();
+        return new CoffeeMug(ctx);
       }
     },
     6

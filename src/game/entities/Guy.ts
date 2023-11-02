@@ -144,7 +144,7 @@ export class Guy extends Entity {
     this.speedX = speed;
   }
 
-  update({ delta }: Context) {
+  update({ delta, ctx }: Context) {
     this.lifeTimeS += delta;
 
     this.speedY += GRAVITY * delta;
@@ -153,7 +153,7 @@ export class Guy extends Entity {
     this.cx += this.speedX * delta;
     this.cx = Math.max(
       this.getAnimation().getSize().width,
-      Math.min(this.cx, window.innerWidth - this.getAnimation().getSize().width)
+      Math.min(this.cx, ctx.canvas.width - this.getAnimation().getSize().width)
     );
 
     this.fullBoundingBox.updatePosition(
@@ -212,7 +212,7 @@ export class Guy extends Entity {
     this.getAnimation().update(delta);
 
     const offTheScreen =
-      this.cy - 2 * this.getAnimation().getSize().height > window.innerHeight;
+      this.cy - 2 * this.getAnimation().getSize().height > ctx.canvas.height;
 
     if (offTheScreen) {
       this.getScene().getSceneManager().switchScene("gameOver");

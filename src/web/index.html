@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="./main.css" rel="stylesheet">
+  <link href="./override.css" rel="stylesheet">
+  <script>
+    globalFontFamily = "monospace";
+    globalFontSize = 14;
+    mediaFolder = "./";
+    initialMusicEnabled = true;
+    automaticResizeCanvas = false;
+  </script>
+
+  <title>Vertical Code Jumper</title>
+</head>
+
+<body>
+  <div class="background">
+    <canvas id="gameCanvas" width="360" height="600"></canvas>
+  </div>
+
+  <script src="./vscode-mock.js"></script>
+  <script src="./game.js"></script>
+  <script>
+    window.postMessage({ type: 'addWords', words: ['hello', 'world', 'good'] })
+  </script>
+</body>
+
+</html>

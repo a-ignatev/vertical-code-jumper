@@ -5,7 +5,7 @@ import { Guy } from "./Guy";
 import { LifeBar } from "./LifeBar";
 import { Score } from "./Score";
 
-const FALLING_SPEED = 300;
+const FALLING_SPEED = 200;
 const FONT_SIZE = globalFontSize * 0.8;
 const BLOCK_SIZE = FONT_SIZE * 0.5;
 const PADDING = 1;
@@ -56,7 +56,7 @@ export class Commit extends Entity {
       BLOCK_SIZE / 2;
   }
 
-  update({ delta }: Context): void {
+  update({ delta, ctx }: Context): void {
     this.y += FALLING_SPEED * delta;
 
     const score = this.getScene().getEntity<Score>("score");
@@ -75,22 +75,19 @@ export class Commit extends Entity {
           } else {
             score.addScore(100);
           }
+          this.getScene().getEntity<LifeBar>("lifeBar")?.increaseLife();
           this.getScene().removeEntity(this);
         }
       }
     }
 
-    if (this.y - FONT_SIZE > window.innerHeight) {
+    if (this.y - FONT_SIZE > ctx.canvas.height) {
       this.getScene().removeEntity(this);
 
       const coffeeWave = this.getScene().getEntity("coffeeWave");
 
       if (!coffeeWave) {
-        const lifeBar = this.getScene().getEntity<LifeBar>("lifeBar");
-
-        if (lifeBar) {
-          lifeBar.decreaseLife();
-        }
+        this.getScene().getEntity<LifeBar>("lifeBar")?.decreaseLife();
       }
     }
   }

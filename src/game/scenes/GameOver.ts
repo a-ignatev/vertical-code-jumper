@@ -25,22 +25,22 @@ export class GameOver extends Scene {
 
     const gameOver = new StaticWord(
       gameOverText,
-      window.innerWidth / 2 - ctx.measureText(gameOverText).width / 2,
-      window.innerHeight / 2 - 6 * globalFontSize,
+      ctx.canvas.width / 2 - ctx.measureText(gameOverText).width / 2,
+      ctx.canvas.height / 2 - 6 * globalFontSize,
       ctx
     );
 
     const jobTitle = new StaticWord(
       jobTitleText,
-      window.innerWidth / 2 - ctx.measureText(jobTitleText).width / 2,
-      window.innerHeight / 2 - globalFontSize,
+      ctx.canvas.width / 2 - ctx.measureText(jobTitleText).width / 2,
+      ctx.canvas.height / 2 - globalFontSize,
       ctx
     );
 
     const score = new StaticWord(
       scoreText,
-      window.innerWidth / 2 - ctx.measureText(scoreText).width / 2,
-      window.innerHeight / 2 + globalFontSize,
+      ctx.canvas.width / 2 - ctx.measureText(scoreText).width / 2,
+      ctx.canvas.height / 2 + globalFontSize,
       ctx
     );
 
@@ -48,14 +48,14 @@ export class GameOver extends Scene {
 
     const help = new StaticWord(
       helpText,
-      window.innerWidth / 2 - ctx.measureText(helpText).width / 2,
-      window.innerHeight / 2 + 4 * globalFontSize,
+      ctx.canvas.width / 2 - ctx.measureText(helpText).width / 2,
+      ctx.canvas.height / 2 + 4 * globalFontSize,
       ctx
     );
     const help2 = new StaticWord(
       help2Text,
-      window.innerWidth / 2 - ctx.measureText(help2Text).width / 2,
-      window.innerHeight / 2 + 6 * globalFontSize,
+      ctx.canvas.width / 2 - ctx.measureText(help2Text).width / 2,
+      ctx.canvas.height / 2 + 6 * globalFontSize,
       ctx
     );
 

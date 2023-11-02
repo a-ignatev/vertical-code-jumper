@@ -1,0 +1,29 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background-color: #aaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.background {
+  background-color: #21252B;
+  height: 600px;
+  width: 360px;
+}
+
+:root {
+  --vscode-editor-foreground: #abb2bf;
+}

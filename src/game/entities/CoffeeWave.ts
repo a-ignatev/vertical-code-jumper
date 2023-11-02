@@ -20,12 +20,12 @@ export class CoffeeWave extends Entity {
   private drinkingSpeed: number;
   private pouringSpeed: number;
 
-  constructor() {
+  constructor(ctx: CanvasRenderingContext2D) {
     super();
 
-    this.baseHeight = window.innerHeight;
-    this.drinkingSpeed = window.innerHeight / 10; // 10 seconds
-    this.pouringSpeed = window.innerHeight; // 1 second
+    this.baseHeight = ctx.canvas.height;
+    this.drinkingSpeed = ctx.canvas.height / 10; // 10 seconds
+    this.pouringSpeed = ctx.canvas.height; // 1 second
     this.shift = 0;
     this.sound = new Sound("pouring-drink.mp3");
     this.sound.setCurrentTime(0.2);
@@ -36,7 +36,7 @@ export class CoffeeWave extends Entity {
     throw new Error("Method not implemented.");
   }
 
-  update({ delta }: Context): void {
+  update({ delta, ctx }: Context): void {
     if (this.isPouring) {
       this.baseHeight -= this.pouringSpeed * delta;
     } else {
@@ -61,7 +61,7 @@ export class CoffeeWave extends Entity {
 
     if (this.isPouring && this.baseHeight <= 0) {
       this.isPouring = false;
-    } else if (this.baseHeight >= window.innerHeight + SCALE) {
+    } else if (this.baseHeight >= ctx.canvas.height + SCALE) {
       this.getScene().removeEntity(this);
       this.getScene()
         .getEntity<BonusIndicator>("bonusIndicator")
@@ -84,12 +84,12 @@ export class CoffeeWave extends Entity {
   ) {
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.moveTo(window.innerWidth, window.innerHeight);
-    ctx.lineTo(0, window.innerHeight);
+    ctx.moveTo(ctx.canvas.width, ctx.canvas.height);
+    ctx.lineTo(0, ctx.canvas.height);
     ctx.lineTo(0, this.baseHeight + height);
 
     let x = 0;
-    while (x <= window.innerWidth) {
+    while (x <= ctx.canvas.width) {
       const y =
         Math.sin(x * SCALE + phase + this.shift) * SCALE +
         this.baseHeight +
@@ -98,7 +98,7 @@ export class CoffeeWave extends Entity {
       x += SEGMENT_LENGTH;
     }
 
-    ctx.lineTo(window.innerWidth, this.baseHeight + height);
+    ctx.lineTo(ctx.canvas.width, this.baseHeight + height);
     ctx.closePath();
     ctx.fill();
   }

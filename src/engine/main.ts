@@ -27,7 +27,7 @@ export function startGameLoop(
 
     // update entities
     for (const entity of scene.getEntities()) {
-      entity.update({ delta: deltaMs / 1000 });
+      entity.update({ delta: deltaMs / 1000, ctx });
     }
 
     // clear screen

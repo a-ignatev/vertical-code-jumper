@@ -19,18 +19,20 @@ export class Game extends Scene {
   private holdingKeys: string[] = [];
   private guy?: Guy;
   private score?: Score;
+  private ctx: CanvasRenderingContext2D;
 
-  constructor(words: string[]) {
+  constructor(words: string[], ctx: CanvasRenderingContext2D) {
     super();
 
     this.words = words;
+    this.ctx = ctx;
 
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
   }
 
   attach(ctx: CanvasRenderingContext2D) {
-    this.guy = new Guy(window.innerWidth / 2, 0, true);
+    this.guy = new Guy(ctx.canvas.width / 2, 0, true);
     this.score = new Score(
       "Score: ",
       globalFontSize / 2,
@@ -41,8 +43,8 @@ export class Game extends Scene {
     // TODO refactor
     // create initial words
     let y = 1;
-    while (y * 100 <= window.innerHeight) {
-      const randomWord = Word.randomWord(this.words, innerWidth / 2, ctx);
+    while (y * 100 <= ctx.canvas.height) {
+      const randomWord = Word.randomWord(this.words, ctx.canvas.width / 2, ctx);
       randomWord.y = y * 100;
       this.addEntity("word", randomWord);
       y++;
@@ -52,7 +54,7 @@ export class Game extends Scene {
     this.addEntity("score", this.score);
     this.addEntity("wordSpawner", createWordSpawner(ctx, this.words, this.guy));
     this.addEntity("commitSpawner", createCommitSpawner(ctx, this.guy));
-    this.addEntity("coffeeMugSpawner", createCoffeeMugSpawner());
+    this.addEntity("coffeeMugSpawner", createCoffeeMugSpawner(ctx));
     this.addEntity("bonusIndicator", new BonusIndicator(ctx));
     this.addEntity("lifeBar", new LifeBar());
 
@@ -85,7 +87,7 @@ export class Game extends Scene {
     }
 
     if (event.key === "m") {
-      this.addEntity("mug", new CoffeeMug());
+      this.addEntity("mug", new CoffeeMug(this.ctx));
     }
   }
 

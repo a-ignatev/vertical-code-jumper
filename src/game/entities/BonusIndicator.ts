@@ -54,7 +54,7 @@ export class BonusIndicator extends Entity {
     ctx.fillStyle = COLOR;
     ctx.fillText(
       TEXT,
-      window.innerWidth / 2 - (this.originalTextWidth / 2) * this.scale,
+      ctx.canvas.width / 2 - (this.originalTextWidth / 2) * this.scale,
       20
     );
   }

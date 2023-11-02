@@ -25,25 +25,25 @@ export class Intro extends Scene {
     const helpText = "Click to play";
     const keysText = "Press ← and → to move";
 
-    const guy = new Guy(window.innerWidth / 2, 0, false);
+    const guy = new Guy(ctx.canvas.width / 2, 0, false);
     const commitSpawner = createCommitSpawner(ctx, guy, getRandomWordX);
     const title = new StaticWord(
       titleText,
-      window.innerWidth / 2 - ctx.measureText(titleText).width / 2,
-      window.innerHeight / 2 + 2 * globalFontSize,
+      ctx.canvas.width / 2 - ctx.measureText(titleText).width / 2,
+      ctx.canvas.height / 2 + 2 * globalFontSize,
       ctx
     );
 
     const keys = new StaticWord(
       keysText,
-      window.innerWidth / 2 - ctx.measureText(keysText).width / 2,
-      window.innerHeight / 2 + 4 * globalFontSize,
+      ctx.canvas.width / 2 - ctx.measureText(keysText).width / 2,
+      ctx.canvas.height / 2 + 4 * globalFontSize,
       ctx
     );
     const help = new StaticWord(
       helpText,
-      window.innerWidth / 2 - ctx.measureText(helpText).width / 2,
-      window.innerHeight / 2 + 6 * globalFontSize,
+      ctx.canvas.width / 2 - ctx.measureText(helpText).width / 2,
+      ctx.canvas.height / 2 + 6 * globalFontSize,
       ctx
     );
 

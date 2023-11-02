@@ -39,6 +39,12 @@ export class LifeBar extends Entity {
     }
   }
 
+  increaseLife() {
+    if (this.life !== this.totalLife) {
+      this.life++;
+    }
+  }
+
   reset() {
     this.life = this.totalLife;
   }
@@ -51,7 +57,7 @@ export class LifeBar extends Entity {
   update(): void {}
 
   render(ctx: CanvasRenderingContext2D): void {
-    const offset = window.innerWidth - (WIDTH + PADDING) * this.totalLife;
+    const offset = ctx.canvas.width - (WIDTH + PADDING) * this.totalLife;
 
     for (let i = 0; i < this.totalLife; i++) {
       ctx.drawImage(

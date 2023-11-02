@@ -33,7 +33,7 @@ function main() {
       case "addWords": {
         const state = getStateOrDefault(vscode);
         vscode.setState({ ...state, words: message.words });
-        startGame(state.words, abortController.signal);
+        startGame(message.words, abortController.signal);
         break;
       }
       case "restartGame": {
@@ -109,11 +109,11 @@ function startGame(words: string[], abortSignal: AbortSignal) {
 
   const sceneManager = new SceneManager(ctx);
   sceneManager.addScene("intro", new Intro(music));
-  sceneManager.addScene("game", new Game(words));
+  sceneManager.addScene("game", new Game(words, ctx));
   sceneManager.addScene("gameOver", new GameOver());
   sceneManager.addScene("resize", new Resize());
 
-  if (isScreenTooSmall() || isScreenTooWide()) {
+  if (isScreenTooSmall(ctx) || isScreenTooWide(ctx)) {
     sceneManager.switchScene("resize");
   } else {
     sceneManager.switchScene("intro");

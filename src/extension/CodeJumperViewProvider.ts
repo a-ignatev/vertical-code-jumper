@@ -81,7 +81,7 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
 
     // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "main-bundle.js")
+      vscode.Uri.joinPath(this._extensionUri, "media", "game.js")
     );
 
     const styleMainUri = webview.asWebviewUri(
@@ -115,6 +115,7 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
           globalFontSize = ${workbenchConfig.get("fontSize")};
           mediaFolder = "${mediaFolder}";
           initialMusicEnabled = ${this.isMusicEnabled()};
+          automaticResizeCanvas = true;
         </script>
         
         <title>Vertical Code Jumper</title>
