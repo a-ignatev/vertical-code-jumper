@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/a-ignatev/vertical-code-jumper/compare/v0.0.6...v0.0.7) (2023-11-02)
+
+
+### Features
+
+* add web version support draft ([1b892ed](https://github.com/a-ignatev/vertical-code-jumper/commit/1b892edc1bf8beeab2802bdf35a52e8d5b4d5d9b))
+
 ### [0.0.6](https://github.com/a-ignatev/vertical-code-jumper/compare/v0.0.5...v0.0.6) (2023-11-01)
 
 
