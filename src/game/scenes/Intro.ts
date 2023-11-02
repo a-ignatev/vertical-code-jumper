@@ -1,3 +1,4 @@
+import { Graphics } from "engine/graphics/Graphics";
 import { Scene } from "engine/scenes/Scene";
 import { Sound } from "engine/sound/Sound";
 import { Guy } from "game/entities/Guy";
@@ -20,31 +21,31 @@ export class Intro extends Scene {
     this.onClick = this.onClick.bind(this);
   }
 
-  attach(ctx: CanvasRenderingContext2D): void {
+  attach(graphics: Graphics): void {
     const titleText = "Vertical Code Jumper";
     const helpText = "Click to play";
     const keysText = "Press ← and → to move";
 
-    const guy = new Guy(ctx.canvas.width / 2, 0, false);
-    const commitSpawner = createCommitSpawner(ctx, guy, getRandomWordX);
+    const guy = new Guy(graphics.getWidth() / 2, 0, false);
+    const commitSpawner = createCommitSpawner(graphics, guy, getRandomWordX);
     const title = new StaticWord(
       titleText,
-      ctx.canvas.width / 2 - ctx.measureText(titleText).width / 2,
-      ctx.canvas.height / 2 + 2 * globalFontSize,
-      ctx
+      graphics.getWidth() / 2 - graphics.measureText(titleText).width / 2,
+      graphics.getHeight() / 2 + 2 * globalFontSize,
+      graphics
     );
 
     const keys = new StaticWord(
       keysText,
-      ctx.canvas.width / 2 - ctx.measureText(keysText).width / 2,
-      ctx.canvas.height / 2 + 4 * globalFontSize,
-      ctx
+      graphics.getWidth() / 2 - graphics.measureText(keysText).width / 2,
+      graphics.getHeight() / 2 + 4 * globalFontSize,
+      graphics
     );
     const help = new StaticWord(
       helpText,
-      ctx.canvas.width / 2 - ctx.measureText(helpText).width / 2,
-      ctx.canvas.height / 2 + 6 * globalFontSize,
-      ctx
+      graphics.getWidth() / 2 - graphics.measureText(helpText).width / 2,
+      graphics.getHeight() / 2 + 6 * globalFontSize,
+      graphics
     );
 
     this.addEntity("guy", guy);
@@ -53,11 +54,11 @@ export class Intro extends Scene {
     this.addEntity("keys", keys);
     this.addEntity("commitSpawner", commitSpawner);
 
-    ctx.canvas.addEventListener("click", this.onClick);
+    graphics.addScreenEventListener("click", this.onClick);
   }
 
-  detach(ctx: CanvasRenderingContext2D): void {
-    ctx.canvas.removeEventListener("click", this.onClick);
+  detach(graphics: Graphics): void {
+    graphics.removeScreenEventListener("click", this.onClick);
   }
 
   private onClick() {

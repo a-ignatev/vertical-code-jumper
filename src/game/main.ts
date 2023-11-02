@@ -1,13 +1,13 @@
 import { WebviewApi } from "vscode-webview";
+import { prepareGraphics } from "engine/graphics/prepareGraphics";
 import { startGameLoop } from "engine/main";
 import { SceneManager } from "engine/scenes/SceneManager";
 import { Sound } from "engine/sound/Sound";
-import { prepareCanvas } from "engine/utils/prepareCanvas";
 import { Game } from "./scenes/Game";
 import { GameOver } from "./scenes/GameOver";
 import { Intro } from "./scenes/Intro";
 import { Resize } from "./scenes/Resize";
-import { debounce, isScreenTooSmall, isScreenTooWide } from "./helpers";
+import { debounce } from "./helpers";
 
 const DEBUG = false;
 
@@ -86,40 +86,37 @@ function requestWords(vscode: WebviewApi<State>) {
 
 function resetAll() {
   abortController.abort();
-  const graphics = prepareCanvas(globalFontSize, globalFontFamily);
+  const graphics = prepareGraphics(globalFontSize, globalFontFamily);
 
   if (!graphics) {
     return;
   }
 
   window.requestAnimationFrame(() => {
-    const { canvas, ctx } = graphics;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    graphics.clearScreen();
   });
 }
 
 function startGame(words: string[], abortSignal: AbortSignal) {
-  const graphics = prepareCanvas(globalFontSize, globalFontFamily);
+  const graphics = prepareGraphics(globalFontSize, globalFontFamily);
 
   if (!graphics) {
     return;
   }
 
-  const { ctx, canvas } = graphics;
-
-  const sceneManager = new SceneManager(ctx);
+  const sceneManager = new SceneManager(graphics);
   sceneManager.addScene("intro", new Intro(music));
-  sceneManager.addScene("game", new Game(words, ctx));
+  sceneManager.addScene("game", new Game(words));
   sceneManager.addScene("gameOver", new GameOver());
   sceneManager.addScene("resize", new Resize());
 
-  if (isScreenTooSmall(ctx) || isScreenTooWide(ctx)) {
+  if (graphics.isScreenTooSmall() || graphics.isScreenTooWide()) {
     sceneManager.switchScene("resize");
   } else {
     sceneManager.switchScene("intro");
   }
 
-  startGameLoop(sceneManager, ctx, canvas, abortSignal, DEBUG);
+  startGameLoop(sceneManager, graphics, abortSignal, DEBUG);
 }
 
 main();

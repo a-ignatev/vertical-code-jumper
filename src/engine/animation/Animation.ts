@@ -1,3 +1,5 @@
+import { Graphics } from "engine/graphics/Graphics";
+
 const FRAME_TIME = 1 / 8; // 8fps
 
 interface ImageProperties {
@@ -68,11 +70,11 @@ export class Animation {
     }
   }
 
-  render(cx: number, cy: number, ctx: CanvasRenderingContext2D) {
+  render(cx: number, cy: number, graphics: Graphics) {
     const row = Math.trunc(this.currentFrame / this.imageProperties.cols);
     const col = this.currentFrame % this.imageProperties.cols;
 
-    ctx.drawImage(
+    graphics.drawImage(
       this.img,
       col * this.imageProperties.width,
       row * this.imageProperties.height,

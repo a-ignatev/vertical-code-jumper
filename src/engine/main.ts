@@ -1,9 +1,9 @@
+import { Graphics } from "./graphics/Graphics";
 import { SceneManager } from "./scenes/SceneManager";
 
 export function startGameLoop(
   sceneManager: SceneManager,
-  ctx: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement,
+  graphics: Graphics,
   abortSignal: AbortSignal,
   debug: boolean
 ) {
@@ -27,16 +27,16 @@ export function startGameLoop(
 
     // update entities
     for (const entity of scene.getEntities()) {
-      entity.update({ delta: deltaMs / 1000, ctx });
+      entity.update({ delta: deltaMs / 1000 });
     }
 
     // clear screen
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    graphics.clearScreen();
 
     // render entities
     [...scene.getEntities()]
       .sort((a, b) => a.getZOrder() - b.getZOrder())
-      .forEach((entity) => entity.render(ctx, debug));
+      .forEach((entity) => entity.render(graphics, debug));
 
     lastTimeStamp = timeStamp;
 

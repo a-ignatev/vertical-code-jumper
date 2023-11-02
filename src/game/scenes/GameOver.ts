@@ -1,3 +1,4 @@
+import { Graphics } from "engine/graphics/Graphics";
 import { Scene } from "engine/scenes/Scene";
 import { Sound } from "engine/sound/Sound";
 import { SCORE_COLOR } from "game/entities/Score";
@@ -14,7 +15,7 @@ export class GameOver extends Scene {
     this.gameOverSound = new Sound("game-over.mp3");
   }
 
-  attach(ctx: CanvasRenderingContext2D, payload: { score: number }): void {
+  attach(graphics: Graphics, payload: { score: number }): void {
     this.gameOverSound.play();
 
     const jobTitleText = this.getJobTitle(payload.score);
@@ -25,38 +26,38 @@ export class GameOver extends Scene {
 
     const gameOver = new StaticWord(
       gameOverText,
-      ctx.canvas.width / 2 - ctx.measureText(gameOverText).width / 2,
-      ctx.canvas.height / 2 - 6 * globalFontSize,
-      ctx
+      graphics.getWidth() / 2 - graphics.measureText(gameOverText).width / 2,
+      graphics.getHeight() / 2 - 6 * globalFontSize,
+      graphics
     );
 
     const jobTitle = new StaticWord(
       jobTitleText,
-      ctx.canvas.width / 2 - ctx.measureText(jobTitleText).width / 2,
-      ctx.canvas.height / 2 - globalFontSize,
-      ctx
+      graphics.getWidth() / 2 - graphics.measureText(jobTitleText).width / 2,
+      graphics.getHeight() / 2 - globalFontSize,
+      graphics
     );
 
     const score = new StaticWord(
       scoreText,
-      ctx.canvas.width / 2 - ctx.measureText(scoreText).width / 2,
-      ctx.canvas.height / 2 + globalFontSize,
-      ctx
+      graphics.getWidth() / 2 - graphics.measureText(scoreText).width / 2,
+      graphics.getHeight() / 2 + globalFontSize,
+      graphics
     );
 
     score.color = SCORE_COLOR;
 
     const help = new StaticWord(
       helpText,
-      ctx.canvas.width / 2 - ctx.measureText(helpText).width / 2,
-      ctx.canvas.height / 2 + 4 * globalFontSize,
-      ctx
+      graphics.getWidth() / 2 - graphics.measureText(helpText).width / 2,
+      graphics.getHeight() / 2 + 4 * globalFontSize,
+      graphics
     );
     const help2 = new StaticWord(
       help2Text,
-      ctx.canvas.width / 2 - ctx.measureText(help2Text).width / 2,
-      ctx.canvas.height / 2 + 6 * globalFontSize,
-      ctx
+      graphics.getWidth() / 2 - graphics.measureText(help2Text).width / 2,
+      graphics.getHeight() / 2 + 6 * globalFontSize,
+      graphics
     );
 
     this.addEntity("jobTitle", jobTitle);
@@ -65,12 +66,12 @@ export class GameOver extends Scene {
     this.addEntity("help", help);
     this.addEntity("help2", help2);
 
-    ctx.canvas.addEventListener("click", this.onClick);
+    graphics.addScreenEventListener("click", this.onClick);
     window.addEventListener("keydown", this.onKeyDown);
   }
 
-  detach(ctx: CanvasRenderingContext2D): void {
-    ctx.canvas.removeEventListener("click", this.onClick);
+  detach(graphics: Graphics): void {
+    graphics.removeScreenEventListener("click", this.onClick);
     window.removeEventListener("keydown", this.onKeyDown);
   }
 

@@ -1,3 +1,4 @@
+import { Graphics } from "engine/graphics/Graphics";
 import { Scene } from "engine/scenes/Scene";
 import { BonusIndicator } from "game/entities/BonusIndicator";
 import { CoffeeMug } from "game/entities/CoffeeMug";
@@ -19,32 +20,34 @@ export class Game extends Scene {
   private holdingKeys: string[] = [];
   private guy?: Guy;
   private score?: Score;
-  private ctx: CanvasRenderingContext2D;
 
-  constructor(words: string[], ctx: CanvasRenderingContext2D) {
+  constructor(words: string[]) {
     super();
 
     this.words = words;
-    this.ctx = ctx;
 
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
   }
 
-  attach(ctx: CanvasRenderingContext2D) {
-    this.guy = new Guy(ctx.canvas.width / 2, 0, true);
+  attach(graphics: Graphics) {
+    this.guy = new Guy(graphics.getWidth() / 2, 0, true);
     this.score = new Score(
       "Score: ",
       globalFontSize / 2,
       1.5 * globalFontSize,
-      ctx
+      graphics
     );
 
     // TODO refactor
     // create initial words
     let y = 1;
-    while (y * 100 <= ctx.canvas.height) {
-      const randomWord = Word.randomWord(this.words, ctx.canvas.width / 2, ctx);
+    while (y * 100 <= graphics.getHeight()) {
+      const randomWord = Word.randomWord(
+        this.words,
+        graphics.getWidth() / 2,
+        graphics
+      );
       randomWord.y = y * 100;
       this.addEntity("word", randomWord);
       y++;
@@ -52,10 +55,13 @@ export class Game extends Scene {
 
     this.addEntity("guy", this.guy);
     this.addEntity("score", this.score);
-    this.addEntity("wordSpawner", createWordSpawner(ctx, this.words, this.guy));
-    this.addEntity("commitSpawner", createCommitSpawner(ctx, this.guy));
-    this.addEntity("coffeeMugSpawner", createCoffeeMugSpawner(ctx));
-    this.addEntity("bonusIndicator", new BonusIndicator(ctx));
+    this.addEntity(
+      "wordSpawner",
+      createWordSpawner(graphics, this.words, this.guy)
+    );
+    this.addEntity("commitSpawner", createCommitSpawner(graphics, this.guy));
+    this.addEntity("coffeeMugSpawner", createCoffeeMugSpawner(graphics));
+    this.addEntity("bonusIndicator", new BonusIndicator(graphics));
     this.addEntity("lifeBar", new LifeBar());
 
     window.addEventListener("keydown", this.onKeyDown);
@@ -87,7 +93,8 @@ export class Game extends Scene {
     }
 
     if (event.key === "m") {
-      this.addEntity("mug", new CoffeeMug(this.ctx));
+      const graphics = this.getSceneManager().getGraphics();
+      this.addEntity("mug", new CoffeeMug(graphics));
       event.preventDefault();
     }
   }

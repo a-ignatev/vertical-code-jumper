@@ -1,5 +1,6 @@
 import { Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
+import { Graphics } from "engine/graphics/Graphics";
 import { Sound } from "engine/sound/Sound";
 
 const LIFE_COUNT = 3;
@@ -56,11 +57,11 @@ export class LifeBar extends Entity {
 
   update(): void {}
 
-  render(ctx: CanvasRenderingContext2D): void {
-    const offset = ctx.canvas.width - (WIDTH + PADDING) * this.totalLife;
+  render(graphics: Graphics): void {
+    const offset = graphics.getWidth() - (WIDTH + PADDING) * this.totalLife;
 
     for (let i = 0; i < this.totalLife; i++) {
-      ctx.drawImage(
+      graphics.drawImage(
         this.life - 1 >= i ? this.heartImg : this.heartEmptyImg,
         offset + i * (WIDTH + PADDING),
         PADDING,

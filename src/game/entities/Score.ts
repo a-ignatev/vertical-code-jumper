@@ -1,4 +1,5 @@
 import { Context } from "engine/entities/Entity";
+import { Graphics } from "engine/graphics/Graphics";
 import { Sound } from "engine/sound/Sound";
 import { Word } from "./Word";
 
@@ -12,13 +13,8 @@ export class Score extends Word {
   private lastEffectScore: number = 0;
   private additionalScore: number = 0;
 
-  constructor(
-    word: string,
-    x: number,
-    y: number,
-    ctx: CanvasRenderingContext2D
-  ) {
-    super(word, x, y, ctx);
+  constructor(word: string, x: number, y: number, graphics: Graphics) {
+    super(word, x, y, graphics);
 
     this.originalWord = word;
     this.color = SCORE_COLOR;

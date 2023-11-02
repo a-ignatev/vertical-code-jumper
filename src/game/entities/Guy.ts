@@ -1,6 +1,7 @@
 import { Animation } from "engine/animation/Animation";
 import { Context, Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
+import { Graphics } from "engine/graphics/Graphics";
 import { Sound } from "engine/sound/Sound";
 import { LifeBar } from "./LifeBar";
 import { Score } from "./Score";
@@ -144,7 +145,8 @@ export class Guy extends Entity {
     this.speedX = speed;
   }
 
-  update({ delta, ctx }: Context) {
+  update({ delta }: Context) {
+    const graphics = this.getScene().getSceneManager().getGraphics();
     this.lifeTimeS += delta;
 
     this.speedY += GRAVITY * delta;
@@ -153,7 +155,10 @@ export class Guy extends Entity {
     this.cx += this.speedX * delta;
     this.cx = Math.max(
       this.getAnimation().getSize().width,
-      Math.min(this.cx, ctx.canvas.width - this.getAnimation().getSize().width)
+      Math.min(
+        this.cx,
+        graphics.getWidth() - this.getAnimation().getSize().width
+      )
     );
 
     this.fullBoundingBox.updatePosition(
@@ -212,19 +217,19 @@ export class Guy extends Entity {
     this.getAnimation().update(delta);
 
     const offTheScreen =
-      this.cy - 2 * this.getAnimation().getSize().height > ctx.canvas.height;
+      this.cy - 2 * this.getAnimation().getSize().height > graphics.getHeight();
 
     if (offTheScreen) {
       this.getScene().getSceneManager().switchScene("gameOver");
     }
   }
 
-  render(ctx: CanvasRenderingContext2D, debug: boolean) {
-    this.getAnimation().render(this.cx, this.cy, ctx);
+  render(graphics: Graphics, debug: boolean) {
+    this.getAnimation().render(this.cx, this.cy, graphics);
 
     if (debug) {
-      this.getBoundingRect().render(ctx);
-      this.fullBoundingBox.render(ctx);
+      this.getBoundingRect().render(graphics);
+      this.fullBoundingBox.render(graphics);
     }
   }
 

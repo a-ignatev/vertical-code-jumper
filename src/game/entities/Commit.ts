@@ -1,5 +1,6 @@
 import { Context, Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
+import { Graphics } from "engine/graphics/Graphics";
 import { CoffeeWave } from "./CoffeeWave";
 import { Guy } from "./Guy";
 import { LifeBar } from "./LifeBar";
@@ -25,7 +26,7 @@ export class Commit extends Entity {
   private removedLength: number;
   private blocksYOffset: number;
 
-  constructor(x: number, y: number, ctx: CanvasRenderingContext2D) {
+  constructor(x: number, y: number, graphics: Graphics) {
     super();
 
     this.x = x;
@@ -45,18 +46,18 @@ export class Commit extends Entity {
       ...Array(Math.round(neutral / block)).fill(this.neutralColor),
     ].slice(0, 5);
 
-    ctx.font = `${FONT_SIZE}px ${globalFontFamily.split(",")[0]}`;
-    const measure = ctx.measureText(this.addedText + this.removedText);
+    graphics.setFont(`${FONT_SIZE}px ${globalFontFamily.split(",")[0]}`);
+    const measure = graphics.measureText(this.addedText + this.removedText);
     this.totalLength = measure.width + BLOCK_SIZE * 5 + PADDING * 5;
-    const m = ctx.measureText(this.addedText);
+    const m = graphics.measureText(this.addedText);
     this.addedLength = m.width;
-    this.removedLength = ctx.measureText(this.removedText).width;
+    this.removedLength = graphics.measureText(this.removedText).width;
     this.blocksYOffset =
       (m.actualBoundingBoxAscent + m.actualBoundingBoxDescent) / 2 +
       BLOCK_SIZE / 2;
   }
 
-  update({ delta, ctx }: Context): void {
+  update({ delta }: Context): void {
     this.y += FALLING_SPEED * delta;
 
     const score = this.getScene().getEntity<Score>("score");
@@ -81,7 +82,9 @@ export class Commit extends Entity {
       }
     }
 
-    if (this.y - FONT_SIZE > ctx.canvas.height) {
+    const graphics = this.getScene().getSceneManager().getGraphics();
+
+    if (this.y - FONT_SIZE > graphics.getHeight()) {
       this.getScene().removeEntity(this);
 
       const coffeeWave = this.getScene().getEntity("coffeeWave");
@@ -92,16 +95,16 @@ export class Commit extends Entity {
     }
   }
 
-  render(ctx: CanvasRenderingContext2D, debug: boolean) {
-    ctx.font = `${FONT_SIZE}px ${globalFontFamily.split(",")[0]}`;
-    ctx.fillStyle = this.addColor;
-    ctx.fillText(this.addedText, this.x, this.y);
-    ctx.fillStyle = this.removeColor;
-    ctx.fillText(this.removedText, this.x + this.addedLength, this.y);
+  render(graphics: Graphics, debug: boolean) {
+    graphics.setFont(`${FONT_SIZE}px ${globalFontFamily.split(",")[0]}`);
+    graphics.setFillColor(this.addColor);
+    graphics.fillText(this.addedText, this.x, this.y);
+    graphics.setFillColor(this.removeColor);
+    graphics.fillText(this.removedText, this.x + this.addedLength, this.y);
 
     for (let i = 0; i < this.blocks.length; i++) {
-      ctx.fillStyle = this.blocks[i];
-      ctx.fillRect(
+      graphics.setFillColor(this.blocks[i]);
+      graphics.fillRect(
         this.x + this.addedLength + this.removedLength + BLOCK_SIZE * i + 1,
         this.y - this.blocksYOffset,
         BLOCK_SIZE,
@@ -110,7 +113,7 @@ export class Commit extends Entity {
     }
 
     if (debug) {
-      this.getBoundingRect().render(ctx);
+      this.getBoundingRect().render(graphics);
     }
   }
 

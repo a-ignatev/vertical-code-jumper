@@ -1,5 +1,6 @@
 import { Context, Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
+import { Graphics } from "engine/graphics/Graphics";
 import { getRandomWordX } from "game/helpers";
 import { BonusIndicator } from "./BonusIndicator";
 import { CoffeeWave } from "./CoffeeWave";
@@ -14,10 +15,10 @@ export class CoffeeMug extends Entity {
   private cy: number;
   private img: HTMLImageElement;
 
-  constructor(ctx: CanvasRenderingContext2D) {
+  constructor(graphics: Graphics) {
     super();
 
-    this.cx = getRandomWordX(ctx);
+    this.cx = getRandomWordX(graphics);
     this.cy = -MUG_SIZE;
     this.img = new Image(); // Create new img element
     this.img.src = mediaFolder + "/img/mug.png"; // Set source path
@@ -32,7 +33,7 @@ export class CoffeeMug extends Entity {
     );
   }
 
-  update({ delta, ctx }: Context): void {
+  update({ delta }: Context): void {
     this.cy += FALLING_SPEED * delta;
 
     const guy = this.getScene().getEntity<Guy>("guy");
@@ -41,7 +42,8 @@ export class CoffeeMug extends Entity {
       this.getScene().removeEntity(this);
 
       if (!this.getScene().getEntity("coffeeWave")) {
-        this.getScene().addEntity("coffeeWave", new CoffeeWave(ctx));
+        const graphics = this.getScene().getSceneManager().getGraphics();
+        this.getScene().addEntity("coffeeWave", new CoffeeWave(graphics));
         this.getScene().getEntity<LifeBar>("lifeBar")?.reset();
         this.getScene()
           .getEntity<BonusIndicator>("bonusIndicator")
@@ -50,8 +52,8 @@ export class CoffeeMug extends Entity {
     }
   }
 
-  render(ctx: CanvasRenderingContext2D, debug: boolean): void {
-    ctx.drawImage(
+  render(graphics: Graphics, debug: boolean): void {
+    graphics.drawImage(
       this.img,
       this.cx - MUG_SIZE / 2,
       this.cy + MUG_SIZE / 2,
@@ -60,7 +62,7 @@ export class CoffeeMug extends Entity {
     );
 
     if (debug) {
-      this.getBoundingRect().render(ctx);
+      this.getBoundingRect().render(graphics);
     }
   }
 

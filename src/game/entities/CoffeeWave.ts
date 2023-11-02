@@ -1,5 +1,6 @@
 import { Context, Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
+import { Graphics } from "engine/graphics/Graphics";
 import { Sound } from "engine/sound/Sound";
 import { BonusIndicator } from "./BonusIndicator";
 
@@ -20,12 +21,12 @@ export class CoffeeWave extends Entity {
   private drinkingSpeed: number;
   private pouringSpeed: number;
 
-  constructor(ctx: CanvasRenderingContext2D) {
+  constructor(graphics: Graphics) {
     super();
 
-    this.baseHeight = ctx.canvas.height;
-    this.drinkingSpeed = ctx.canvas.height / 10; // 10 seconds
-    this.pouringSpeed = ctx.canvas.height; // 1 second
+    this.baseHeight = graphics.getHeight();
+    this.drinkingSpeed = graphics.getHeight() / 10; // 10 seconds
+    this.pouringSpeed = graphics.getHeight(); // 1 second
     this.shift = 0;
     this.sound = new Sound("pouring-drink.mp3");
     this.sound.setCurrentTime(0.2);
@@ -36,7 +37,7 @@ export class CoffeeWave extends Entity {
     throw new Error("Method not implemented.");
   }
 
-  update({ delta, ctx }: Context): void {
+  update({ delta }: Context): void {
     if (this.isPouring) {
       this.baseHeight -= this.pouringSpeed * delta;
     } else {
@@ -61,46 +62,50 @@ export class CoffeeWave extends Entity {
 
     if (this.isPouring && this.baseHeight <= 0) {
       this.isPouring = false;
-    } else if (this.baseHeight >= ctx.canvas.height + SCALE) {
-      this.getScene().removeEntity(this);
-      this.getScene()
-        .getEntity<BonusIndicator>("bonusIndicator")
-        ?.setIsHidden(true);
+    } else {
+      const graphics = this.getScene().getSceneManager().getGraphics();
+
+      if (this.baseHeight >= graphics.getHeight() + SCALE) {
+        this.getScene().removeEntity(this);
+        this.getScene()
+          .getEntity<BonusIndicator>("bonusIndicator")
+          ?.setIsHidden(true);
+      }
     }
   }
 
-  render(ctx: CanvasRenderingContext2D): void {
-    ctx.strokeStyle = "#ece0d1";
-    this.renderSineWave(ctx, 40, -SCALE, "rgb(236, 224, 209)");
-    this.renderSineWave(ctx, 10, this.middleHeight, "rgb(219, 193, 172)");
-    this.renderSineWave(ctx, 0, 2 * SCALE, "rgb(99, 72, 50)");
+  render(graphics: Graphics): void {
+    graphics.setStrokeColor("#ece0d1");
+    this.renderSineWave(graphics, 40, -SCALE, "rgb(236, 224, 209)");
+    this.renderSineWave(graphics, 10, this.middleHeight, "rgb(219, 193, 172)");
+    this.renderSineWave(graphics, 0, 2 * SCALE, "rgb(99, 72, 50)");
   }
 
   private renderSineWave(
-    ctx: CanvasRenderingContext2D,
+    graphics: Graphics,
     phase: number,
     height: number,
     color: string
   ) {
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(ctx.canvas.width, ctx.canvas.height);
-    ctx.lineTo(0, ctx.canvas.height);
-    ctx.lineTo(0, this.baseHeight + height);
+    graphics.setFillColor(color);
+    graphics.beginPath();
+    graphics.moveTo(graphics.getWidth(), graphics.getHeight());
+    graphics.lineTo(0, graphics.getHeight());
+    graphics.lineTo(0, this.baseHeight + height);
 
     let x = 0;
-    while (x <= ctx.canvas.width) {
+    while (x <= graphics.getWidth()) {
       const y =
         Math.sin(x * SCALE + phase + this.shift) * SCALE +
         this.baseHeight +
         height;
-      ctx.lineTo(x, y);
+      graphics.lineTo(x, y);
       x += SEGMENT_LENGTH;
     }
 
-    ctx.lineTo(ctx.canvas.width, this.baseHeight + height);
-    ctx.closePath();
-    ctx.fill();
+    graphics.lineTo(graphics.getWidth(), this.baseHeight + height);
+    graphics.closePath();
+    graphics.fill();
   }
 
   getZOrder(): number {

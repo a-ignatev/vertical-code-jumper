@@ -1,3 +1,5 @@
+import { Graphics } from "engine/graphics/Graphics";
+
 const DEFAULT_COLOR = "#ff0000";
 
 export class Rect {
@@ -21,10 +23,10 @@ export class Rect {
     this.color = color || DEFAULT_COLOR;
   }
 
-  render(ctx: CanvasRenderingContext2D) {
-    ctx.strokeStyle = this.color;
-    ctx.strokeRect(this.x, this.y, this.width, this.height);
-    ctx.fill();
+  render(graphics: Graphics) {
+    graphics.setStrokeColor(this.color);
+    graphics.strokeRect(this.x, this.y, this.width, this.height);
+    graphics.fill();
   }
 
   updatePosition(x: number, y: number) {

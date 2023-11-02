@@ -1,5 +1,6 @@
 import { Context, Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
+import { Graphics } from "engine/graphics/Graphics";
 import { getRandomWordXNotCloseTo } from "game/helpers";
 import { getColor } from "game/helpers";
 
@@ -17,12 +18,7 @@ export class Word extends Entity {
   private font: string;
   private wordLength: number;
 
-  constructor(
-    word: string,
-    x: number,
-    y: number,
-    ctx: CanvasRenderingContext2D
-  ) {
+  constructor(word: string, x: number, y: number, graphics: Graphics) {
     super();
 
     this.word = word;
@@ -31,38 +27,36 @@ export class Word extends Entity {
     this.font = `${globalFontSize}px ${globalFontFamily.split(",")[0]}`;
     this.color = getColor("--vscode-editor-foreground");
 
-    ctx.font = this.font;
-    this.wordLength = ctx.measureText(this.word).width;
+    graphics.setFont(this.font);
+    this.wordLength = graphics.measureText(this.word).width;
   }
 
-  static randomWord(
-    words: string[],
-    notCloseTo: number,
-    ctx: CanvasRenderingContext2D
-  ) {
+  static randomWord(words: string[], notCloseTo: number, graphics: Graphics) {
     return new Word(
       getRandomWord(words),
-      getRandomWordXNotCloseTo(ctx, notCloseTo),
+      getRandomWordXNotCloseTo(graphics, notCloseTo),
       0,
-      ctx
+      graphics
     );
   }
 
-  update({ delta, ctx }: Context) {
+  update({ delta }: Context) {
     this.y += FALLING_SPEED * delta;
 
-    if (this.y - globalFontSize > ctx.canvas.height) {
+    const graphics = this.getScene().getSceneManager().getGraphics();
+
+    if (this.y - globalFontSize > graphics.getHeight()) {
       this.getScene().removeEntity(this);
     }
   }
 
-  render(ctx: CanvasRenderingContext2D, debug: boolean) {
-    ctx.font = this.font;
-    ctx.fillStyle = this.color;
-    ctx.fillText(this.word, this.x, this.y);
+  render(graphics: Graphics, debug: boolean) {
+    graphics.setFont(this.font);
+    graphics.setFillColor(this.color);
+    graphics.fillText(this.word, this.x, this.y);
 
     if (debug) {
-      this.getBoundingRect().render(ctx);
+      this.getBoundingRect().render(graphics);
     }
   }
 

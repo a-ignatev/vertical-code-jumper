@@ -1,5 +1,6 @@
 import { Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
+import { Graphics } from "engine/graphics/Graphics";
 
 type Direction = "left" | "right";
 
@@ -15,7 +16,7 @@ export class AnimatedArrow extends Entity {
   private height: number;
 
   constructor(
-    ctx: CanvasRenderingContext2D,
+    graphics: Graphics,
     x: number,
     y: number,
     direction: "left" | "right",
@@ -28,8 +29,8 @@ export class AnimatedArrow extends Entity {
     this.direction = direction;
     this.side = side;
     this.font = `${globalFontSize * 3}px ${globalFontFamily.split(",")[0]}`;
-    ctx.font = this.font;
-    const measure = ctx.measureText("←");
+    graphics.setFont(this.font);
+    const measure = graphics.measureText("←");
     this.originalTextWidth = measure.width;
     this.height =
       measure.actualBoundingBoxAscent + measure.actualBoundingBoxDescent;
@@ -55,26 +56,26 @@ export class AnimatedArrow extends Entity {
     }
   }
 
-  render(ctx: CanvasRenderingContext2D): void {
-    ctx.font = this.font;
+  render(graphics: Graphics): void {
+    graphics.setFont(this.font);
 
     const shift = (this.originalTextWidth / 2) * this.scale;
     const y = this.y + this.height / 2;
 
     if (this.direction === "left" && this.side === "left") {
-      ctx.fillText("←", this.x - this.originalTextWidth - shift, y);
+      graphics.fillText("←", this.x - this.originalTextWidth - shift, y);
     }
 
     if (this.direction === "left" && this.side === "right") {
-      ctx.fillText("←", this.x + shift, y);
+      graphics.fillText("←", this.x + shift, y);
     }
 
     if (this.direction === "right" && this.side === "left") {
-      ctx.fillText("→", this.x - this.originalTextWidth - shift, y);
+      graphics.fillText("→", this.x - this.originalTextWidth - shift, y);
     }
 
     if (this.direction === "right" && this.side === "right") {
-      ctx.fillText("→", this.x + shift, y);
+      graphics.fillText("→", this.x + shift, y);
     }
   }
 }

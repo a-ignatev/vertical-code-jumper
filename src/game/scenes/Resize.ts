@@ -1,33 +1,33 @@
+import { Graphics } from "engine/graphics/Graphics";
 import { Scene } from "engine/scenes/Scene";
 import { AnimatedArrow } from "game/entities/AnimatedArrow";
 import { StaticWord } from "game/entities/Word";
-import { isScreenTooSmall } from "game/helpers";
 
 export class Resize extends Scene {
-  attach(ctx: CanvasRenderingContext2D): void {
-    const baseY = ctx.canvas.height / 2;
+  attach(graphics: Graphics): void {
+    const baseY = graphics.getHeight() / 2;
     const message = "Resize";
-    const halfMessageLength = ctx.measureText("Resize").width / 2;
+    const halfMessageLength = graphics.measureText("Resize").width / 2;
 
     const resize = new StaticWord(
       message,
-      ctx.canvas.width / 2 - halfMessageLength,
+      graphics.getWidth() / 2 - halfMessageLength,
       baseY,
-      ctx
+      graphics
     );
 
     const left = new AnimatedArrow(
-      ctx,
-      ctx.canvas.width / 2 - halfMessageLength,
+      graphics,
+      graphics.getWidth() / 2 - halfMessageLength,
       baseY,
-      isScreenTooSmall(ctx) ? "left" : "right",
+      graphics.isScreenTooSmall() ? "left" : "right",
       "left"
     );
     const right = new AnimatedArrow(
-      ctx,
-      ctx.canvas.width / 2 + halfMessageLength,
+      graphics,
+      graphics.getWidth() / 2 + halfMessageLength,
       baseY,
-      isScreenTooSmall(ctx) ? "right" : "left",
+      graphics.isScreenTooSmall() ? "right" : "left",
       "right"
     );
 

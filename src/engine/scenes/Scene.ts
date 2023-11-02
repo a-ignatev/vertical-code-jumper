@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { Entity } from "engine/entities/Entity";
+import { Graphics } from "engine/graphics/Graphics";
 import { SceneManager } from "./SceneManager";
 
 export abstract class Scene {
@@ -42,9 +43,9 @@ export abstract class Scene {
     return this.entities.get(name) as T;
   }
 
-  abstract attach(ctx: CanvasRenderingContext2D, payload: unknown): void;
+  abstract attach(graphics: Graphics, payload: unknown): void;
 
-  abstract detach(ctx: CanvasRenderingContext2D): unknown;
+  abstract detach(graphics: Graphics): unknown;
 
   afterDetach() {
     this.entities.clear();

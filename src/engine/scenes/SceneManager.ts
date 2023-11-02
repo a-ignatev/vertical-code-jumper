@@ -1,12 +1,13 @@
+import { Graphics } from "engine/graphics/Graphics";
 import { Scene } from "./Scene";
 
 export class SceneManager {
   private scenes: Record<string, Scene> = {};
   private currentSceneType?: string;
-  private ctx: CanvasRenderingContext2D;
+  private graphics: Graphics;
 
-  constructor(ctx: CanvasRenderingContext2D) {
-    this.ctx = ctx;
+  constructor(graphics: Graphics) {
+    this.graphics = graphics;
   }
 
   addScene(name: string, scene: Scene) {
@@ -19,13 +20,13 @@ export class SceneManager {
     let payload: unknown = null;
 
     if (prevScene) {
-      payload = prevScene.detach(this.ctx);
+      payload = prevScene.detach(this.graphics);
       prevScene.afterDetach();
     }
 
     this.currentSceneType = sceneType;
 
-    this.getCurrentScene()?.attach(this.ctx, payload);
+    this.getCurrentScene()?.attach(this.graphics, payload);
   }
 
   getCurrentScene() {
@@ -34,8 +35,12 @@ export class SceneManager {
     }
   }
 
+  getGraphics() {
+    return this.graphics;
+  }
+
   destroy() {
-    this.getCurrentScene()?.detach(this.ctx);
+    this.getCurrentScene()?.detach(this.graphics);
     this.scenes = {};
     this.currentSceneType = undefined;
   }

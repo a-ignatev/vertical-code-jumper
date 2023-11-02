@@ -1,4 +1,6 @@
-export function prepareCanvas(fontSizePx: number, fontFamily: string) {
+import { Graphics } from "engine/graphics/Graphics";
+
+export function prepareGraphics(fontSizePx: number, fontFamily: string) {
   const canvas = document.getElementById(
     "gameCanvas"
   ) as HTMLCanvasElement | null;
@@ -25,5 +27,6 @@ export function prepareCanvas(fontSizePx: number, fontFamily: string) {
   ctx.imageSmoothingEnabled = false;
   ctx.font = `${fontSizePx}px ${fontFamily.split(",")[0]}`;
 
-  return { ctx, canvas };
+  return new Graphics(ctx);
+  // return { ctx, canvas };
 }

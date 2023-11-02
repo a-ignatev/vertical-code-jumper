@@ -1,5 +1,6 @@
 import { Context, Entity } from "engine/entities/Entity";
 import { Rect } from "engine/entities/Rect";
+import { Graphics } from "engine/graphics/Graphics";
 import { getRandomWordXNotCloseTo } from "game/helpers";
 import { CoffeeMug } from "./CoffeeMug";
 import { Commit } from "./Commit";
@@ -55,37 +56,42 @@ export class Spawner extends Entity {
 }
 
 export const createCommitSpawner = (
-  ctx: CanvasRenderingContext2D,
+  graphics: Graphics,
   guy: Guy,
   xPositionGenerator: (
-    ctx: CanvasRenderingContext2D,
+    graphics: Graphics,
     x: number
   ) => number = getRandomWordXNotCloseTo
 ) =>
   new Spawner(
     "commit",
-    () => new Commit(xPositionGenerator(ctx, guy.getPosition().cx), 0, ctx),
+    () =>
+      new Commit(
+        xPositionGenerator(graphics, guy.getPosition().cx),
+        0,
+        graphics
+      ),
     2.5
   );
 
 export const createWordSpawner = (
-  ctx: CanvasRenderingContext2D,
+  graphics: Graphics,
   words: string[],
   guy: Guy
 ) =>
   new Spawner(
     "word",
-    () => Word.randomWord(words, guy.getPosition().cx, ctx),
+    () => Word.randomWord(words, guy.getPosition().cx, graphics),
     1,
     true
   );
 
-export const createCoffeeMugSpawner = (ctx: CanvasRenderingContext2D) =>
+export const createCoffeeMugSpawner = (graphics: Graphics) =>
   new Spawner(
     "coffeeMug",
     (spawner: Spawner) => {
       if (!spawner.getScene().getEntity("coffeeWave")) {
-        return new CoffeeMug(ctx);
+        return new CoffeeMug(graphics);
       }
     },
     6
