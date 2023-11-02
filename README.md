@@ -3,10 +3,11 @@
 An infinite vertical jumping game in your code.
 
 # Features
-- infinitely jumps though words from the open file
-- collect falling commits to prevent damage and collect points
-- drink coffee to receive more points per commit and prevent any damage
-- survive for one minute to become even stronger!
+- Infinitely jumps though words from the open file
+- Collect falling commits to prevent damage and collect points
+- Drink coffee to receive more points per commit and prevent any damage
+- Survive for one minute to become even stronger!
+- Also playable as web version https://vertical-code-jumper.netlify.app/
 
 ![Current File](/resources/demo.gif "Vertical Code Jumper")
 
