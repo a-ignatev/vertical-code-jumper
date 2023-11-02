@@ -1,6 +1,9 @@
 import copyWebpackPlugin from "copy-webpack-plugin";
 import path from "path";
+// @ts-expect-error not typed
+import replaceInFileWebpackPlugin from "replace-in-file-webpack-plugin";
 import { Configuration } from "webpack";
+import packageJson from "./package.json";
 
 export const webConfig: Configuration = {
   target: "web",
@@ -48,6 +51,18 @@ export const webConfig: Configuration = {
         },
       ],
     }),
+    new replaceInFileWebpackPlugin([
+      {
+        dir: "./dist-web",
+        files: ["index.html"],
+        rules: [
+          {
+            search: "VERSION",
+            replace: packageJson.version,
+          },
+        ],
+      },
+    ]),
   ],
 };
 
