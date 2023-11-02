@@ -65,12 +65,12 @@ export class GameOver extends Scene {
     this.addEntity("help", help);
     this.addEntity("help2", help2);
 
-    window.addEventListener("click", this.onClick);
+    ctx.canvas.addEventListener("click", this.onClick);
     window.addEventListener("keydown", this.onKeyDown);
   }
 
-  detach(): void {
-    window.removeEventListener("click", this.onClick);
+  detach(ctx: CanvasRenderingContext2D): void {
+    ctx.canvas.removeEventListener("click", this.onClick);
     window.removeEventListener("keydown", this.onKeyDown);
   }
 
@@ -100,9 +100,8 @@ export class GameOver extends Scene {
   }
 
   private onKeyDown(event: KeyboardEvent) {
-    event.preventDefault();
-
     if (event.key === " ") {
+      event.preventDefault();
       this.getSceneManager().switchScene("game");
     }
   }

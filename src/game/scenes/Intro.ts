@@ -53,11 +53,11 @@ export class Intro extends Scene {
     this.addEntity("keys", keys);
     this.addEntity("commitSpawner", commitSpawner);
 
-    window.addEventListener("click", this.onClick);
+    ctx.canvas.addEventListener("click", this.onClick);
   }
 
-  detach(): void {
-    window.removeEventListener("click", this.onClick);
+  detach(ctx: CanvasRenderingContext2D): void {
+    ctx.canvas.removeEventListener("click", this.onClick);
   }
 
   private onClick() {

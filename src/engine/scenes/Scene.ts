@@ -44,7 +44,7 @@ export abstract class Scene {
 
   abstract attach(ctx: CanvasRenderingContext2D, payload: unknown): void;
 
-  abstract detach(): unknown;
+  abstract detach(ctx: CanvasRenderingContext2D): unknown;
 
   afterDetach() {
     this.entities.clear();

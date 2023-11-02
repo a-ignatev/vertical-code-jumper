@@ -19,7 +19,7 @@ export class SceneManager {
     let payload: unknown = null;
 
     if (prevScene) {
-      payload = prevScene.detach();
+      payload = prevScene.detach(this.ctx);
       prevScene.afterDetach();
     }
 
@@ -35,7 +35,7 @@ export class SceneManager {
   }
 
   destroy() {
-    this.getCurrentScene()?.detach();
+    this.getCurrentScene()?.detach(this.ctx);
     this.scenes = {};
     this.currentSceneType = undefined;
   }

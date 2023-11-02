@@ -70,8 +70,6 @@ export class Game extends Scene {
   }
 
   private onKeyDown(event: KeyboardEvent) {
-    event.preventDefault();
-
     if (!this.guy) {
       return;
     }
@@ -79,26 +77,28 @@ export class Game extends Scene {
     if (event.key === LEFT_KEY) {
       this.guy.setSpeedX(-SIDE_SPEED);
       this.holdingKeys.push(event.key);
+      event.preventDefault();
     }
 
     if (event.key === RIGHT_KEY) {
       this.guy.setSpeedX(SIDE_SPEED);
       this.holdingKeys.push(event.key);
+      event.preventDefault();
     }
 
     if (event.key === "m") {
       this.addEntity("mug", new CoffeeMug(this.ctx));
+      event.preventDefault();
     }
   }
 
   private onKeyUp(event: KeyboardEvent) {
-    event.preventDefault();
-
     if (!this.guy) {
       return;
     }
 
     if (event.key === LEFT_KEY || event.key === RIGHT_KEY) {
+      event.preventDefault();
       this.holdingKeys = this.holdingKeys.filter((key) => key !== event.key);
 
       if (!this.holdingKeys.length) {
