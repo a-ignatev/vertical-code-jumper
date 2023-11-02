@@ -26,11 +26,13 @@ body {
   margin-bottom: 16px;
 }
 
-.github {
+.links {
   position: absolute;
   top: 0;
   right: 0;
   padding: 24px;
+  display: flex;
+  flex-direction: column;
 }
 
 .version {

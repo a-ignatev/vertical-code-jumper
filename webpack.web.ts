@@ -45,6 +45,10 @@ export const webConfig: Configuration = {
           to: path.resolve(__dirname, "./dist-web/override.css"),
         },
         {
+          from: path.resolve(__dirname, "./resources/icon.png"),
+          to: path.resolve(__dirname, "./dist-web/favicon.png"),
+        },
+        {
           from: path.resolve(__dirname, "./media"),
           to: path.resolve(__dirname, "./dist-web"),
           toType: "dir",
