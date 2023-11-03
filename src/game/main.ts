@@ -107,7 +107,7 @@ function startGame(words: string[], abortSignal: AbortSignal) {
   const sceneManager = new SceneManager(graphics);
   sceneManager.addScene("intro", new Intro(music));
   sceneManager.addScene("game", new Game(words));
-  sceneManager.addScene("gameOver", new GameOver());
+  sceneManager.addScene("gameOver", new GameOver(music));
   sceneManager.addScene("resize", new Resize());
 
   if (graphics.isScreenTooSmall() || graphics.isScreenTooWide()) {

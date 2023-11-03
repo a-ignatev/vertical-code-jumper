@@ -34,7 +34,11 @@ export class LifeBar extends Entity {
     this.life--;
 
     if (this.life <= 0) {
-      this.getScene().getSceneManager().switchScene("gameOver");
+      if (
+        this.getScene().getSceneManager().getCurrentSceneName() !== "gameOver"
+      ) {
+        this.getScene().getSceneManager().switchScene("gameOver");
+      }
     } else {
       this.sound.play();
     }

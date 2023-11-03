@@ -20,7 +20,7 @@ global.acquireVsCodeApi = <StateType = unknown>(): WebviewApi<StateType> => {
       if (message.type === "getWords") {
         window.postMessage({
           type: "addWords",
-          words: ["hello", "world", "good"],
+          words: webVersionWords,
         });
       }
     },

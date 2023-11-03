@@ -220,7 +220,11 @@ export class Guy extends Entity {
       this.cy - 2 * this.getAnimation().getSize().height > graphics.getHeight();
 
     if (offTheScreen) {
-      this.getScene().getSceneManager().switchScene("gameOver");
+      if (
+        this.getScene().getSceneManager().getCurrentSceneName() !== "gameOver"
+      ) {
+        this.getScene().getSceneManager().switchScene("gameOver");
+      }
     }
   }
 

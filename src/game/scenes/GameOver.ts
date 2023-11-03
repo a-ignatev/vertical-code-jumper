@@ -5,18 +5,24 @@ import { SCORE_COLOR } from "game/entities/Score";
 import { StaticWord } from "game/entities/Word";
 
 export class GameOver extends Scene {
-  gameOverSound: Sound;
+  private gameOverSound: Sound;
+  private music: Sound;
 
-  constructor() {
+  constructor(music: Sound) {
     super();
 
+    this.music = music;
     this.onClick = this.onClick.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.gameOverSound = new Sound("game-over.mp3");
   }
 
   attach(graphics: Graphics, payload: { score: number }): void {
-    this.gameOverSound.play();
+    this.music.stop();
+
+    if (!this.gameOverSound.isPlaying()) {
+      this.gameOverSound.play();
+    }
 
     const jobTitleText = this.getJobTitle(payload.score);
     const gameOverText = "Game Over";
@@ -98,12 +104,14 @@ export class GameOver extends Scene {
 
   private onClick() {
     this.getSceneManager().switchScene("game");
+    this.music.play();
   }
 
   private onKeyDown(event: KeyboardEvent) {
     if (event.key === " ") {
       event.preventDefault();
       this.getSceneManager().switchScene("game");
+      this.music.play();
     }
   }
 }

@@ -3,7 +3,7 @@ import { Scene } from "./Scene";
 
 export class SceneManager {
   private scenes: Record<string, Scene> = {};
-  private currentSceneType?: string;
+  private currentSceneName?: string;
   private graphics: Graphics;
 
   constructor(graphics: Graphics) {
@@ -15,7 +15,7 @@ export class SceneManager {
     this.scenes[name] = scene;
   }
 
-  switchScene(sceneType: string) {
+  switchScene(sceneName: string) {
     const prevScene = this.getCurrentScene();
     let payload: unknown = null;
 
@@ -24,15 +24,19 @@ export class SceneManager {
       prevScene.afterDetach();
     }
 
-    this.currentSceneType = sceneType;
+    this.currentSceneName = sceneName;
 
     this.getCurrentScene()?.attach(this.graphics, payload);
   }
 
   getCurrentScene() {
-    if (this.currentSceneType) {
-      return this.scenes[this.currentSceneType];
+    if (this.currentSceneName) {
+      return this.scenes[this.currentSceneName];
     }
+  }
+
+  getCurrentSceneName() {
+    return this.currentSceneName;
   }
 
   getGraphics() {
@@ -42,6 +46,6 @@ export class SceneManager {
   destroy() {
     this.getCurrentScene()?.detach(this.graphics);
     this.scenes = {};
-    this.currentSceneType = undefined;
+    this.currentSceneName = undefined;
   }
 }
