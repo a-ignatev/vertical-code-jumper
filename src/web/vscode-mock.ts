@@ -160,10 +160,11 @@ function prevent(event: any) {
   event.preventDefault();
 }
 
+window.addEventListener("touchstart", prevent, false);
+
 const leftButton = document.getElementById("leftButton");
 
 if (leftButton) {
-  leftButton.addEventListener("touchstart", prevent);
   leftButton.addEventListener("pointerdown", (e) => {
     e.preventDefault();
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft" }));
@@ -177,7 +178,6 @@ if (leftButton) {
 const rightButton = document.getElementById("rightButton");
 
 if (rightButton) {
-  rightButton.addEventListener("touchstart", prevent);
   rightButton.addEventListener("pointerdown", (e) => {
     e.preventDefault();
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
