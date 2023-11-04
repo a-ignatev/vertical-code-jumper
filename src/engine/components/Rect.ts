@@ -18,6 +18,10 @@ export class Rect extends Component implements IRenderable {
     this.color = color || DEFAULT_COLOR;
   }
 
+  getWidth() {
+    return this.width;
+  }
+
   render(graphics: Graphics, debug: boolean) {
     if (!debug) {
       return;

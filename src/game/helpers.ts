@@ -5,7 +5,7 @@ export function getColor(name: string) {
 }
 
 export function getRandomWordX(graphics: Graphics) {
-  return Math.random() * graphics.getWidth() - 20;
+  return Math.max(20, Math.random() * graphics.getWidth() - 20);
 }
 
 export function getRandomWordXNotCloseTo(graphics: Graphics, x: number) {

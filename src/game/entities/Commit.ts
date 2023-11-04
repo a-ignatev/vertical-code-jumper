@@ -73,6 +73,10 @@ export class Commit extends Entity {
     boundingBox.pivot.y = -FONT_SIZE;
   }
 
+  getWidth() {
+    return this.getComponent<Rect>("collisionBox")?.getWidth();
+  }
+
   update({ delta }: Context): void {
     this.getTransform().translate(0, FALLING_SPEED * delta);
 

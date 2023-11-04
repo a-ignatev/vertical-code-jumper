@@ -68,15 +68,18 @@ export class Game extends Scene {
     });
     this.spawnEntity("commitSpawner", Timer, 2.5, false, () => {
       const commit = this.spawnEntity("commit", Commit);
-      commit
-        .getTransform()
-        .setPosition(
-          getRandomWordXNotCloseTo(
-            graphics,
-            guy.getTransform().getPosition().x
-          ),
-          0
-        );
+      const randomX = getRandomWordXNotCloseTo(
+        graphics,
+        guy.getTransform().getPosition().x
+      );
+      commit.getTransform().setPosition(
+        Math.min(
+          Math.max(randomX, 5),
+          // start of the word should be that the word would fit the screen
+          graphics.getWidth() - commit.getWidth()! - 5
+        ),
+        0
+      );
     });
     this.spawnEntity("coffeeMugSpawner", Timer, 6, false, () => {
       if (!this.getEntity("coffeeWave")) {

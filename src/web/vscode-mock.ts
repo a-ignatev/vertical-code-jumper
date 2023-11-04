@@ -159,10 +159,12 @@ global.webVersionWords = [
 const leftButton = document.getElementById("leftButton");
 
 if (leftButton) {
-  leftButton.addEventListener("pointerdown", () => {
+  leftButton.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft" }));
   });
-  leftButton.addEventListener("pointerup", () => {
+  leftButton.addEventListener("pointerup", (e) => {
+    e.preventDefault();
     window.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowLeft" }));
   });
 }
@@ -170,10 +172,12 @@ if (leftButton) {
 const rightButton = document.getElementById("rightButton");
 
 if (rightButton) {
-  rightButton.addEventListener("pointerdown", () => {
+  rightButton.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
   });
-  rightButton.addEventListener("pointerup", () => {
+  rightButton.addEventListener("pointerup", (e) => {
+    e.preventDefault();
     window.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowRight" }));
   });
 }
