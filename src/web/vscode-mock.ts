@@ -160,7 +160,7 @@ function prevent(event: any) {
   event.preventDefault();
 }
 
-window.addEventListener("touchstart", prevent, false);
+window.addEventListener("touchstart", prevent, true);
 
 const leftButton = document.getElementById("leftButton");
 
