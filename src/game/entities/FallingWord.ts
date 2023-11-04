@@ -5,6 +5,7 @@ import { Scene } from "engine/scenes/Scene";
 import { getRandomWordXNotCloseTo } from "game/helpers";
 
 const FALLING_SPEED = 150;
+const PADDING = globalFontSize;
 
 function getRandomWord(words: string[]) {
   return words[Math.floor(Math.random() * words.length)];
@@ -30,8 +31,19 @@ export class FallingWord extends Entity {
 
   randomize(notCloseToX: number) {
     const graphics = this.getScene().getSceneManager().getGraphics();
+    const randomX = getRandomWordXNotCloseTo(graphics, notCloseToX);
+    const text = this.getComponent<Text>("text");
+
+    if (!text) {
+      return;
+    }
+
     this.getTransform().setPosition(
-      getRandomWordXNotCloseTo(graphics, notCloseToX),
+      Math.min(
+        Math.max(randomX, PADDING),
+        // start of the word should be that the word would fit the screen
+        graphics.getWidth() - text.getWidth() - PADDING
+      ),
       0
     );
   }
