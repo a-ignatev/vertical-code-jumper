@@ -79,7 +79,6 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
       vscode.Uri.joinPath(this._extensionUri, "media")
     );
 
-    // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
     const scriptUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "media", "game.js")
     );
@@ -88,7 +87,6 @@ export class CodeJumperViewProvider implements vscode.WebviewViewProvider {
       vscode.Uri.joinPath(this._extensionUri, "media", "main.css")
     );
 
-    // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
 
     return `<!DOCTYPE html>

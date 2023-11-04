@@ -1,4 +1,4 @@
-import { Graphics } from "engine/graphics/Graphics";
+import { Graphics } from "engine/core/Graphics";
 
 export function prepareGraphics(fontSizePx: number, fontFamily: string) {
   const canvas = document.getElementById(
@@ -28,5 +28,16 @@ export function prepareGraphics(fontSizePx: number, fontFamily: string) {
   ctx.font = `${fontSizePx}px ${fontFamily.split(",")[0]}`;
 
   return new Graphics(ctx);
-  // return { ctx, canvas };
+}
+
+export function resetGraphics() {
+  const graphics = prepareGraphics(globalFontSize, globalFontFamily);
+
+  if (!graphics) {
+    return;
+  }
+
+  window.requestAnimationFrame(() => {
+    graphics.clearScreen();
+  });
 }

@@ -1,4 +1,5 @@
-import { Graphics } from "./graphics/Graphics";
+import { isIRenderable } from "./components/IRenderable";
+import { Graphics } from "./core/Graphics";
 import { SceneManager } from "./scenes/SceneManager";
 
 export function startGameLoop(
@@ -13,8 +14,6 @@ export function startGameLoop(
     const scene = sceneManager.getCurrentScene();
 
     if (!scene) {
-      console.log("No scene set");
-
       return;
     }
 
@@ -34,9 +33,16 @@ export function startGameLoop(
     graphics.clearScreen();
 
     // render entities
+    // todo convert to system
     [...scene.getEntities()]
       .sort((a, b) => a.getZOrder() - b.getZOrder())
-      .forEach((entity) => entity.render(graphics, debug));
+      .forEach((entity) => {
+        for (const component of entity.getComponents()) {
+          if (isIRenderable(component)) {
+            component.render(graphics, debug);
+          }
+        }
+      });
 
     lastTimeStamp = timeStamp;
 

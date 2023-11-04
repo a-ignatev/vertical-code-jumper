@@ -1,15 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
+import { Graphics } from "engine/core/Graphics";
 import { Entity } from "engine/entities/Entity";
-import { Graphics } from "engine/graphics/Graphics";
 import { SceneManager } from "./SceneManager";
 
+type ConstructorParametersWithoutNameAndScene<
+  T extends new (...args: any) => any
+> = T extends new (scene: Scene, ...args: infer P) => any ? P : [];
+
 export abstract class Scene {
-  // must be set by the manager
-  private sceneManager!: SceneManager;
+  private sceneManager: SceneManager;
 
   private entities: Map<string, Entity> = new Map();
 
-  setSceneManager(sceneManager: SceneManager) {
+  constructor(sceneManager: SceneManager) {
     this.sceneManager = sceneManager;
   }
 
@@ -17,21 +20,37 @@ export abstract class Scene {
     return this.sceneManager;
   }
 
-  addEntity(name: string, entity: Entity) {
+  // todo can limit by Entity?
+  spawnEntity<
+    T extends new (
+      scene: Scene,
+      ...params: ConstructorParametersWithoutNameAndScene<T>
+    ) => Entity
+  >(
+    name: string,
+    ctor: T,
+    ...params: ConstructorParametersWithoutNameAndScene<T>
+  ) {
     let entityName = name;
 
     if (this.entities.has(entityName)) {
       entityName += uuidv4();
     }
 
-    entity.name = entityName;
-    entity.setScene(this);
+    const entity = new ctor(this, ...params);
     this.entities.set(entityName, entity);
+
+    return entity as InstanceType<T>;
   }
 
-  removeEntity(entity: Entity) {
-    if (this.entities.has(entity.name)) {
-      this.entities.delete(entity.name);
+  removeEntity(entityToRemove: Entity) {
+    for (const [name, entity] of this.entities) {
+      if (entity === entityToRemove) {
+        entity.destroy();
+        this.entities.delete(name);
+
+        return;
+      }
     }
   }
 
@@ -48,6 +67,10 @@ export abstract class Scene {
   abstract detach(graphics: Graphics): unknown;
 
   afterDetach() {
+    this.entities.forEach((entity) => {
+      entity.destroy();
+    });
+
     this.entities.clear();
   }
 }

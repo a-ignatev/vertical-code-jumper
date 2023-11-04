@@ -1,6 +1,7 @@
+import { Rect } from "engine/components/Rect";
+import { StaticImage } from "engine/components/StaticImage";
 import { Context, Entity } from "engine/entities/Entity";
-import { Rect } from "engine/entities/Rect";
-import { Graphics } from "engine/graphics/Graphics";
+import { Scene } from "engine/scenes/Scene";
 import { getRandomWordX } from "game/helpers";
 import { BonusIndicator } from "./BonusIndicator";
 import { CoffeeWave } from "./CoffeeWave";
@@ -8,61 +9,34 @@ import { Guy } from "./Guy";
 import { LifeBar } from "./LifeBar";
 
 const MUG_SIZE = 16;
-const FALLING_SPEED = 300;
+const FALLING_SPEED = 200;
 
 export class CoffeeMug extends Entity {
-  private cx: number;
-  private cy: number;
-  private img: HTMLImageElement;
+  constructor(scene: Scene) {
+    super(scene);
 
-  constructor(graphics: Graphics) {
-    super();
-
-    this.cx = getRandomWordX(graphics);
-    this.cy = -MUG_SIZE;
-    this.img = new Image(); // Create new img element
-    this.img.src = mediaFolder + "/img/mug.png"; // Set source path
-  }
-
-  getBoundingRect(): Rect {
-    return new Rect(
-      this.cx - MUG_SIZE / 2,
-      this.cy + MUG_SIZE / 2,
-      MUG_SIZE,
-      MUG_SIZE
-    );
+    const graphics = this.getScene().getSceneManager().getGraphics();
+    this.getTransform().setPosition(getRandomWordX(graphics), -MUG_SIZE);
+    this.addComponent("mug", StaticImage, "mug.png", MUG_SIZE, MUG_SIZE);
+    this.addComponent("collisionBox", Rect, MUG_SIZE, MUG_SIZE, "#00FF00");
   }
 
   update({ delta }: Context): void {
-    this.cy += FALLING_SPEED * delta;
+    this.getTransform().translate(0, FALLING_SPEED * delta);
 
     const guy = this.getScene().getEntity<Guy>("guy");
+    const guyBox = guy?.getComponent<Rect>("fullBoundingBox");
 
-    if (guy && this.getBoundingRect().intersects(guy.getFullBoundingBox())) {
+    if (guyBox && this.getComponent<Rect>("collisionBox")?.intersects(guyBox)) {
       this.getScene().removeEntity(this);
 
       if (!this.getScene().getEntity("coffeeWave")) {
-        const graphics = this.getScene().getSceneManager().getGraphics();
-        this.getScene().addEntity("coffeeWave", new CoffeeWave(graphics));
+        this.getScene().spawnEntity("coffeeWave", CoffeeWave);
         this.getScene().getEntity<LifeBar>("lifeBar")?.reset();
         this.getScene()
           .getEntity<BonusIndicator>("bonusIndicator")
           ?.setIsHidden(false);
       }
-    }
-  }
-
-  render(graphics: Graphics, debug: boolean): void {
-    graphics.drawImage(
-      this.img,
-      this.cx - MUG_SIZE / 2,
-      this.cy + MUG_SIZE / 2,
-      MUG_SIZE,
-      MUG_SIZE
-    );
-
-    if (debug) {
-      this.getBoundingRect().render(graphics);
     }
   }
 

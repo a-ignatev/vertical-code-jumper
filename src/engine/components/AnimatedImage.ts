@@ -1,4 +1,7 @@
-import { Graphics } from "engine/graphics/Graphics";
+import { Graphics } from "engine/core/Graphics";
+import { Entity } from "engine/entities/Entity";
+import { Component } from "./Component";
+import { IRenderable } from "./IRenderable";
 
 const FRAME_TIME = 1 / 8; // 8fps
 
@@ -9,7 +12,7 @@ interface ImageProperties {
   height: number;
 }
 
-export class Animation {
+export class AnimatedImage extends Component implements IRenderable {
   public isBlocking: boolean;
 
   private currentFrame = 0;
@@ -19,6 +22,7 @@ export class Animation {
   private imageProperties: ImageProperties;
 
   constructor({
+    entity,
     spreadsheet,
     frames,
     cols,
@@ -27,6 +31,7 @@ export class Animation {
     isBlocking,
     onEnd,
   }: {
+    entity: Entity;
     spreadsheet: string;
     frames: number;
     cols: number;
@@ -35,6 +40,8 @@ export class Animation {
     isBlocking: boolean;
     onEnd?: () => void;
   }) {
+    super(entity);
+
     this.img = new Image(); // Create new img element
     this.img.src = mediaFolder + "/img/" + spreadsheet; // Set source path
     this.isBlocking = isBlocking;
@@ -70,7 +77,8 @@ export class Animation {
     }
   }
 
-  render(cx: number, cy: number, graphics: Graphics) {
+  render(graphics: Graphics) {
+    const { x: cx, y: cy } = this.getEntity().getTransform().getPosition();
     const row = Math.trunc(this.currentFrame / this.imageProperties.cols);
     const col = this.currentFrame % this.imageProperties.cols;
 
@@ -80,10 +88,14 @@ export class Animation {
       row * this.imageProperties.height,
       this.imageProperties.width,
       this.imageProperties.height,
-      cx - this.imageProperties.width,
-      cy - this.imageProperties.height,
+      cx + this.pivot.x - this.imageProperties.width,
+      cy + this.pivot.y - this.imageProperties.height,
       2 * this.imageProperties.width,
       2 * this.imageProperties.height
     );
+  }
+
+  destroy() {
+    this.img.remove();
   }
 }

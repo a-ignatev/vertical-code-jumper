@@ -1,8 +1,14 @@
-import { Graphics } from "engine/graphics/Graphics";
+import { Graphics } from "engine/core/Graphics";
 import { Scene } from "./Scene";
 
+type ConstructorParametersWithoutNameSceneManager<
+  T extends new (...args: any) => any
+> = T extends new (sceneManager: SceneManager, ...args: infer P) => any
+  ? P
+  : [];
+
 export class SceneManager {
-  private scenes: Record<string, Scene> = {};
+  private scenes: Map<string, Scene> = new Map();
   private currentSceneName?: string;
   private graphics: Graphics;
 
@@ -10,9 +16,22 @@ export class SceneManager {
     this.graphics = graphics;
   }
 
-  addScene(name: string, scene: Scene) {
-    scene.setSceneManager(this);
-    this.scenes[name] = scene;
+  // todo can limit by Entity?
+  addScene<
+    T extends new (
+      sceneManager: SceneManager,
+      ...params: ConstructorParametersWithoutNameSceneManager<T>
+    ) => Scene
+  >(
+    name: string,
+    ctor: T,
+    ...params: ConstructorParametersWithoutNameSceneManager<T>
+  ) {
+    const scene = new ctor(this, ...params);
+
+    this.scenes.set(name, scene);
+
+    return scene as InstanceType<T>;
   }
 
   switchScene(sceneName: string) {
@@ -31,7 +50,7 @@ export class SceneManager {
 
   getCurrentScene() {
     if (this.currentSceneName) {
-      return this.scenes[this.currentSceneName];
+      return this.scenes.get(this.currentSceneName);
     }
   }
 
@@ -45,7 +64,7 @@ export class SceneManager {
 
   destroy() {
     this.getCurrentScene()?.detach(this.graphics);
-    this.scenes = {};
+    this.scenes.clear();
     this.currentSceneName = undefined;
   }
 }

@@ -1,8 +1,13 @@
-export class Sound {
+import { Entity } from "engine/entities/Entity";
+import { Component } from "./Component";
+
+export class Sound extends Component {
   private audio: HTMLAudioElement;
   private isMuted: boolean;
 
-  constructor(name: string, isLoop: boolean = false) {
+  constructor(entity: Entity, name: string, isLoop: boolean = false) {
+    super(entity);
+
     const src = mediaFolder + "/sound/" + name;
     this.audio = new Audio(src);
 
@@ -46,5 +51,10 @@ export class Sound {
     setTimeout(() => {
       this.play();
     }, delayMs);
+  }
+
+  destroy() {
+    this.audio.pause();
+    this.audio.remove();
   }
 }

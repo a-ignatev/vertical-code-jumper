@@ -1,11 +1,10 @@
-import { Animation } from "engine/animation/Animation";
+import { AnimatedImage } from "engine/components/AnimatedImage";
+import { AnimationSet } from "engine/components/AnimationSet";
+import { Rect } from "engine/components/Rect";
+import { Sound } from "engine/components/Sound";
 import { Context, Entity } from "engine/entities/Entity";
-import { Rect } from "engine/entities/Rect";
-import { Graphics } from "engine/graphics/Graphics";
-import { Sound } from "engine/sound/Sound";
+import { Scene } from "engine/scenes/Scene";
 import { LifeBar } from "./LifeBar";
-import { Score } from "./Score";
-import { Word } from "./Word";
 
 const GRAVITY = 1000;
 const JUMP_SPEED = -500;
@@ -15,36 +14,38 @@ const DRINKING_PERIOD = 1;
 const TRANSFORM_PERIOD = 60;
 
 type GuyForm = "normal" | "strong";
-type AnimationType = "idle" | "falling" | "drinking" | "transforms";
+type AnimationName =
+  | "falling.normal"
+  | "falling.strong"
+  | "idle.normal"
+  | "idle.strong"
+  | "drinking.normal"
+  | "drinking.strong"
+  | "transforms.normal"
+  | "transforms.strong";
 
 export class Guy extends Entity {
   private speedX: number;
   private speedY: number;
-  private cx: number;
-  private cy: number;
-  private animations: Record<AnimationType, Record<GuyForm, Animation | null>>;
-  private currentAnimation: AnimationType;
-  private jumpSound: Sound;
-  private roarSound: Sound;
-  private drinkingSound: Sound;
   private currentForm: GuyForm;
   private nonDrinkingTimeS: number;
   private lifeTimeS: number;
-  private canTransform: boolean;
-  private fullBoundingBox: Rect;
+  private canBecomeStrong: boolean;
 
-  constructor(cx: number, cy: number, canTransform: boolean) {
-    super();
+  constructor(scene: Scene, cx: number, cy: number, canBecomeStrong: boolean) {
+    super(scene);
 
     this.speedX = 0;
     this.speedY = 0;
-    this.cx = cx;
-    this.cy = cy;
-    this.canTransform = canTransform;
+    this.getTransform().setPosition(cx, cy);
+    this.canBecomeStrong = canBecomeStrong;
 
-    this.animations = {
-      falling: {
-        normal: new Animation({
+    const animationSet = this.addComponent(
+      "animationSet",
+      AnimationSet<AnimationName>,
+      {
+        "falling.normal": new AnimatedImage({
+          entity: this,
           spreadsheet: "Normal_Guy_Air.png",
           frames: 1,
           cols: 1,
@@ -52,7 +53,8 @@ export class Guy extends Entity {
           height: 20,
           isBlocking: false,
         }),
-        strong: new Animation({
+        "falling.strong": new AnimatedImage({
+          entity: this,
           spreadsheet: "Strong_Guy_Idle_SpriteSheet.png",
           frames: 1,
           cols: 1,
@@ -60,9 +62,8 @@ export class Guy extends Entity {
           height: 23,
           isBlocking: false,
         }),
-      },
-      idle: {
-        normal: new Animation({
+        "idle.normal": new AnimatedImage({
+          entity: this,
           spreadsheet: "Normal_Guy_Idle_SpriteSheet.png",
           frames: 9,
           cols: 3,
@@ -70,7 +71,8 @@ export class Guy extends Entity {
           height: 20,
           isBlocking: false,
         }),
-        strong: new Animation({
+        "idle.strong": new AnimatedImage({
+          entity: this,
           spreadsheet: "Strong_Guy_Jumps.png",
           frames: 1,
           cols: 1,
@@ -78,9 +80,8 @@ export class Guy extends Entity {
           height: 21,
           isBlocking: false,
         }),
-      },
-      drinking: {
-        normal: new Animation({
+        "drinking.normal": new AnimatedImage({
+          entity: this,
           spreadsheet: "Normal_Guy_Drinks_SpriteSheet.png",
           frames: 11,
           cols: 4,
@@ -88,13 +89,12 @@ export class Guy extends Entity {
           height: 20,
           isBlocking: true,
           onEnd: () => {
-            this.currentAnimation = "idle";
+            animationSet.setCurrentAnimation("idle.normal");
           },
         }),
-        strong: null,
-      },
-      transforms: {
-        normal: new Animation({
+        "drinking.strong": null,
+        "transforms.normal": new AnimatedImage({
+          entity: this,
           spreadsheet: "Normal_Guy_Transforms_SpriteSheet.png",
           frames: 27,
           cols: 5,
@@ -102,122 +102,134 @@ export class Guy extends Entity {
           height: 25,
           isBlocking: true,
           onEnd: () => {
-            this.currentAnimation = "idle";
+            animationSet.setCurrentAnimation("idle.strong");
             this.currentForm = "strong";
           },
         }),
-        strong: null,
+        "transforms.strong": null,
       },
-    };
+      "idle.normal"
+    );
 
-    this.jumpSound = new Sound("jump.mp3");
-    this.roarSound = new Sound("roar.mp3");
-    this.roarSound.setVolume(0.5);
-    this.drinkingSound = new Sound("coffee.mp3");
-    this.drinkingSound.setVolume(0.5);
+    this.addComponent("jumpSound", Sound, "jump.mp3");
+    const roarSound = this.addComponent("roarSound", Sound, "roar.mp3");
+    roarSound.setVolume(0.5);
+    const drinkingSound = this.addComponent(
+      "drinkingSound",
+      Sound,
+      "coffee.mp3"
+    );
+    drinkingSound.setVolume(0.5);
     this.nonDrinkingTimeS = 0;
     this.lifeTimeS = 0;
-    this.currentAnimation = "idle";
     this.currentForm = "normal";
 
-    const size = this.getAnimation().getSize();
-    this.fullBoundingBox = new Rect(
-      this.cx - size.width,
-      this.cy + size.height - 1,
-      2 * size.width,
-      2 * size.width,
-      "#00FF00"
-    );
-  }
+    const size = animationSet.getAnimation("idle.normal")?.getSize();
 
-  private getAnimation() {
-    return this.animations[this.currentAnimation][this.currentForm]!;
-  }
-
-  getPosition() {
-    return {
-      cx: this.cx,
-      cy: this.cy,
-    };
+    if (size) {
+      const boundingBox = this.addComponent(
+        "boundingBox",
+        Rect,
+        2 * size.width,
+        1
+      );
+      boundingBox.pivot = { x: -size.width, y: size.height };
+      const fullBoundingBox = this.addComponent(
+        "fullBoundingBox",
+        Rect,
+        2 * size.width,
+        2 * size.height,
+        "#00FF00"
+      );
+      fullBoundingBox.pivot = { x: -size.width, y: -size.width };
+    }
   }
 
   setSpeedX(speed: number) {
     this.speedX = speed;
   }
 
+  getAnimationSet() {
+    return this.getComponent<AnimationSet<AnimationName>>("animationSet");
+  }
+
   update({ delta }: Context) {
     const graphics = this.getScene().getSceneManager().getGraphics();
+    const animationSet = this.getAnimationSet();
+
+    if (!animationSet) {
+      return;
+    }
+
     this.lifeTimeS += delta;
 
     this.speedY += GRAVITY * delta;
-    this.cy += this.speedY * delta;
-
-    this.cx += this.speedX * delta;
-    this.cx = Math.max(
-      this.getAnimation().getSize().width,
-      Math.min(
-        this.cx,
-        graphics.getWidth() - this.getAnimation().getSize().width
-      )
-    );
-
-    this.fullBoundingBox.updatePosition(
-      this.cx - this.getAnimation().getSize().width,
-      this.cy - this.getAnimation().getSize().width
+    this.getTransform().translate(this.speedX * delta, this.speedY * delta);
+    const { x, y } = this.getTransform().getPosition();
+    this.getTransform().setPosition(
+      Math.max(
+        animationSet.getCurrentAnimation().getSize().width,
+        Math.min(
+          x,
+          graphics.getWidth() -
+            animationSet.getCurrentAnimation().getSize().width
+        )
+      ),
+      y
     );
 
     for (const entity of this.getScene().getEntities()) {
-      if (
-        entity === this ||
-        !(entity instanceof Word) ||
-        entity instanceof Score
-      ) {
+      const otherBoundingBox = entity.getComponent<Rect>("boundingBox");
+
+      if (!otherBoundingBox || entity === this) {
         continue;
       }
 
+      const boundingBox = this.getComponent<Rect>("boundingBox");
+
       if (
         this.speedY > 0 &&
-        this.getBoundingRect().intersects(entity.getBoundingRect())
+        boundingBox &&
+        boundingBox.intersects(otherBoundingBox)
       ) {
         this.speedY = JUMP_SPEED;
-        this.jumpSound.play();
+        this.getComponent<Sound>("jumpSound")?.play();
       }
     }
 
-    if (!this.getAnimation().isBlocking) {
+    if (!animationSet.getCurrentAnimation().isBlocking) {
       if (this.speedY > 0) {
-        this.currentAnimation = "falling";
+        animationSet.setCurrentAnimation(`falling.${this.currentForm}`);
       } else {
-        this.currentAnimation = "idle";
+        animationSet.setCurrentAnimation(`idle.${this.currentForm}`);
       }
 
       this.nonDrinkingTimeS += delta;
 
-      if (
-        this.currentForm === "normal" &&
-        this.nonDrinkingTimeS >= DRINKING_PERIOD &&
-        this.getScene().getEntity("coffeeWave")
-      ) {
-        this.drinkingSound.playWithDelay(500);
-        this.nonDrinkingTimeS = 0;
-        this.currentAnimation = "drinking";
-      }
+      if (this.currentForm === "normal") {
+        if (
+          this.nonDrinkingTimeS >= DRINKING_PERIOD &&
+          this.getScene().getEntity("coffeeWave")
+        ) {
+          this.getComponent<Sound>("drinkingSound")?.playWithDelay(500);
+          this.nonDrinkingTimeS = 0;
+          animationSet.setCurrentAnimation(`drinking.normal`);
+        }
 
-      if (
-        this.currentForm === "normal" &&
-        this.canTransform &&
-        this.lifeTimeS >= TRANSFORM_PERIOD
-      ) {
-        this.roarSound.play();
-        this.currentAnimation = "transforms";
-        this.getScene().getEntity<LifeBar>("lifeBar")?.becomeStrong();
+        if (this.canBecomeStrong && this.lifeTimeS >= TRANSFORM_PERIOD) {
+          this.getComponent<Sound>("roarSound")?.play();
+          animationSet.setCurrentAnimation(`transforms.normal`);
+          this.getScene().getEntity<LifeBar>("lifeBar")?.becomeStrong();
+        }
       }
     }
 
-    this.getAnimation().update(delta);
+    animationSet.update(delta);
 
     const offTheScreen =
-      this.cy - 2 * this.getAnimation().getSize().height > graphics.getHeight();
+      this.getTransform().getY() -
+        2 * animationSet.getCurrentAnimation().getSize().height >
+      graphics.getHeight();
 
     if (offTheScreen) {
       if (
@@ -226,30 +238,6 @@ export class Guy extends Entity {
         this.getScene().getSceneManager().switchScene("gameOver");
       }
     }
-  }
-
-  render(graphics: Graphics, debug: boolean) {
-    this.getAnimation().render(this.cx, this.cy, graphics);
-
-    if (debug) {
-      this.getBoundingRect().render(graphics);
-      this.fullBoundingBox.render(graphics);
-    }
-  }
-
-  getFullBoundingBox() {
-    return this.fullBoundingBox;
-  }
-
-  getBoundingRect(): Rect {
-    const size = this.getAnimation().getSize();
-
-    return new Rect(
-      this.cx - size.width,
-      this.cy + size.height - 1,
-      2 * size.width,
-      1
-    );
   }
 
   getZOrder() {

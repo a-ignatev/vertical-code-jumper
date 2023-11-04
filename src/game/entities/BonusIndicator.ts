@@ -1,6 +1,6 @@
+import { Text } from "engine/components/Text";
 import { Context, Entity } from "engine/entities/Entity";
-import { Rect } from "engine/entities/Rect";
-import { Graphics } from "engine/graphics/Graphics";
+import { Scene } from "engine/scenes/Scene";
 
 const TEXT = "x2";
 const SCALE_SPEED = 3;
@@ -9,19 +9,17 @@ const MIN_SCALE = 0.6;
 const COLOR = "#EDBB4E";
 
 export class BonusIndicator extends Entity {
-  private isHidden = true;
   private isGrowing: boolean = true;
   private scale: number = 1;
-  private originalTextWidth: number;
+  private originalTextWidth: number = 0;
+  private top = -100;
 
-  constructor(graphics: Graphics) {
-    super();
+  constructor(scene: Scene) {
+    super(scene);
 
-    this.originalTextWidth = graphics.measureText(TEXT).width;
-  }
-
-  getBoundingRect(): Rect {
-    throw new Error("Method not implemented.");
+    const text = this.addComponent("text", Text, TEXT);
+    this.originalTextWidth = text.getWidth();
+    text.setColor(COLOR);
   }
 
   update({ delta }: Context): void {
@@ -38,25 +36,18 @@ export class BonusIndicator extends Entity {
     if (this.scale < MIN_SCALE) {
       this.isGrowing = false;
     }
+
+    const graphics = this.getScene().getSceneManager().getGraphics();
+    this.getTransform().setPosition(
+      graphics.getWidth() / 2 - (this.originalTextWidth / 2) * this.scale,
+      this.top
+    );
+    this.getComponent<Text>("text")?.setFont(
+      `${globalFontSize * this.scale}px ${globalFontFamily.split(",")[0]}`
+    );
   }
 
   setIsHidden(value: boolean) {
-    this.isHidden = value;
-  }
-
-  render(graphics: Graphics): void {
-    if (this.isHidden) {
-      return;
-    }
-
-    graphics.setFont(
-      `${globalFontSize * this.scale}px ${globalFontFamily.split(",")[0]}`
-    );
-    graphics.setFillColor(COLOR);
-    graphics.fillText(
-      TEXT,
-      graphics.getWidth() / 2 - (this.originalTextWidth / 2) * this.scale,
-      20
-    );
+    this.top = value ? -100 : 20;
   }
 }

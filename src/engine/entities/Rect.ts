@@ -1,8 +1,11 @@
-import { Graphics } from "engine/graphics/Graphics";
+import { Component } from "engine/components/Component";
+import { IRenderable } from "engine/components/IRenderable";
+import { Graphics } from "engine/core/Graphics";
+import { Entity } from "./Entity";
 
 const DEFAULT_COLOR = "#ff0000";
 
-export class Rect {
+export class Rect extends Component implements IRenderable {
   private x: number;
   private y: number;
   private width: number;
@@ -10,12 +13,15 @@ export class Rect {
   private color: string;
 
   constructor(
+    entity: Entity,
     x: number,
     y: number,
     width: number,
     height: number,
     color?: string
   ) {
+    super(entity);
+
     this.x = x;
     this.y = y;
     this.width = width;
@@ -23,7 +29,13 @@ export class Rect {
     this.color = color || DEFAULT_COLOR;
   }
 
-  render(graphics: Graphics) {
+  render(graphics: Graphics, debug: boolean) {
+    console.log(debug);
+
+    if (!debug) {
+      return;
+    }
+
     graphics.setStrokeColor(this.color);
     graphics.strokeRect(this.x, this.y, this.width, this.height);
     graphics.fill();
@@ -51,4 +63,6 @@ export class Rect {
 
     return true;
   }
+
+  destroy() {}
 }

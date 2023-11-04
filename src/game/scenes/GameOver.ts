@@ -1,117 +1,91 @@
-import { Graphics } from "engine/graphics/Graphics";
+import { Text } from "engine/components/Text";
+import { Graphics } from "engine/core/Graphics";
+import { SoundEmitter } from "engine/entities/SoundEmitter";
 import { Scene } from "engine/scenes/Scene";
-import { Sound } from "engine/sound/Sound";
+import { SceneManager } from "engine/scenes/SceneManager";
 import { SCORE_COLOR } from "game/entities/Score";
-import { StaticWord } from "game/entities/Word";
+import { StaticWord } from "game/entities/StaticWord";
+import { getJobTitle } from "game/helpers";
 
 export class GameOver extends Scene {
-  private gameOverSound: Sound;
-  private music: Sound;
+  constructor(sceneManager: SceneManager) {
+    super(sceneManager);
 
-  constructor(music: Sound) {
-    super();
-
-    this.music = music;
     this.onClick = this.onClick.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
-    this.gameOverSound = new Sound("game-over.mp3");
   }
 
-  attach(graphics: Graphics, payload: { score: number }): void {
-    this.music.stop();
-
-    if (!this.gameOverSound.isPlaying()) {
-      this.gameOverSound.play();
-    }
-
-    const jobTitleText = this.getJobTitle(payload.score);
+  attach(graphics: Graphics, payload: { score: number } | undefined): void {
+    const jobTitleText = payload?.score ? getJobTitle(payload.score) : "";
     const gameOverText = "Game Over";
     const helpText = "Click or press Space";
     const help2Text = "to play again";
-    const scoreText = payload.score.toString();
+    const scoreText = payload?.score.toString() || "0";
 
-    const gameOver = new StaticWord(
-      gameOverText,
-      graphics.getWidth() / 2 - graphics.measureText(gameOverText).width / 2,
-      graphics.getHeight() / 2 - 6 * globalFontSize,
-      graphics
-    );
-
-    const jobTitle = new StaticWord(
+    graphics.setFont(`${globalFontSize}px ${globalFontFamily.split(",")[0]}`);
+    this.spawnEntity(
+      "jobTitle",
+      StaticWord,
       jobTitleText,
       graphics.getWidth() / 2 - graphics.measureText(jobTitleText).width / 2,
-      graphics.getHeight() / 2 - globalFontSize,
-      graphics
+      graphics.getHeight() / 2 - globalFontSize
     );
-
-    const score = new StaticWord(
+    const score = this.spawnEntity(
+      "score",
+      StaticWord,
       scoreText,
       graphics.getWidth() / 2 - graphics.measureText(scoreText).width / 2,
-      graphics.getHeight() / 2 + globalFontSize,
-      graphics
+      graphics.getHeight() / 2 + globalFontSize
     );
+    score.getComponent<Text>("text")?.setColor(SCORE_COLOR);
 
-    score.color = SCORE_COLOR;
-
-    const help = new StaticWord(
+    this.spawnEntity(
+      "title",
+      StaticWord,
+      gameOverText,
+      graphics.getWidth() / 2 - graphics.measureText(gameOverText).width / 2,
+      graphics.getHeight() / 2 - 6 * globalFontSize
+    );
+    this.spawnEntity(
+      "help",
+      StaticWord,
       helpText,
       graphics.getWidth() / 2 - graphics.measureText(helpText).width / 2,
-      graphics.getHeight() / 2 + 4 * globalFontSize,
-      graphics
+      graphics.getHeight() / 2 + 4 * globalFontSize
     );
-    const help2 = new StaticWord(
+    this.spawnEntity(
+      "help2",
+      StaticWord,
       help2Text,
       graphics.getWidth() / 2 - graphics.measureText(help2Text).width / 2,
-      graphics.getHeight() / 2 + 6 * globalFontSize,
-      graphics
+      graphics.getHeight() / 2 + 6 * globalFontSize
     );
-
-    this.addEntity("jobTitle", jobTitle);
-    this.addEntity("score", score);
-    this.addEntity("title", gameOver);
-    this.addEntity("help", help);
-    this.addEntity("help2", help2);
+    const gameOverSound = this.spawnEntity(
+      "gameOverSound",
+      SoundEmitter,
+      "game-over.mp3"
+    );
+    gameOverSound.play();
 
     graphics.addScreenEventListener("click", this.onClick);
+    // todo encapsulate window events
     window.addEventListener("keydown", this.onKeyDown);
   }
 
   detach(graphics: Graphics): void {
     graphics.removeScreenEventListener("click", this.onClick);
+    // todo encapsulate window events
     window.removeEventListener("keydown", this.onKeyDown);
-  }
-
-  private multiplier = 2000;
-
-  private titles = [
-    { name: "Junior", limit: 1 },
-    { name: "Advanced Junior", limit: 1.4 },
-    { name: "Regular", limit: 1.8 },
-    { name: "Senior", limit: 2.4 },
-    { name: "Strong Senior", limit: 3 },
-    { name: "Staff", limit: 4 },
-    { name: "Senior Staff", limit: 5 },
-    { name: "Principal", limit: 7 },
-  ];
-
-  private getJobTitle(score: number) {
-    const titleIndex =
-      this.titles.findIndex(({ limit }) => limit * this.multiplier > score) ||
-      0;
-
-    return this.titles[titleIndex].name + " Engineer";
   }
 
   private onClick() {
     this.getSceneManager().switchScene("game");
-    this.music.play();
   }
 
   private onKeyDown(event: KeyboardEvent) {
     if (event.key === " ") {
       event.preventDefault();
       this.getSceneManager().switchScene("game");
-      this.music.play();
     }
   }
 }

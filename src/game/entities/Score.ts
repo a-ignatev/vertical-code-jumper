@@ -1,25 +1,23 @@
-import { Context } from "engine/entities/Entity";
-import { Graphics } from "engine/graphics/Graphics";
-import { Sound } from "engine/sound/Sound";
-import { Word } from "./Word";
+import { Sound } from "engine/components/Sound";
+import { Text } from "engine/components/Text";
+import { Context, Entity } from "engine/entities/Entity";
+import { Scene } from "engine/scenes/Scene";
 
 const EFFECT_POINTS = 100;
 export const SCORE_COLOR = "#EDBB4E";
 
-export class Score extends Word {
-  private originalWord: string;
+export class Score extends Entity {
   private playTimeS: number = 0;
-  private scoreSound: Sound;
   private lastEffectScore: number = 0;
   private additionalScore: number = 0;
 
-  constructor(word: string, x: number, y: number, graphics: Graphics) {
-    super(word, x, y, graphics);
+  constructor(scene: Scene) {
+    super(scene);
 
-    this.originalWord = word;
-    this.color = SCORE_COLOR;
-
-    this.scoreSound = new Sound("score.mp3");
+    this.getTransform().setPosition(globalFontSize / 2, 1.5 * globalFontSize);
+    const text = this.addComponent("text", Text, "Score:");
+    text.setColor(SCORE_COLOR);
+    this.addComponent("scoreSound", Sound, "score.mp3");
   }
 
   update({ delta }: Context) {
@@ -29,15 +27,15 @@ export class Score extends Word {
 
     if (score !== this.lastEffectScore && score % EFFECT_POINTS === 0) {
       this.lastEffectScore = score;
-      this.scoreSound.play();
+      this.getComponent<Sound>("scoreSound")?.play();
     }
 
-    this.word = this.originalWord + score.toString();
+    this.getComponent<Text>("text")?.setText("Score: " + score.toString());
   }
 
   addScore(value: number) {
     this.additionalScore += value;
-    this.scoreSound.play();
+    this.getComponent<Sound>("scoreSound")?.play();
   }
 
   getScore() {

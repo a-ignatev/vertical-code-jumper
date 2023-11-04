@@ -1,7 +1,7 @@
-import { Graphics } from "engine/graphics/Graphics";
+import { Graphics } from "engine/core/Graphics";
 import { Scene } from "engine/scenes/Scene";
 import { AnimatedArrow } from "game/entities/AnimatedArrow";
-import { StaticWord } from "game/entities/Word";
+import { StaticWord } from "game/entities/StaticWord";
 
 export class Resize extends Scene {
   attach(graphics: Graphics): void {
@@ -9,31 +9,29 @@ export class Resize extends Scene {
     const message = "Resize";
     const halfMessageLength = graphics.measureText("Resize").width / 2;
 
-    const resize = new StaticWord(
+    this.spawnEntity(
+      "resize",
+      StaticWord,
       message,
       graphics.getWidth() / 2 - halfMessageLength,
-      baseY,
-      graphics
+      baseY
     );
-
-    const left = new AnimatedArrow(
-      graphics,
+    this.spawnEntity(
+      "left",
+      AnimatedArrow,
       graphics.getWidth() / 2 - halfMessageLength,
       baseY,
       graphics.isScreenTooSmall() ? "left" : "right",
       "left"
     );
-    const right = new AnimatedArrow(
-      graphics,
+    this.spawnEntity(
+      "right",
+      AnimatedArrow,
       graphics.getWidth() / 2 + halfMessageLength,
       baseY,
       graphics.isScreenTooSmall() ? "right" : "left",
       "right"
     );
-
-    this.addEntity("resize", resize);
-    this.addEntity("left", left);
-    this.addEntity("right", right);
   }
 
   detach() {}

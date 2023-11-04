@@ -1,6 +1,9 @@
+import { Rect } from "engine/components/Rect";
+import { Text } from "engine/components/Text";
 import { Context, Entity } from "engine/entities/Entity";
-import { Rect } from "engine/entities/Rect";
-import { Graphics } from "engine/graphics/Graphics";
+import { Scene } from "engine/scenes/Scene";
+import { ColorBox } from "game/components/ColorBox";
+import { getRandomWordX } from "game/helpers";
 import { CoffeeWave } from "./CoffeeWave";
 import { Guy } from "./Guy";
 import { LifeBar } from "./LifeBar";
@@ -16,21 +19,11 @@ export class Commit extends Entity {
   private removeColor = "#f85149";
   private neutralColor = "#6e768166";
 
-  private x: number;
-  private y: number;
-  private blocks: string[];
-  private addedText: string;
-  private removedText: string;
-  private totalLength: number;
-  private addedLength: number;
-  private removedLength: number;
-  private blocksYOffset: number;
+  constructor(scene: Scene) {
+    super(scene);
 
-  constructor(x: number, y: number, graphics: Graphics) {
-    super();
-
-    this.x = x;
-    this.y = y;
+    const graphics = this.getScene().getSceneManager().getGraphics();
+    this.getTransform().setPosition(getRandomWordX(graphics), 0);
 
     const added = Math.round(Math.random() * 600);
     const removed = Math.round(Math.random() * 500);
@@ -38,53 +31,76 @@ export class Commit extends Entity {
     const total = added + removed + neutral;
     const block = Math.round(total / 5);
 
-    this.addedText = `+${added} `;
-    this.removedText = `-${removed} `;
-    this.blocks = [
+    const addedString = `+${added} `;
+    const removedString = `-${removed} `;
+
+    const font = `${FONT_SIZE}px ${globalFontFamily.split(",")[0]}`;
+
+    const addedText = this.addComponent("addedText", Text, addedString);
+    addedText.setFont(font);
+
+    const removedText = this.addComponent("removedText", Text, removedString);
+    removedText.setFont(font);
+    removedText.pivot.x = addedText.getWidth();
+
+    const blocks = [
       ...Array(Math.round(added / block)).fill(this.addColor),
       ...Array(Math.round(removed / block)).fill(this.removeColor),
       ...Array(Math.round(neutral / block)).fill(this.neutralColor),
     ].slice(0, 5);
 
-    graphics.setFont(`${FONT_SIZE}px ${globalFontFamily.split(",")[0]}`);
-    const measure = graphics.measureText(this.addedText + this.removedText);
-    this.totalLength = measure.width + BLOCK_SIZE * 5 + PADDING * 5;
-    const m = graphics.measureText(this.addedText);
-    this.addedLength = m.width;
-    this.removedLength = graphics.measureText(this.removedText).width;
-    this.blocksYOffset =
-      (m.actualBoundingBoxAscent + m.actualBoundingBoxDescent) / 2 +
-      BLOCK_SIZE / 2;
+    for (let i = 0; i < blocks.length; i++) {
+      const box = this.addComponent("box", ColorBox, BLOCK_SIZE, blocks[i]);
+      box.pivot = {
+        x: addedText.getWidth() + removedText.getWidth() + BLOCK_SIZE * i + 1,
+        y: -addedText.getHeight() / 2 - BLOCK_SIZE / 2,
+      };
+    }
+
+    const totalLength =
+      addedText.getWidth() +
+      removedText.getWidth() +
+      BLOCK_SIZE * 5 +
+      PADDING * 5;
+
+    const boundingBox = this.addComponent(
+      "collisionBox",
+      Rect,
+      totalLength,
+      FONT_SIZE,
+      "#00ff00"
+    );
+    boundingBox.pivot.y = -FONT_SIZE;
   }
 
   update({ delta }: Context): void {
-    this.y += FALLING_SPEED * delta;
+    this.getTransform().translate(0, FALLING_SPEED * delta);
 
     const score = this.getScene().getEntity<Score>("score");
 
     if (score) {
-      for (const entity of this.getScene().getEntities()) {
-        if (
-          entity instanceof Guy &&
-          this.getBoundingRect().intersects(entity.getFullBoundingBox())
-        ) {
-          const coffeeWave =
-            this.getScene().getEntity<CoffeeWave>("coffeeWave");
+      const guy = this.getScene().getEntity<Guy>("guy");
+      const guyBox = guy?.getComponent<Rect>("fullBoundingBox");
 
-          if (coffeeWave) {
-            score.addScore(200);
-          } else {
-            score.addScore(100);
-          }
-          this.getScene().getEntity<LifeBar>("lifeBar")?.increaseLife();
-          this.getScene().removeEntity(this);
+      if (
+        guyBox &&
+        this.getComponent<Rect>("collisionBox")?.intersects(guyBox)
+      ) {
+        const coffeeWave = this.getScene().getEntity<CoffeeWave>("coffeeWave");
+
+        if (coffeeWave) {
+          score.addScore(200);
+        } else {
+          score.addScore(100);
         }
+        this.getScene().getEntity<LifeBar>("lifeBar")?.increaseLife();
+        this.getScene().removeEntity(this);
       }
     }
 
     const graphics = this.getScene().getSceneManager().getGraphics();
 
-    if (this.y - FONT_SIZE > graphics.getHeight()) {
+    if (this.getTransform().getY() - FONT_SIZE > graphics.getHeight()) {
       this.getScene().removeEntity(this);
 
       const coffeeWave = this.getScene().getEntity("coffeeWave");
@@ -93,32 +109,6 @@ export class Commit extends Entity {
         this.getScene().getEntity<LifeBar>("lifeBar")?.decreaseLife();
       }
     }
-  }
-
-  render(graphics: Graphics, debug: boolean) {
-    graphics.setFont(`${FONT_SIZE}px ${globalFontFamily.split(",")[0]}`);
-    graphics.setFillColor(this.addColor);
-    graphics.fillText(this.addedText, this.x, this.y);
-    graphics.setFillColor(this.removeColor);
-    graphics.fillText(this.removedText, this.x + this.addedLength, this.y);
-
-    for (let i = 0; i < this.blocks.length; i++) {
-      graphics.setFillColor(this.blocks[i]);
-      graphics.fillRect(
-        this.x + this.addedLength + this.removedLength + BLOCK_SIZE * i + 1,
-        this.y - this.blocksYOffset,
-        BLOCK_SIZE,
-        BLOCK_SIZE
-      );
-    }
-
-    if (debug) {
-      this.getBoundingRect().render(graphics);
-    }
-  }
-
-  getBoundingRect(): Rect {
-    return new Rect(this.x, this.y - FONT_SIZE, this.totalLength, FONT_SIZE);
   }
 
   getZOrder(): number {

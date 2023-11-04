@@ -1,7 +1,7 @@
+import { Sound } from "engine/components/Sound";
+import { StaticImage } from "engine/components/StaticImage";
 import { Entity } from "engine/entities/Entity";
-import { Rect } from "engine/entities/Rect";
-import { Graphics } from "engine/graphics/Graphics";
-import { Sound } from "engine/sound/Sound";
+import { Scene } from "engine/scenes/Scene";
 
 const LIFE_COUNT = 3;
 const STRONG_LIFE_COUNT = 4;
@@ -10,28 +10,51 @@ const HEIGHT = 24;
 const PADDING = 4;
 
 export class LifeBar extends Entity {
-  private heartImg: HTMLImageElement;
-  private heartEmptyImg: HTMLImageElement;
   private life = LIFE_COUNT;
   private totalLife = LIFE_COUNT;
-  private sound: Sound;
 
-  constructor() {
-    super();
+  constructor(scene: Scene) {
+    super(scene);
 
-    this.heartImg = new Image();
-    this.heartImg.src = mediaFolder + "/img/heart.png";
-    this.heartEmptyImg = new Image();
-    this.heartEmptyImg.src = mediaFolder + "/img/heart-empty.png";
-    this.sound = new Sound("ough.mp3");
+    this.addComponent("hurtSound", Sound, "ough.mp3");
+    this.updateHealthBar();
   }
 
-  getBoundingRect(): Rect {
-    return new Rect(0, 0, 0, 0);
+  private setLife(value: number) {
+    this.life = value;
+    this.updateHealthBar();
+  }
+
+  private updateHealthBar() {
+    for (const component of this.getComponents()) {
+      if (component instanceof StaticImage) {
+        this.removeComponent(component);
+      }
+    }
+
+    const graphics = this.getScene().getSceneManager().getGraphics();
+    const offset = graphics.getWidth() - (WIDTH + PADDING) * this.totalLife;
+    for (let i = 0; i < this.totalLife; i++) {
+      this.addHeart(this.life - 1 >= i ? "heart.png" : "heart-empty.png", {
+        x: offset + i * (WIDTH + PADDING),
+        y: PADDING,
+      });
+    }
+  }
+
+  private addHeart(filename: string, offset: { x: number; y: number }) {
+    const heart = this.addComponent(
+      "fullHeart",
+      StaticImage,
+      filename,
+      WIDTH,
+      HEIGHT
+    );
+    heart.pivot = offset;
   }
 
   decreaseLife() {
-    this.life--;
+    this.setLife(this.life - 1);
 
     if (this.life <= 0) {
       if (
@@ -40,18 +63,18 @@ export class LifeBar extends Entity {
         this.getScene().getSceneManager().switchScene("gameOver");
       }
     } else {
-      this.sound.play();
+      this.getComponent<Sound>("hurtSound")?.play();
     }
   }
 
   increaseLife() {
     if (this.life !== this.totalLife) {
-      this.life++;
+      this.setLife(this.life + 1);
     }
   }
 
   reset() {
-    this.life = this.totalLife;
+    this.setLife(this.totalLife);
   }
 
   becomeStrong() {
@@ -60,18 +83,4 @@ export class LifeBar extends Entity {
   }
 
   update(): void {}
-
-  render(graphics: Graphics): void {
-    const offset = graphics.getWidth() - (WIDTH + PADDING) * this.totalLife;
-
-    for (let i = 0; i < this.totalLife; i++) {
-      graphics.drawImage(
-        this.life - 1 >= i ? this.heartImg : this.heartEmptyImg,
-        offset + i * (WIDTH + PADDING),
-        PADDING,
-        WIDTH,
-        HEIGHT
-      );
-    }
-  }
 }

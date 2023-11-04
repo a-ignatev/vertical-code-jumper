@@ -1,4 +1,4 @@
-import { Graphics } from "engine/graphics/Graphics";
+import { Graphics } from "engine/core/Graphics";
 
 export function getColor(name: string) {
   return getComputedStyle(document.documentElement).getPropertyValue(name);
@@ -32,4 +32,25 @@ export function debounce(func: () => void, time: number) {
 
     timer = setTimeout(func, time);
   };
+}
+
+// todo find another place for job title logic
+const multiplier = 2000;
+
+const titles = [
+  { name: "Junior", limit: 1 },
+  { name: "Advanced Junior", limit: 1.4 },
+  { name: "Regular", limit: 1.8 },
+  { name: "Senior", limit: 2.4 },
+  { name: "Strong Senior", limit: 3 },
+  { name: "Staff", limit: 4 },
+  { name: "Senior Staff", limit: 5 },
+  { name: "Principal", limit: 7 },
+];
+
+export function getJobTitle(score: number) {
+  const titleIndex =
+    titles.findIndex(({ limit }) => limit * multiplier > score) || 0;
+
+  return titles[titleIndex].name + " Engineer";
 }
