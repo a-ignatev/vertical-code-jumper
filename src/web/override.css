@@ -111,3 +111,17 @@ body {
 .button-4:-webkit-details-marker {
   display: none;
 }
+
+.mobile-only {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .links {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+}

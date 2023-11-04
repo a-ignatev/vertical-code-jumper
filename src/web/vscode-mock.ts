@@ -155,3 +155,25 @@ global.webVersionWords = [
   "Scalability",
   "Sprint retrospective",
 ];
+
+const leftButton = document.getElementById("leftButton");
+
+if (leftButton) {
+  leftButton.addEventListener("mousedown", () => {
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft" }));
+  });
+  leftButton.addEventListener("mouseup", () => {
+    window.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowLeft" }));
+  });
+}
+
+const rightButton = document.getElementById("rightButton");
+
+if (rightButton) {
+  rightButton.addEventListener("mousedown", () => {
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+  });
+  rightButton.addEventListener("mouseup", () => {
+    window.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowRight" }));
+  });
+}
