@@ -23,7 +23,10 @@ body {
   height: 600px;
   width: 360px;
   box-shadow: #00000047 0px 8px 10px 4px;
+  position: relative;
   margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
 }
 
 .links {
@@ -112,8 +115,15 @@ body {
   display: none;
 }
 
-.mobile-only {
+.mobile-controls {
   display: none;
+  position: absolute;
+  bottom: 24px;
+}
+
+#leftButton, #rightButton {
+  font-size: 20px;
+  line-height: normal;
 }
 
 @media screen and (max-width: 600px) {
@@ -121,7 +131,7 @@ body {
     display: none;
   }
 
-  .mobile-only {
+  .mobile-controls {
     display: block;
   }
 }
