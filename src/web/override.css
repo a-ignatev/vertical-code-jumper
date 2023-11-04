@@ -5,14 +5,15 @@
 }
 
 *:not(input):not(textarea) {
-  user-select: none; /* disable selection/Copy of UIWebView */
-  -webkit-user-select: none; /* disable selection/Copy of UIWebView */
-  -webkit-touch-callout: none; /* disable the IOS popup when long-press on a link */
+  -webkit-touch-callout: none;
   -webkit-user-callout: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
   -webkit-user-modify: none;
   -webkit-highlight: none;
+  -webkit-text-size-adjust: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
 }   
 
 html {
