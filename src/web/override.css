@@ -2,15 +2,15 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  -webkit-touch-callout: none;
-  -webkit-user-callout: none;
-  -webkit-user-select: none;
-  -webkit-user-drag: none;
-  -webkit-user-modify: none;
-  -webkit-highlight: none;
-  -webkit-text-size-adjust: none;
-  -webkit-touch-callout: none;
-  touch-action: none;
+  -webkit-touch-callout: none !important;
+  -webkit-user-callout: none !important;
+  -webkit-user-select: none !important;
+  -webkit-user-drag: none !important;
+  -webkit-user-modify: none !important;
+  -webkit-highlight: none !important;
+  -webkit-text-size-adjust: none !important;
+  -webkit-touch-callout: none !important;
+  touch-action: none !important;
 }   
 
 html {
