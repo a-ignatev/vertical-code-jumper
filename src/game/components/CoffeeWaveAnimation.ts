@@ -44,7 +44,7 @@ export class CoffeeWaveAnimation extends Component implements IRenderable {
 
     this.shift -= SHIFT_SPEED * delta;
 
-    if (this.isMiddleGoingUp === true) {
+    if (this.isMiddleGoingUp) {
       this.middleHeight -= MIDDLE_WAVE_SPEED * delta;
     } else {
       this.middleHeight += MIDDLE_WAVE_SPEED * delta;

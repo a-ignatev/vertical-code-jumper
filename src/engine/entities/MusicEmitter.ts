@@ -18,11 +18,11 @@ export class MusicEmitter extends Entity {
     }
 
     if (enabled) {
-      music.seMuted(false);
+      music.setMuted(false);
       music.play();
     } else {
       music.stop();
-      music.seMuted(true);
+      music.setMuted(true);
     }
   }
 }

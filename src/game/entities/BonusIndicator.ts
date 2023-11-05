@@ -23,7 +23,7 @@ export class BonusIndicator extends Entity {
   }
 
   update({ delta }: Context): void {
-    if (this.isGrowing === true) {
+    if (this.isGrowing) {
       this.scale -= SCALE_SPEED * delta;
     } else {
       this.scale += SCALE_SPEED * delta;

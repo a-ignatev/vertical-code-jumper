@@ -27,7 +27,7 @@ export class Sound extends Component {
       return;
     }
 
-    this.audio.play().catch(() => {
+    return this.audio.play().catch(() => {
       // just wait until user interact
     });
   }
@@ -41,7 +41,7 @@ export class Sound extends Component {
     return !this.audio.paused;
   }
 
-  seMuted(value: boolean) {
+  setMuted(value: boolean) {
     this.isMuted = value;
   }
 

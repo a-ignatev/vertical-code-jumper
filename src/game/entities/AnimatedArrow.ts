@@ -66,7 +66,7 @@ export class AnimatedArrow extends Entity {
   }
 
   update(): void {
-    if (this.isGrowing === true) {
+    if (this.isGrowing) {
       this.scale -= 0.05;
     } else {
       this.scale += 0.05;

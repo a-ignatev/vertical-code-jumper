@@ -8,6 +8,7 @@ import { Commit } from "game/entities/Commit";
 import { FallingWord } from "game/entities/FallingWord";
 import { Guy, SIDE_SPEED } from "game/entities/Guy";
 import { LifeBar } from "game/entities/LifeBar";
+import { MovingWord } from "game/entities/MovingWord";
 import { Score } from "game/entities/Score";
 import { Timer } from "game/entities/Timer";
 import { getRandomWordXNotCloseTo } from "game/helpers";
@@ -59,12 +60,21 @@ export class Game extends Scene {
     const guy = this.spawnEntity("guy", Guy, graphics.getWidth() / 2, 0, true);
     this.spawnEntity("score", Score);
     this.spawnEntity("wordSpawner", Timer, 1, true, () => {
-      const fallingWord = this.spawnEntity(
-        "fallingWord",
-        FallingWord,
-        this.words
-      );
-      fallingWord.randomize(guy.getTransform().getPosition().x);
+      if (Math.random() > 0.6) {
+        const fallingWord = this.spawnEntity(
+          "fallingWord",
+          FallingWord,
+          this.words
+        );
+        fallingWord.randomize(guy.getTransform().getPosition().x);
+      } else {
+        const fallingWord = this.spawnEntity(
+          "fallingWord",
+          MovingWord,
+          this.words
+        );
+        fallingWord.randomize(guy.getTransform().getPosition().x);
+      }
     });
     this.spawnEntity("commitSpawner", Timer, 2.5, false, () => {
       const commit = this.spawnEntity("commit", Commit);
