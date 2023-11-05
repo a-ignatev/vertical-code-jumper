@@ -27,7 +27,9 @@ export class Sound extends Component {
       return;
     }
 
-    this.audio.play();
+    this.audio.play().catch(() => {
+      // just wait until user interact
+    });
   }
 
   stop() {
