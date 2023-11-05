@@ -2,10 +2,10 @@ import { Graphics } from "engine/core/Graphics";
 import { MusicEmitter } from "engine/entities/MusicEmitter";
 import { Scene } from "engine/scenes/Scene";
 import { SceneManager } from "engine/scenes/SceneManager";
-import { BonusIndicator } from "game/entities/BonusIndicator";
 import { CoffeeMug } from "game/entities/CoffeeMug";
 import { Commit } from "game/entities/Commit";
 import { FallingWord } from "game/entities/FallingWord";
+import { FlashyIndicator } from "game/entities/FlashyIndicator";
 import { Guy, SIDE_SPEED } from "game/entities/Guy";
 import { LifeBar } from "game/entities/LifeBar";
 import { MovingWord } from "game/entities/MovingWord";
@@ -96,7 +96,7 @@ export class Game extends Scene {
         this.spawnEntity("mug", CoffeeMug);
       }
     });
-    this.spawnEntity("bonusIndicator", BonusIndicator);
+    this.spawnEntity("bonusIndicator", FlashyIndicator, "x2", "#EDBB4E");
     this.spawnEntity("lifeBar", LifeBar);
 
     // todo encapsulate window events

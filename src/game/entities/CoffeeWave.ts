@@ -2,7 +2,7 @@ import { Sound } from "engine/components/Sound";
 import { Context, Entity } from "engine/entities/Entity";
 import { Scene } from "engine/scenes/Scene";
 import { CoffeeWaveAnimation } from "game/components/CoffeeWaveAnimation";
-import { BonusIndicator } from "./BonusIndicator";
+import { FlashyIndicator } from "./FlashyIndicator";
 
 export class CoffeeWave extends Entity {
   constructor(scene: Scene) {
@@ -11,7 +11,7 @@ export class CoffeeWave extends Entity {
     this.addComponent("coffeeWaveAnimation", CoffeeWaveAnimation, () => {
       this.getScene().removeEntity(this);
       this.getScene()
-        .getEntity<BonusIndicator>("bonusIndicator")
+        .getEntity<FlashyIndicator>("bonusIndicator")
         ?.setIsHidden(true);
     });
     const pouringSound = this.addComponent(

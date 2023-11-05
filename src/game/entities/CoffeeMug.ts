@@ -3,8 +3,8 @@ import { StaticImage } from "engine/components/StaticImage";
 import { Context, Entity } from "engine/entities/Entity";
 import { Scene } from "engine/scenes/Scene";
 import { getRandomWordX } from "game/helpers";
-import { BonusIndicator } from "./BonusIndicator";
 import { CoffeeWave } from "./CoffeeWave";
+import { FlashyIndicator } from "./FlashyIndicator";
 import { Guy } from "./Guy";
 import { LifeBar } from "./LifeBar";
 
@@ -34,7 +34,7 @@ export class CoffeeMug extends Entity {
         this.getScene().spawnEntity("coffeeWave", CoffeeWave);
         this.getScene().getEntity<LifeBar>("lifeBar")?.reset();
         this.getScene()
-          .getEntity<BonusIndicator>("bonusIndicator")
+          .getEntity<FlashyIndicator>("bonusIndicator")
           ?.setIsHidden(false);
       }
     }
