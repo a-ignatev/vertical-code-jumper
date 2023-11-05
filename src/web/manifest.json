@@ -1,0 +1,16 @@
+{
+  "name": "Vertical Code Jumper",
+  "short_name": "Vertical Code Jumper",
+  "description": "An infinite vertical jumping game in your code.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#aaa",
+  "theme_color": "#21252B",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
