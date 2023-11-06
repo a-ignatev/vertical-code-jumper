@@ -127,12 +127,15 @@ body {
 .mobile-controls {
   display: none;
   position: absolute;
-  bottom: 24px;
+  bottom: 10px;
 }
 
 #leftButton, #rightButton {
   font-size: 20px;
   line-height: normal;
+  width: 170px;
+  height: 100px;
+  opacity: 0.2;
 }
 
 @media screen and (max-width: 600px) {
