@@ -3,12 +3,10 @@ import { Text } from "engine/components/Text";
 import { Context, Entity } from "engine/entities/Entity";
 import { Scene } from "engine/scenes/Scene";
 
-const EFFECT_POINTS = 100;
 export const SCORE_COLOR = "#EDBB4E";
 
 export class Score extends Entity {
   private playTimeS: number = 0;
-  private lastEffectScore: number = 0;
   private additionalScore: number = 0;
 
   constructor(scene: Scene) {
@@ -24,11 +22,6 @@ export class Score extends Entity {
     this.playTimeS += delta;
 
     const score = this.getScore();
-
-    if (score !== this.lastEffectScore && score % EFFECT_POINTS === 0) {
-      this.lastEffectScore = score;
-      this.getComponent<Sound>("scoreSound")?.play();
-    }
 
     this.getComponent<Text>("text")?.setText("Score: " + score.toString());
   }

@@ -61,5 +61,28 @@ export class Rect extends Component implements IRenderable {
     return true;
   }
 
+  approximateIntersectionPoint(other: Rect) {
+    const { x, y } = this.getEntity().getTransform().getPosition();
+    const { x: otherX, y: otherY } = other
+      .getEntity()
+      .getTransform()
+      .getPosition();
+
+    const rect1Right = x + this.pivot.x + this.width;
+    const rect1Bottom = y + this.pivot.y + this.height;
+    const rect2Right = otherX + other.pivot.x + other.width;
+    const rect2Bottom = otherY + other.pivot.y + other.height;
+
+    const left = Math.max(x + this.pivot.x, otherX + other.pivot.x);
+    const top = Math.max(y + this.pivot.y, otherY + other.pivot.y);
+    const right = Math.min(rect1Right, rect2Right);
+    const bottom = Math.min(rect1Bottom, rect2Bottom);
+
+    return {
+      x: (left + right) / 2,
+      y: (top + bottom) / 2,
+    };
+  }
+
   destroy() {}
 }

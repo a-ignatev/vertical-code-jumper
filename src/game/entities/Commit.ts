@@ -1,10 +1,13 @@
 import { Rect } from "engine/components/Rect";
+import { Sound } from "engine/components/Sound";
 import { Text } from "engine/components/Text";
 import { Context, Entity } from "engine/entities/Entity";
+import { SoundEmitter } from "engine/entities/SoundEmitter";
 import { Scene } from "engine/scenes/Scene";
 import { ColorBox } from "game/components/ColorBox";
 import { getRandomWordX } from "game/helpers";
 import { CoffeeWave } from "./CoffeeWave";
+import { CommitCatch } from "./CommitCatch";
 import { Guy } from "./Guy";
 import { LifeBar } from "./LifeBar";
 import { Score } from "./Score";
@@ -23,7 +26,6 @@ export class Commit extends Entity {
     super(scene);
 
     const graphics = this.getScene().getSceneManager().getGraphics();
-    this.getTransform().setPosition(getRandomWordX(graphics), 0);
 
     const added = Math.round(Math.random() * 600);
     const removed = Math.round(Math.random() * 500);
@@ -71,6 +73,22 @@ export class Commit extends Entity {
       "#00ff00"
     );
     boundingBox.pivot.y = -FONT_SIZE;
+
+    const randomX = getRandomWordX(graphics);
+    this.getTransform().setPosition(
+      Math.min(
+        Math.max(randomX, 5),
+        // start of the word should be that the word would fit the screen
+        graphics.getWidth() - this.getWidth()! - 5
+      ),
+      0
+    );
+    const shatterSound = this.addComponent(
+      "shatterSound",
+      Sound,
+      "shatter.mp3"
+    );
+    shatterSound.setVolume(0.5);
   }
 
   getWidth() {
@@ -85,11 +103,9 @@ export class Commit extends Entity {
     if (score) {
       const guy = this.getScene().getEntity<Guy>("guy");
       const guyBox = guy?.getComponent<Rect>("fullBoundingBox");
+      const boundingBox = this.getComponent<Rect>("collisionBox");
 
-      if (
-        guyBox &&
-        this.getComponent<Rect>("collisionBox")?.intersects(guyBox)
-      ) {
+      if (guyBox && boundingBox && boundingBox.intersects(guyBox)) {
         const coffeeWave = this.getScene().getEntity<CoffeeWave>("coffeeWave");
 
         if (coffeeWave) {
@@ -98,6 +114,11 @@ export class Commit extends Entity {
           score.addScore(100);
         }
         this.getScene().getEntity<LifeBar>("lifeBar")?.increaseLife();
+        this.getScene().spawnEntity(
+          "commitCatch",
+          CommitCatch,
+          boundingBox.approximateIntersectionPoint(guyBox)
+        );
         this.getScene().removeEntity(this);
       }
     }
@@ -105,7 +126,22 @@ export class Commit extends Entity {
     const graphics = this.getScene().getSceneManager().getGraphics();
 
     if (this.getTransform().getY() - FONT_SIZE > graphics.getHeight()) {
+      for (const component of this.getComponents()) {
+        if (component instanceof ColorBox) {
+          component.spawnCommitSplash();
+        }
+      }
       this.getScene().removeEntity(this);
+
+      const shatterSound = this.getScene().spawnEntity(
+        "shatterSound",
+        SoundEmitter,
+        "shatter.mp3",
+        0.5
+      );
+      shatterSound.play(() => {
+        this.getScene().removeEntity(shatterSound);
+      });
 
       const coffeeWave = this.getScene().getEntity("coffeeWave");
 

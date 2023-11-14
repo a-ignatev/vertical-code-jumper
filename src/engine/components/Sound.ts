@@ -22,9 +22,16 @@ export class Sound extends Component {
     this.audio.currentTime = timeS;
   }
 
-  play() {
+  play(onEnded?: () => void) {
     if (this.isMuted) {
       return;
+    }
+
+    if (onEnded) {
+      this.audio.onended = () => {
+        this.audio.onended = null;
+        onEnded();
+      };
     }
 
     return this.audio.play().catch(() => {

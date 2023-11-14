@@ -135,7 +135,7 @@ body {
   line-height: normal;
   width: 170px;
   height: 100px;
-  opacity: 0.2;
+  opacity: 0.1;
 }
 
 @media screen and (max-width: 600px) {

@@ -16,7 +16,8 @@ export class LifeBar extends Entity {
   constructor(scene: Scene) {
     super(scene);
 
-    this.addComponent("hurtSound", Sound, "ough.mp3");
+    const hurtSound = this.addComponent("hurtSound", Sound, "ough.mp3");
+    hurtSound.setVolume(0.5);
     this.updateHealthBar();
   }
 

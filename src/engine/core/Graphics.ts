@@ -112,4 +112,10 @@ export class Graphics {
   removeScreenEventListener(name: string, handler: () => void) {
     this.ctx.canvas.removeEventListener(name, handler);
   }
+
+  drawCircle(x: number, y: number, radius: number) {
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    this.ctx.fill();
+  }
 }
