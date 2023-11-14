@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://github.com/a-ignatev/vertical-code-jumper/compare/v0.0.10...v0.0.11) (2023-11-14)
+
+
+### Features
+
+* add particles! ([be23d23](https://github.com/a-ignatev/vertical-code-jumper/commit/be23d23ed0b986453ee46a6415d9abb7eef19fcb))
+
 ### [0.0.10](https://github.com/a-ignatev/vertical-code-jumper/compare/v0.0.9...v0.0.10) (2023-11-05)
 
 ### [0.0.9](https://github.com/a-ignatev/vertical-code-jumper/compare/v0.0.8...v0.0.9) (2023-11-04)
