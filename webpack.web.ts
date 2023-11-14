@@ -45,14 +45,6 @@ export const webConfig: Configuration = {
           to: path.resolve(__dirname, "./dist-web/override.css"),
         },
         {
-          from: path.resolve(__dirname, "./src/web/manifest.json"),
-          to: path.resolve(__dirname, "./dist-web/manifest.json"),
-        },
-        {
-          from: path.resolve(__dirname, "./src/web/service-worker.js"),
-          to: path.resolve(__dirname, "./dist-web/service-worker.js"),
-        },
-        {
           from: path.resolve(__dirname, "./resources/icon.png"),
           to: path.resolve(__dirname, "./dist-web/favicon.png"),
         },
