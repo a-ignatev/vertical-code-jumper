@@ -2,12 +2,13 @@ import { Rect } from "engine/components/Rect";
 import { Sound } from "engine/components/Sound";
 import { Text } from "engine/components/Text";
 import { Context, Entity } from "engine/entities/Entity";
+import { ParticlesEmitter } from "engine/entities/ParticlesEmitter";
 import { SoundEmitter } from "engine/entities/SoundEmitter";
 import { Scene } from "engine/scenes/Scene";
 import { ColorBox } from "game/components/ColorBox";
 import { getRandomWordX } from "game/helpers";
+import { CommitCatchParticle } from "game/particles/CommitCatchParticle";
 import { CoffeeWave } from "./CoffeeWave";
-import { CommitCatch } from "./CommitCatch";
 import { Guy } from "./Guy";
 import { LifeBar } from "./LifeBar";
 import { Score } from "./Score";
@@ -116,8 +117,10 @@ export class Commit extends Entity {
         this.getScene().getEntity<LifeBar>("lifeBar")?.increaseLife();
         this.getScene().spawnEntity(
           "commitCatch",
-          CommitCatch,
-          boundingBox.approximateIntersectionPoint(guyBox)
+          ParticlesEmitter,
+          boundingBox.approximateIntersectionPoint(guyBox),
+          Math.random() * 50 + 10,
+          CommitCatchParticle
         );
         this.getScene().removeEntity(this);
       }

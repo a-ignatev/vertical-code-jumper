@@ -1,22 +1,26 @@
 import { Graphics } from "engine/core/Graphics";
+import { Particle } from "engine/particles/Particle";
 import { hexToRgb } from "game/helpers";
-import { Particle } from "./Particle";
 
 export class CommitCatchParticle implements Particle {
   lifetime: number;
-  private position: { x: number; y: number };
+  private position: { x: number; y: number } = { x: 0, y: 0 };
   private velocity: { x: number; y: number };
   private colorsParts: { r: number; g: number; b: number };
 
-  constructor(center: { x: number; y: number }) {
+  constructor() {
     this.lifetime = Math.random();
-    this.position = center;
 
     this.colorsParts = hexToRgb("#EDBB4E") || { r: 0, g: 0, b: 0 };
     this.velocity = {
       x: Math.random() * 1000 - 500,
       y: Math.random() * 1000 - 500,
     };
+  }
+
+  setPosition(x: number, y: number): void {
+    this.position.x = x;
+    this.position.y = y;
   }
 
   update(delta: number) {

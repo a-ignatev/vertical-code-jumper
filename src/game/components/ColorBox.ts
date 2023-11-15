@@ -2,7 +2,8 @@ import { Component } from "engine/components/Component";
 import { IRenderable } from "engine/components/IRenderable";
 import { Graphics } from "engine/core/Graphics";
 import { Entity } from "engine/entities/Entity";
-import { CommitSplash } from "game/entities/CommitSplash";
+import { ParticlesEmitter } from "engine/entities/ParticlesEmitter";
+import { CommitSplashParticle } from "game/particles/CommitSplashParticle";
 
 export class ColorBox extends Component implements IRenderable {
   private size: number;
@@ -26,10 +27,17 @@ export class ColorBox extends Component implements IRenderable {
     const { x, y } = this.getEntity().getTransform().getPosition();
     this.getEntity()
       .getScene()
-      .spawnEntity("commitSplash", CommitSplash, this.color, {
-        x: x + this.pivot.x,
-        y: y + this.pivot.y,
-      });
+      .spawnEntity(
+        "commitSplash",
+        ParticlesEmitter<typeof CommitSplashParticle>,
+        {
+          x: x + this.pivot.x,
+          y: y + this.pivot.y,
+        },
+        Math.random() * 20 + 10,
+        CommitSplashParticle,
+        this.color
+      );
   }
 
   destroy() {}

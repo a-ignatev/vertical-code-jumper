@@ -1,19 +1,23 @@
 import { Graphics } from "engine/core/Graphics";
+import { Particle } from "engine/particles/Particle";
 import { hexToRgb } from "game/helpers";
-import { Particle } from "./Particle";
 
 export class CommitSplashParticle implements Particle {
   lifetime: number;
-  private position: { x: number; y: number };
+  private position: { x: number; y: number } = { x: 0, y: 0 };
   private velocity: number;
   private colorsParts: { r: number; g: number; b: number };
 
-  constructor(center: { x: number; y: number }, color: string) {
+  constructor(color: string) {
     this.lifetime = Math.random() * 3 + 1;
-    this.position = center;
 
     this.colorsParts = hexToRgb(color) || { r: 0, g: 0, b: 0 };
     this.velocity = -Math.random() * 180 - 20;
+  }
+
+  setPosition(x: number, y: number): void {
+    this.position.x = x;
+    this.position.y = y;
   }
 
   update(delta: number) {
