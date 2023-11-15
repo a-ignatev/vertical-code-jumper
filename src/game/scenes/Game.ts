@@ -6,20 +6,16 @@ import { CoffeeMug } from "game/entities/CoffeeMug";
 import { Commit } from "game/entities/Commit";
 import { FallingWord } from "game/entities/FallingWord";
 import { FlashyIndicator } from "game/entities/FlashyIndicator";
-import { Guy, SIDE_SPEED } from "game/entities/Guy";
+import { Guy } from "game/entities/Guy";
 import { LifeBar } from "game/entities/LifeBar";
 import { MovingWord } from "game/entities/MovingWord";
 import { Score } from "game/entities/Score";
 import { Timer } from "game/entities/Timer";
 import { getRandomWordXNotCloseTo } from "game/helpers";
 
-const LEFT_KEY = "ArrowLeft";
-const RIGHT_KEY = "ArrowRight";
-
 export class Game extends Scene {
   private words: string[];
   private isMusicEnabled: boolean;
-  private holdingKeys: string[] = [];
 
   constructor(
     sceneManager: SceneManager,
@@ -30,9 +26,6 @@ export class Game extends Scene {
 
     this.words = words;
     this.isMusicEnabled = isMusicEnabled;
-
-    this.onKeyDown = this.onKeyDown.bind(this);
-    this.onKeyUp = this.onKeyUp.bind(this);
   }
 
   switchMusic(enabled: boolean) {
@@ -98,60 +91,9 @@ export class Game extends Scene {
     });
     this.spawnEntity("bonusIndicator", FlashyIndicator, "x2", "#EDBB4E");
     this.spawnEntity("lifeBar", LifeBar);
-
-    // todo encapsulate window events
-    window.addEventListener("keydown", this.onKeyDown);
-    window.addEventListener("keyup", this.onKeyUp);
   }
 
   detach() {
-    // todo encapsulate window events
-    window.removeEventListener("keydown", this.onKeyDown);
-    window.removeEventListener("keyup", this.onKeyUp);
-
     return { score: this.getEntity<Score>("score")?.getScore() };
-  }
-
-  // todo refactor horrible keyboard handling
-  private onKeyDown(event: KeyboardEvent) {
-    const guy = this.getEntity<Guy>("guy");
-
-    if (!guy) {
-      return;
-    }
-
-    if (event.key === LEFT_KEY) {
-      guy.setSpeedX(-SIDE_SPEED);
-      this.holdingKeys.push(event.key);
-      event.preventDefault();
-    }
-
-    if (event.key === RIGHT_KEY) {
-      guy.setSpeedX(SIDE_SPEED);
-      this.holdingKeys.push(event.key);
-      event.preventDefault();
-    }
-
-    if (event.key === "m") {
-      this.spawnEntity("mug", CoffeeMug);
-      event.preventDefault();
-    }
-  }
-
-  private onKeyUp(event: KeyboardEvent) {
-    const guy = this.getEntity<Guy>("guy");
-
-    if (!guy) {
-      return;
-    }
-
-    if (event.key === LEFT_KEY || event.key === RIGHT_KEY) {
-      event.preventDefault();
-      this.holdingKeys = this.holdingKeys.filter((key) => key !== event.key);
-
-      if (!this.holdingKeys.length) {
-        guy.setSpeedX(0);
-      }
-    }
   }
 }

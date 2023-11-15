@@ -4,11 +4,11 @@ import { Rect } from "engine/components/Rect";
 import { Sound } from "engine/components/Sound";
 import { Context, Entity } from "engine/entities/Entity";
 import { Scene } from "engine/scenes/Scene";
+import { PlayerController } from "game/components/PlayerController";
 import { LifeBar } from "./LifeBar";
 
 const GRAVITY = 1000;
 const JUMP_SPEED = -500;
-export const SIDE_SPEED = 225;
 
 const DRINKING_PERIOD = 1;
 const TRANSFORM_PERIOD = 60;
@@ -39,6 +39,8 @@ export class Guy extends Entity {
     this.speedY = 0;
     this.getTransform().setPosition(cx, cy);
     this.canBecomeStrong = canBecomeStrong;
+
+    this.addComponent("playerController", PlayerController);
 
     const animationSet = this.addComponent(
       "animationSet",
@@ -156,6 +158,7 @@ export class Guy extends Entity {
   update({ delta }: Context) {
     const graphics = this.getScene().getSceneManager().getGraphics();
     const animationSet = this.getAnimationSet();
+    this.getComponent<PlayerController>("playerController")?.update();
 
     if (!animationSet) {
       return;
