@@ -27,33 +27,25 @@ export class Rect extends Component implements IRenderable {
       return;
     }
 
-    const { x, y } = this.getEntity().getTransform().getPosition();
+    const { x, y } = this.getWorldPosition();
     graphics.setStrokeColor(this.color);
-    graphics.strokeRect(
-      x + this.pivot.x,
-      y + this.pivot.y,
-      this.width,
-      this.height
-    );
+    graphics.strokeRect(x, y, this.width, this.height);
   }
 
   intersects(other: Rect) {
-    const { x, y } = this.getEntity().getTransform().getPosition();
-    const { x: otherX, y: otherY } = other
-      .getEntity()
-      .getTransform()
-      .getPosition();
+    const { x, y } = this.getWorldPosition();
+    const { x: otherX, y: otherY } = other.getWorldPosition();
 
-    const rect1Right = x + this.pivot.x + this.width;
-    const rect1Bottom = y + this.pivot.y + this.height;
-    const rect2Right = otherX + other.pivot.x + other.width;
-    const rect2Bottom = otherY + other.pivot.y + other.height;
+    const rect1Right = x + this.width;
+    const rect1Bottom = y + this.height;
+    const rect2Right = otherX + other.width;
+    const rect2Bottom = otherY + other.height;
 
     if (
-      rect1Right < otherX + other.pivot.x ||
-      rect2Right < x + this.pivot.x ||
-      rect1Bottom < otherY + other.pivot.y ||
-      rect2Bottom < y + this.pivot.y
+      rect1Right < otherX ||
+      rect2Right < x ||
+      rect1Bottom < otherY ||
+      rect2Bottom < y
     ) {
       return false;
     }
@@ -62,19 +54,16 @@ export class Rect extends Component implements IRenderable {
   }
 
   approximateIntersectionPoint(other: Rect) {
-    const { x, y } = this.getEntity().getTransform().getPosition();
-    const { x: otherX, y: otherY } = other
-      .getEntity()
-      .getTransform()
-      .getPosition();
+    const { x, y } = this.getWorldPosition();
+    const { x: otherX, y: otherY } = other.getWorldPosition();
 
-    const rect1Right = x + this.pivot.x + this.width;
-    const rect1Bottom = y + this.pivot.y + this.height;
-    const rect2Right = otherX + other.pivot.x + other.width;
-    const rect2Bottom = otherY + other.pivot.y + other.height;
+    const rect1Right = x + this.width;
+    const rect1Bottom = y + this.height;
+    const rect2Right = otherX + other.width;
+    const rect2Bottom = otherY + other.height;
 
-    const left = Math.max(x + this.pivot.x, otherX + other.pivot.x);
-    const top = Math.max(y + this.pivot.y, otherY + other.pivot.y);
+    const left = Math.max(x, otherX);
+    const top = Math.max(y, otherY);
     const right = Math.min(rect1Right, rect2Right);
     const bottom = Math.min(rect1Bottom, rect2Bottom);
 

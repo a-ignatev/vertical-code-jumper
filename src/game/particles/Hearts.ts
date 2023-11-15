@@ -1,7 +1,7 @@
 import { Graphics } from "engine/core/Graphics";
 import { Particle } from "engine/particles/Particle";
 
-export class CommitCatchParticle implements Particle {
+export class Hearts implements Particle {
   lifetime: number;
   private position: { x: number; y: number } = { x: 0, y: 0 };
   private velocity: { x: number; y: number };
@@ -10,8 +10,8 @@ export class CommitCatchParticle implements Particle {
     this.lifetime = Math.random();
 
     this.velocity = {
-      x: Math.random() * 1000 - 500,
-      y: Math.random() * 1000 - 500,
+      x: Math.random() * 50 - 25,
+      y: Math.random() * 100,
     };
   }
 
@@ -28,7 +28,7 @@ export class CommitCatchParticle implements Particle {
   }
 
   render(graphics: Graphics) {
-    graphics.setFillColor("rgba(237, 187, 78, 0.9)");
-    graphics.drawCircle(this.position.x, this.position.y, 2);
+    graphics.setFillColor("#FF0020");
+    graphics.drawCircle(this.position.x, this.position.y, 3.5);
   }
 }

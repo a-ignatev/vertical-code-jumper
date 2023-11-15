@@ -28,11 +28,11 @@ export class Text extends Component implements IRenderable {
   }
 
   render(graphics: Graphics) {
-    const { x, y } = this.getEntity().getTransform().getPosition();
+    const { x, y } = this.getWorldPosition();
 
     graphics.setFont(this.font);
     graphics.setFillColor(this.color);
-    graphics.fillText(this.word, x + this.pivot.x, y + this.pivot.y);
+    graphics.fillText(this.word, x, y);
   }
 
   getWidth() {

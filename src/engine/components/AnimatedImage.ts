@@ -78,7 +78,7 @@ export class AnimatedImage extends Component implements IRenderable {
   }
 
   render(graphics: Graphics) {
-    const { x: cx, y: cy } = this.getEntity().getTransform().getPosition();
+    const { x: cx, y: cy } = this.getWorldPosition();
     const row = Math.trunc(this.currentFrame / this.imageProperties.cols);
     const col = this.currentFrame % this.imageProperties.cols;
 
@@ -88,8 +88,8 @@ export class AnimatedImage extends Component implements IRenderable {
       row * this.imageProperties.height,
       this.imageProperties.width,
       this.imageProperties.height,
-      cx + this.pivot.x - this.imageProperties.width,
-      cy + this.pivot.y - this.imageProperties.height,
+      cx - this.imageProperties.width,
+      cy - this.imageProperties.height,
       2 * this.imageProperties.width,
       2 * this.imageProperties.height
     );

@@ -14,5 +14,12 @@ export abstract class Component {
     return this.entity;
   }
 
+  getWorldPosition() {
+    return {
+      x: this.entity.getTransform().getPosition().x + this.pivot.x,
+      y: this.entity.getTransform().getPosition().y + this.pivot.y,
+    };
+  }
+
   abstract destroy(): void;
 }

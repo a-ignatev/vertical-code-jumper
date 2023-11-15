@@ -23,15 +23,9 @@ export class StaticImage extends Component implements IRenderable {
   }
 
   render(graphics: Graphics): void {
-    const { x, y } = this.getEntity().getTransform().getPosition();
+    const { x, y } = this.getWorldPosition();
 
-    graphics.drawImage(
-      this.img,
-      x + this.pivot.x,
-      y + this.pivot.y,
-      this.width,
-      this.height
-    );
+    graphics.drawImage(this.img, x, y, this.width, this.height);
   }
 
   destroy(): void {

@@ -17,23 +17,21 @@ export class ColorBox extends Component implements IRenderable {
   }
 
   render(graphics: Graphics): void {
-    const { x, y } = this.getEntity().getTransform().getPosition();
+    const { x, y } = this.getWorldPosition();
 
     graphics.setFillColor(this.color);
-    graphics.fillRect(x + this.pivot.x, y + this.pivot.y, this.size, this.size);
+    graphics.fillRect(x, y, this.size, this.size);
   }
 
   spawnCommitSplash() {
-    const { x, y } = this.getEntity().getTransform().getPosition();
+    const { x, y } = this.getWorldPosition();
+
     this.getEntity()
       .getScene()
       .spawnEntity(
         "commitSplash",
         ParticlesEmitter<typeof CommitSplashParticle>,
-        {
-          x: x + this.pivot.x,
-          y: y + this.pivot.y,
-        },
+        { x, y },
         Math.random() * 20 + 10,
         CommitSplashParticle,
         this.color
