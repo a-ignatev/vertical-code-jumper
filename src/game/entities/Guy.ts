@@ -30,17 +30,19 @@ export class Guy extends Entity {
   private currentForm: GuyForm;
   private nonDrinkingTimeS: number;
   private lifeTimeS: number;
-  private canBecomeStrong: boolean;
+  private isPLayable: boolean;
 
-  constructor(scene: Scene, cx: number, cy: number, canBecomeStrong: boolean) {
+  constructor(scene: Scene, cx: number, cy: number, isPlayable: boolean) {
     super(scene);
 
     this.speedX = 0;
     this.speedY = 0;
     this.getTransform().setPosition(cx, cy);
-    this.canBecomeStrong = canBecomeStrong;
+    this.isPLayable = isPlayable;
 
-    this.addComponent("playerController", PlayerController);
+    if (this.isPLayable) {
+      this.addComponent("playerController", PlayerController);
+    }
 
     const animationSet = this.addComponent(
       "animationSet",
@@ -219,7 +221,7 @@ export class Guy extends Entity {
           animationSet.setCurrentAnimation(`drinking.normal`);
         }
 
-        if (this.canBecomeStrong && this.lifeTimeS >= TRANSFORM_PERIOD) {
+        if (this.isPLayable && this.lifeTimeS >= TRANSFORM_PERIOD) {
           this.getComponent<Sound>("roarSound")?.play();
           animationSet.setCurrentAnimation(`transforms.normal`);
           this.getScene().getEntity<LifeBar>("lifeBar")?.becomeStrong();

@@ -20,7 +20,7 @@ export class LifeBar extends Entity {
     super(scene);
 
     const hurtSound = this.addComponent("hurtSound", Sound, "ough.mp3");
-    hurtSound.setVolume(0.5);
+    hurtSound.setVolume(0.2);
     this.updateHealthBar();
   }
 
