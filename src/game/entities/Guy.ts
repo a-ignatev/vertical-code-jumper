@@ -171,17 +171,23 @@ export class Guy extends Entity {
     this.speedY += GRAVITY * delta;
     this.getTransform().translate(this.speedX * delta, this.speedY * delta);
     const { x, y } = this.getTransform().getPosition();
-    this.getTransform().setPosition(
-      Math.max(
+
+    if (x < 0) {
+      this.getTransform().setPosition(
+        graphics.getWidth() -
+          animationSet.getCurrentAnimation().getSize().width / 2,
+        y
+      );
+    } else if (
+      x >
+      graphics.getWidth() +
+        animationSet.getCurrentAnimation().getSize().width / 2
+    ) {
+      this.getTransform().setPosition(
         animationSet.getCurrentAnimation().getSize().width,
-        Math.min(
-          x,
-          graphics.getWidth() -
-            animationSet.getCurrentAnimation().getSize().width
-        )
-      ),
-      y
-    );
+        y
+      );
+    }
 
     for (const entity of this.getScene().getEntities()) {
       const otherBoundingBox = entity.getComponent<Rect>("boundingBox");

@@ -79,7 +79,7 @@ export class LifeBar extends Entity {
           x: this.lastFullHeartInRow.getWorldPosition().x + WIDTH / 2,
           y: this.lastFullHeartInRow.getWorldPosition().y + WIDTH / 2,
         },
-        10,
+        23,
         Hearts
       );
     }

@@ -7,7 +7,7 @@ export class Hearts implements Particle {
   private velocity: { x: number; y: number };
 
   constructor() {
-    this.lifetime = Math.random();
+    this.lifetime = Math.random() * 3 + 1;
 
     this.velocity = {
       x: Math.random() * 50 - 25,

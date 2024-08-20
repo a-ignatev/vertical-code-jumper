@@ -4,6 +4,7 @@ import { Scene } from "engine/scenes/Scene";
 import { SceneManager } from "engine/scenes/SceneManager";
 import { CoffeeMug } from "game/entities/CoffeeMug";
 import { Commit } from "game/entities/Commit";
+import { DangerIndicator } from "game/entities/DangerIndicator";
 import { FallingWord } from "game/entities/FallingWord";
 import { FlashyIndicator } from "game/entities/FlashyIndicator";
 import { Guy } from "game/entities/Guy";
@@ -91,6 +92,7 @@ export class Game extends Scene {
     });
     this.spawnEntity("bonusIndicator", FlashyIndicator, "x2", "#EDBB4E");
     this.spawnEntity("lifeBar", LifeBar);
+    this.spawnEntity("dangerIndicator", DangerIndicator);
   }
 
   detach() {
